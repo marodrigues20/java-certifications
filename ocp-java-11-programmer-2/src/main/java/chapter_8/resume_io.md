@@ -265,6 +265,215 @@ simple; it basically reads data from the stream and discard the contents.
 Note: Not all input stream classes support mark() and reset(). Make sure to call markSupported() on the stream before
 calling these methods or an exception will be thrown at runtime.
 
+Example: MarkMethodExample.java
+
+## skip()
+Example: SkipMethodExample.java
+
+## Flushing Output Stream
+
+When data is written to an output stream, the underlying operating system does not guarantee that the data will make it
+to the file system immediately. In many operating system, the data may be cached in memory, with write occurring only
+after a temporary cache is filled or after some amount of time has passed.
+If the data is cached in memory and the application terminates unexpectedly, the data would be lost, because it was 
+never written to the file system.
+
+// OutputStream and Writer
+public void flush() throws IOException
+
+example: FlushMethodExample.java
+
+The flush() method helps reduce the amount of data lost if the application terminates unexpectedly.
+
+Note1 : Each time it is used, it may cause a noticeable delay in the application, especially for large files.
+Note 2: You don't need to call flush() method when you have finished writing data, since the close() method will automatically
+do this.
+
+## Reviewing Common I/O Stream Methods
+
+| Stream Classes    | Method Name
+| All Stream        | void close() |
+| All input Stream  | int read()   | 
+InputStream       | int read(byte[] b)
+Reader            | int read(char[] c)
+InputStream       | int read(byte[] b, int offset, int length)
+Reader            | int read(char[] c, int offset, int length)
+All output stream | void write(int)
+OutputStream      | void write(byte[] b)
+Write             | void write(char[] c)
+OutputStream      | void write(byte[] b, int offset, int length)
+Write             | void write(char[] c, int offset, int length)
+All input stream  | boolean markSupport()
+All input stream  | mark(int readLimit)
+All input stream  | void reset()
+All input stream  | long skip(long n)
+All output stream | void flush()
+
+## Reading and Writing Binary Data
+
+The most basic file stream classes, FileInputStream and FileOutputStream. They are used reading bytes from a file or 
+write bytes to a file.
+
+public FileInputStream(File file) throws FileNotFoundException
+public FileInputStream(String name) throws FileNotFoundException
+public FileOutputStream(File file) throws FileNotFoundException
+public FileOutputStream(String file) throws FileNotFoundException
+
+Tip: If you need to append to an existing file, there's a constructor for that. The FileOutputStream class includes 
+overloaded constructor that take a boolean append flag. When set to true, the output stream will append to the end of a
+file if it already exists. This is useful for writing to the end of log files, for example.
+
+
+## Buffering Binary Data
+We can easily enhance our implementation using BufferedInputStream and BufferOutputStream. As high-level stream,
+these classes include constructor that take other streams as input.
+
+public BufferedInputStream(InputStream in)
+public BufferedOutputStream(OutputStream out)
+
+Why Use the Buffered Classes?
+
+Put simply, the Buffered classes contain a number of performance improvements for managing data in memory.
+For example, the BufferedInputStream class is capable of retrieving and storing in memory more data than you might 
+request with a single read(byte[]) call.
+
+The following shows how to apply these streams:
+
+example: CopyFileWithBufferExample
+
+## Choosing a Buffer Size
+
+Given the way computers organize data, it is often appropriate to choose a buffer size that is a power of 2, such as
+1,024. Performance tuning often involves determining what buffer size is most appropriate for your application.
+What buffer size should you use? Any buffer size that is power of 2 from 1,024 to 65,536 is a good choice in practice.
+
+## Reading and Writing Characters Data
+
+The FileReader and FileWriter classes, along with their associated buffer classes, are among the most convenient I/O 
+classes of their built-in support for text data. They include constructors that take the same input as binary file
+classes.
+
+public FileReader(File file) throws FileNotFoundException
+public FileReader(String name) throws FileNotFoundException
+
+public FileWriter(File file) throws FileNotFoundException
+public FileWriter(String file) throws FileNotFoundException
+
+example: CopyTextFileExample.java
+
+## Buffering Characters Data
+
+Like we saw with byte streams, Java includes high-level buffered characters streams that improve performance.
+
+public BufferedReader(Reader in)
+public BufferedWriter(Writer out)
+
+They add two new methods, readLine() and newLine(), that are particularly useful when working with String values.
+
+example: CopyTextFileWithBufferExample.java
+
+## Serializing Data
+
+Serialization is the process of converting an in-memory object to a byte stream. Likewise, deserialization is the 
+process of converting from a byte stream into an object. Serialization often involves writing an object to a stored or
+transmittable format, while deserialization is the reciprocal process.
+
+## Applying the Serialization Interface
+
+To serialize an object using the I/O API, the object must implement the java.io.Serializable interface. The Serializable
+interface is a maker interface. By marker interface, it means the interface does not have any methods. Any class can
+implement the Serializable interface since there are no required methods to implement.
+
+Note: Generally speaking, you should only mark data-oriented classes serializable.
+
+The purpose of using the Serializable interface is to inform any process attempting to serialize the object that you
+have taken the proper steps to make the object serializable.
+
+example: Gorilla.java
+
+## Maintaining a serialVersionUID
+
+It's good practice declaring a static serialVersionUID variable in every class that implements Serializable. The version
+is stored with each object as part of serialization. Then, every time the class structure changes, this value is updated
+or incremented.
+
+The serialVersionUID helps inform the JVM that the stored data may not match the new class definition. If an older 
+version of class is encountered during deserialization, a java.io.InvalidClassException may be thrown. Alternatively,
+some APIs support converting data between versions.
+
+
+## Marketing Data transient
+
+Oftentimes, the transient modifier is used for sensitive data of the class, like a password.
+What happens to data marked transient on deserialization? It reverts to its default Java values, such as 0.0 for double,
+or null for an object. 
+
+Note: Other than the serialVersionUID, only the instance members of a class are serialized.
+
+## Ensuring a Class Is Serializable
+
+Any process attempting to serialize an object will throw a NotSerializableException if the class does not implement the
+Serializable interface properly.
+
+How to Make a Class Serializable
+
+- The class must be marked Serializable
+- Every instance member of the class is serializable, marked transient, or has a null value at the time of serialization.
+
+Be careful with the second rule. For a class to be serializable, we must apply the second rule recursively.
+
+## Storing Data with ObjectOutputStream and ObjectInputStream
+
+The ObjectInputStream class is used to deserialize an object from a stream, while the ObjectOutputStream is used to 
+serialize an Object to a stream. They are high-level stream that operate on existing streams.
+
+public ObjectInputStream(InputStream in) throws IOException
+public ObjectOutputStream(OutputStream out) throws IOException
+
+Two methods you need to know for the exam are the ones related to working with objects.
+
+// ObjectInputStream
+public Object readObject() throws IOException, ClassNotFoundException
+
+// ObjectOutputStream
+public void writeObject(Object obj) throws IOException
+
+We now provide a sample method that serializes a List of Gorilla objects to a file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
