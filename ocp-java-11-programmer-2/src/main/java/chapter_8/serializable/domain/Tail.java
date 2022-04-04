@@ -1,4 +1,6 @@
-package chapter_8.serializable;
+package chapter_8.serializable.domain;
+
+import chapter_8.serializable.domain.Fur;
 
 import java.io.Serializable;
 

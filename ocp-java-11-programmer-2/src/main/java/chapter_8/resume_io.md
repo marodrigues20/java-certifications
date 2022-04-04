@@ -440,9 +440,264 @@ public void writeObject(Object obj) throws IOException
 
 We now provide a sample method that serializes a List of Gorilla objects to a file.
 
+example: SerializeGorillaSample.java
+
+## Understand the Deserialization Creating Process
+
+When you deserialize an object, the constructor of the serialized class, along with any instance initializers, is not
+called when the object is created. Java will call the no-arg constructor of the first nonserializable parent class it
+can find in the class hierarchy. In our Gorilla example, this would just be the no-arg constructor of Object.
+
+As we stated earlier, any static or transient fields are ignored. Values that are not provided will be given their 
+default Java value, such as null for String, or 0 for int values.
+
+example: SerializeGorillaSample.java
+
+example 2: SerializeChimpanzeeSample.java
+
+## Real World Scenario
+
+We focus on serialization using the I/O streams, such as ObjectInputStream and ObjectOutputStream. You should be aware
+there are many others APIs to serialize data to JSON or encrypted data files.
+While these APIs might not use I/O stream classes, many make use of built-in Serializable interface and transient 
+modifier. Some of these APIs also include annotation to customize the serialization and deserialization of objects,
+such as what to do when are missing or need to be translated.
 
 
+## Printing Data
 
+PrintStream and PrintWriter are high-level output print streams classes that are useful for writing text data to a 
+stream. PrintStream and PrintWriter include many of the same methods. Just remember that one operates on an OutputStream
+and the other a Writer.
+
+The PrintStream classes have the distinction of being the only I/O stream classes we cover that do not have corresponding
+input stream classes. And unlike other OutputStream classes, PrintStream does not have Output in its name.
+
+Following constructors:
+
+public PrintStream(OutputStream out)
+public PrintWriter(Writer out)
+
+For convenience, these classes also include constructors that automatically wrap the print stream around a low-level
+file stream class, such as FileOutputStream and FileWriter.
+
+public PrintStream(File file) throws FileNotFoundException
+public PrintStream(String file) throws FileNotFoundException
+
+public PrintWriter(File file) throws FileNotFoundException
+public PrintWriter(String file) throws FileNotFoundException
+
+The PrintWriter class even has a constructor that takes an OutputStream as input. This is one of the few exceptions
+in which we can mix a byte and character stream.
+
+public PrintWriter(OutputStream out)
+
+Note: You've been regularly using a PrintStream throughout this book. Both System.out and System.err are PrintStream
+objects. Likewise, System.in, often useful for reading user input, is an InputStream.
+
+Besides, the inherited write() methods, the print stream classes include numerous methods for writing data including
+print(), println(), and format().
+
+When working with String data, you should use Writer, so our examples in this part of the chapter use PrintWriter.
+
+## print()
+
+The most basic of the print-based methods is print(). The print stream classes include numerous overloaded versions of
+print().
+
+## println()
+
+The next methods available in the PrintStream and PrintWriter classes are the println() methods, which are virtually
+identical to the print() methods, except that they also print a line break after the String value is written.
+The println() methods are especially helpful, as the line break character is dependent on the operating system. For 
+example, in some system a line feed symbol, \n, signifies a line break, whereas other system use a carriage return
+symbol followed by a line feed symbol, \r\n, to signify a line break.
+
+System.getProperty("line.separator");
+System.lineSeparator();
+
+## format()
+
+Each, print stream class includes a format() method, which includes an overloaded version that takes a Locale.
+
+// PrintStream
+public PrintStream format(String format, Object args...)
+public PrintStream format(Locale loc, String format, Object ...)
+
+// PrintWriter
+public PrintWriter format(String format, Object args...)
+public PrintWriter format(Locale loc, String format, Object args...)
+
+
+Note: Java includes printf() methods, which function identically to the format() methods. The only thing you need to
+know about these methods is that they are interchangeable with format().
+
+example: FormatSample.java
+
+
+Symbol | Description
+  %s   | Applies to any type, commonly String values
+  %d   | Applies to integer values like int and long
+  %f   | Applies to floating-point values like float and double
+  %n   | Inserts a line break using the system-dependent line separator.
+
+## Using format() with Flags
+
+By default, %f display six digits past the decimal. If you want to display only one digit after the decimal, you could
+use %.1f instead %f. The format() method relies on rounding, rather than truncating when shortening numbers. For example,
+90.250000 will be displayed as 90.3 (not 90.2) when passed to format() with %.1f
+
+You can specify the total length of output by using a number before the decimal symbol. By default, the method will fill
+the empty space with black spaces. You can also fill the empty space with zeros, by placing a single zero before the 
+decimal symbol. The following examples use brackets, [], to show the start/end of the formatted value:
+
+example: FormatSample.format3 java class
+
+## Sample PrintWriter Program
+
+Example: PrintWriteSample.java
+
+## Review of Stream Classes
+
+FilterInputStream and FilterOutputStream are high-level superclass that filter or transform data. They are rarely used
+directly.
+
+## InputStreamReader and OutputStreamWriter
+
+Most of the time, you can't wrap byte and character stream with each other, although as we mentioned, there are exceptions.
+
+example: ByteAndCharTogetherSample.java
+
+## Interacting with Users
+
+The java.io API includes numerous classes for interacting with the user.
+
+### Printing Data to the User
+
+The syntax for calling and using System.err is the same as System.out but is used to report errors to the user in a 
+separate stream from the regular output information.
+
+Example: SystemPrintExample.java
+
+## Reading Input as a Stream
+
+The System.in returns an InputStream and is used to retrieve text input from the user. It is commonly wrapped with a
+BufferedReader via an InputStreamReader to use the readLine() method.
+
+example: ReadInputAsStreamSample.java
+
+## Closing System Streams
+
+You might have noticed that we never created or closed System.out, System.err, and System.in when we used them.
+Because these are static objects, the System stream are shared by the entire application. The JVM creates and opens
+them for us.
+
+
+What do you think the following code snippet prints?
+
+try(var out = System.out){}
+System.out.println("Hello");
+
+Nothing. It prints nothing. Remember, the method of PrintStream do not throw any checked exceptions and rely on the 
+checkError() to report errors. so they fail silently.
+
+What about this example?
+
+try(var err = System.err){}
+System.err.println("Hello);
+
+Nothing. Like System.out, System.err is a PrintStream. Even if it did throw an exception, though, we'd have a hard time
+seeing it since our stream for reporting errors is closed! Closing System.err is a particularly bad idea, since the 
+stack traces from all exceptions will be hidden.
+
+What about this example?
+
+var reader = new BufferedReader( new InputStreamReader(System.in));
+try (reader){}
+String data = reader.readline(); //IOException
+
+It prints an exception at runtime. Unlike the PrintStream class, most InputStream implementations will throw exception
+if you try to operate on a closed stream.
+
+
+## Acquiring Input with Console
+
+The java.io.Console class is specifically designed to handle user interactions. After all, System.in and System.out 
+are just raw stream, whereas Console is a class with numerous methods centered around user input.
+The Console class is a singleton because it is accessible only from a factory method and only one instance of it is 
+created by the JVM.
+
+example: ConsoleSample.java
+
+## reader() and writer()
+
+The Console class includes access to two streams for reading and writing data.
+
+public Reader reader()
+public PrintWriter writer()
+
+Accessing these classes is analogous to calling System.in and System.out directly, although they use characters streams
+rather than byte stream. In this manner, they are more appropriate for handling text data.
+
+## format()
+
+For printing data with a Console, you can skip calling the writer().format() and output the data directly to stream in a
+single call.
+
+public Console format(String format, Object args...)
+
+The format() method behaves the same as the format() method on the stream classes, formatting and printing a String
+while applying various arguments.
+
+example: ConsoleSample.java
+
+## Using Console with a Locale
+
+Unlike the print stream, Console does not include an overloaded format() method that takes a Locale instance. Instead,
+Console relies on the system locale. Of course, you could always use a specific Locale by retrieving the Writer object
+and passing your own Locale instance, such as in the following example:
+
+example: ConsoleSample.java
+
+readLine() and realPassword()
+
+The Console class includes four methods for retrieving regular text data from user.
+
+public String readLine()
+public String readLine(String fmt, Object... args)
+
+public char[] readPassword()
+public char[] readPassword(String fmt, Object... args)
+
+Like using System.in with a BufferedReader, the Console readLine() methods reads input until the user presses the Enter
+key. The overloaded version of readLine() displays a formatted message prompt prior to requesting input.
+
+The readPassword() methods are similar to the readLine() method with two important differences.
+
+1) The text the user types is not echoed back and displayed on the screen as they are typing.
+2) The data is returned as a char[] instead of a String.
+
+The first feature improves security by no showing the password on the screen if someone happens to be next to you. The
+second feature  involves preventing passwords from entering the String pool discussed in Chapter 11.
+
+example: ConsoleSample.java
+
+
+## Summary
+
+A common practice is to start with a low-level resource or file stream and wrap it in a buffered stream to improve
+performance.
+
+Byte streams operate on binary data and have names that end with Stream, while characters stream operate on text data
+and have names that end in Reader or Writer.
+
+Distinguish between low-level and high-level streams. A low-level stream is one that operates directly on the 
+underlying resources, such as file or network connections. A high-level stream is one that operates on a low-level 
+or other high-level stream to filter data, convert data, or improve performance.
+
+All streams include a close() method, which can be invoked automatically with a try-with-resources.
+
+Remember to call markSupported() before using mark() and reset(), as some streams do not support this operation.
 
 
 

@@ -1,4 +1,4 @@
-package chapter_8.serializable;
+package chapter_8.serializable.domain;
 
 import java.io.Serializable;
 
@@ -16,6 +16,12 @@ public class Gorilla implements Serializable {
     private int age;
     private Boolean friendly;
     private transient String favoriteFood;
+
+    public Gorilla(String name, int age, Boolean friendly) {
+        this.name = name;
+        this.age = age;
+        this.friendly = friendly;
+    }
 
     public String getName() {
         return name;
@@ -47,5 +53,15 @@ public class Gorilla implements Serializable {
 
     public void setFavoriteFood(String favoriteFood) {
         this.favoriteFood = favoriteFood;
+    }
+
+    @Override
+    public String toString() {
+        return "Gorilla{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", friendly=" + friendly +
+                ", favoriteFood='" + favoriteFood + '\'' +
+                '}';
     }
 }
