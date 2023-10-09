@@ -109,4 +109,105 @@ of the year, primary colors, etc. An enumeration is like a fixed set of constant
 
 ## Adding Constructor, Fields, and Methods
 
+- SeasonV2.java
+- SeasonV2Test.java
+- OnlyOne.java
+- PrintTheOne.java
+- SeasonV3.java
+- SeasonV4.java
+
+## Created Nested Classes
+
+- A nested class is a class that is defined within another class. A nested class can come in one of four flavors.
+  - Inner class: A non-static type defined at the member level of a class.
+  - Static nested class: A static type defined at the member level of a class
+  - Local class: A class defined within a method body.
+  - Anonymous class: A special case of a local class that does not have a name
+
+- There are many benefits of using nested classes. They can encapsulate helper classes by restricting them to the containing
+class.
+
+## Declaring an Inner Class
+
+- An inner class, also called a member inner class, is a non-static type defined at the member level of a class. Inner
+classes have the following properties:
+
+  - Can be declared public, protected, package-private (default), or private
+  - Can extend any class and implement interfaces
+  - Can be marked abstract or final
+  - Cannot declare static fields or methods, except for static final fields
+  - Can access members of the outer class including private members
+
+### Example:
+  - Outer.java
+
+### .class Files for Inner Classes
+
+- Compiling the Outer.java class with which we have been working creates two class files. Outer.class you should be
+expecting. For the inner class, the compiler creates Outer$Inner.class.
+
+- Inner classes can have the same variable names as outer classes, making scope a little tricky.
+
+#### Examples:
+
+- A.java
+
+## Inner Classes Require an Instance
+
+- Fox.java
+- Squirrel.java
+
+
+## Creating a static Nested Class
+
+- A static nested class is a static type defined at the member level.
+- Unlike an inner class, a static nested class can be instantiated without an instance of the enclosing class.
+- The trade-off, though, is it can't access instance variables or methods in the outer class directly. It can be done
+  but requires an explicit reference to an outer class.
+
+- Enclosing.java
+- Toucan.java
+- BirdWatcher.java
+
+## Writing a local class
+
+- A local class is a nested class defined within a method. Like local variables, a local class declaration does not exist
+until the method is invoked, and it goes out of scope when the method returns. This means you can create instances only
+from within the method. Those instances can still be returned from the method. This is just how local variables work.
+
+Note: Local classes are not limited to being declared only inside methods. They can be declared inside constructors and
+initializers too. This chapter just treat Local classes inside methods.
+
+- Local classes Have the following properties:
+
+1. They do not have an access modifier
+2. They cannot be declared static and cannot declare static fields or methods, except for static final fields.
+3. They have access to all fields and methods of the enclosing class (when defined in an instance method)
+4. They can access local variables if the variable are final or effectively final.
+
+Note: Remember that effectively final refers to a local variable whose value does not change after it is set.
+
+
+- PrintNumbers.java
+- PrintNumbersNotCompile.java
+
+## Defining an Anonymous Class
+
+- An anonymous class is a specialized form of a local class that does not have a name.
+- Anonymous classes are required to extend an existing class or implement an existing interface.
+
+### Examples
+
+1. ZooGiftShop.java
+2. ZooGiftShopV2.java
+3. ZooGiftShopV3.java
+4. Gorilla.java
+
+
+
+
+
+
+
+
 
