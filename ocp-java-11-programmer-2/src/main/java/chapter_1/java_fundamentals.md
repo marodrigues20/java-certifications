@@ -118,11 +118,11 @@ of the year, primary colors, etc. An enumeration is like a fixed set of constant
 
 ## Created Nested Classes
 
-- A nested class is a class that is defined within another class. A nested class can come in one of four flavors.
-  - Inner class: A non-static type defined at the member level of a class.
-  - Static nested class: A static type defined at the member level of a class
-  - Local class: A class defined within a method body.
-  - Anonymous class: A special case of a local class that does not have a name
+- A nested class is a class that is defined within another class. A nested class can come in one of 4 (four) flavors.
+  1. Inner class: A non-static type defined at the member level of a class.
+  2. Static nested class: A static type defined at the member level of a class
+  3. Local class: A class defined within a method body.
+  4. Anonymous class: A special case of a local class that does not have a name
 
 - There are many benefits of using nested classes. They can encapsulate helper classes by restricting them to the containing
 class.
@@ -132,11 +132,11 @@ class.
 - An inner class, also called a member inner class, is a non-static type defined at the member level of a class. Inner
 classes have the following properties:
 
-  - Can be declared public, protected, package-private (default), or private
-  - Can extend any class and implement interfaces
-  - Can be marked abstract or final
-  - Cannot declare static fields or methods, except for static final fields
-  - Can access members of the outer class including private members
+  1. Can be declared public, protected, package-private (default), or private
+  2. Can extend any class and implement interfaces
+  3. Can be marked abstract or final
+  4. Cannot declare static fields or methods, except for static final fields
+  5. Can access members of the outer class including private members
 
 ### Example:
   - Outer.java
@@ -202,6 +202,18 @@ Note: Remember that effectively final refers to a local variable whose value doe
 2. ZooGiftShopV2.java
 3. ZooGiftShopV3.java
 4. Gorilla.java
+
+
+## Reviewing Nested Classes
+
+For the exam, make sure you know the information
+
+### Table 1.1 Modifiers in nested classes
+
+| Permitted Modifiers | Inner Class | static nested class | Local class | Anonymous class |
+| Access modifiers    |   All       |         All         |     None    |     None        |
+| abstract            |   Yes       |         Yes         |     Yes     |     No          |
+| Final               |   Yes       |         Yes         |     Yes     |     No          |
 
 
 

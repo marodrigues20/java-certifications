@@ -13,7 +13,7 @@ public enum SeasonV2 {
     WINTER("LOW"), SPRING("Medium"), SUMMER("High"), FALL("Meddium");
 
     /**
-     * We mark the instance variable final on line 18 so that our enum values are considered immutable.
+     * We mark the instance variable final on line 21 so that our enum values are considered immutable.
      * Although this is certainly not required, it is considered a good coding practice to do so.
      * Since enum values are shared by all process in the JVM, it would be problematic if one of them could change
      * the value inside an enum.
@@ -24,7 +24,7 @@ public enum SeasonV2 {
     /**
      * All enum constructor are implicitly private, with the modifier being optional.
      * This is the reason why you can't extend an enum and the constructor can be called only within the enum itself.
-     * If you change the constructor to public or protect the enum constructor will compile.
+     * If you change the constructor to public or protect the enum constructor will not compile.
      * @param expectedVisitors
      */
     private SeasonV2(String expectedVisitors){

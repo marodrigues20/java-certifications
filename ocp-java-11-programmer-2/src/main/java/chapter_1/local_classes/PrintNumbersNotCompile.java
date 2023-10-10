@@ -2,7 +2,7 @@ package chapter_1.local_classes;
 
 
 /**
- * The length and height variables are final and effectively final, respsectively, so neither causes a compilation issue.
+ * The length and height variables are final and effectively final, respectively, so neither causes a compilation issue.
  * One the other hand, the width variable is reassigned during the method so it cannot be effectively final. For this reason,
  * the local class declaration does not compile.
  */
