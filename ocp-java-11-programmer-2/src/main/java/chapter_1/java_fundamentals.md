@@ -211,6 +211,7 @@ For the exam, make sure you know the information
 ### Table 1.1 Modifiers in nested classes
 
 | Permitted Modifiers | Inner Class | static nested class | Local class | Anonymous class |
+| --------------------|-------------|---------------------| ------------| ----------------|
 | Access modifiers    |   All       |         All         |     None    |     None        |
 | abstract            |   Yes       |         Yes         |     Yes     |     No          |
 | Final               |   Yes       |         Yes         |     Yes     |     No          |
