@@ -358,6 +358,22 @@ duplication, but also a way to hide some of the underlying implementation detail
 
 
 
+## Abstract Classes vs. Interfaces
+
+- A key distinction, though, is that interfaces do not implement constructors and are not part of the class hierarchy.
+While a class can implement multiple interfaces, it can only directly extend a single class.
+
+
+## Introducing Functional Programming
+
+Functional interfaces are used as the basis for lambda expressions in functional programming. A functional interfaces is <br>
+that contains a single abstract method. <br>
+SAM = Single abstract method (SAM) rule.
+
+A lambda expression is a block of code that gets passed around, sort of like an anonymous class that defines one method.
+
+## Defining a Functional Interfaces
+
 
 
 
