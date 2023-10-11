@@ -210,11 +210,152 @@ For the exam, make sure you know the information
 
 ### Table 1.1 Modifiers in nested classes
 
-| Permitted Modifiers | Inner Class | static nested class | Local class | Anonymous class |
-| --------------------|-------------|---------------------| ------------| ----------------|
-| Access modifiers    |   All       |         All         |     None    |     None        |
-| abstract            |   Yes       |         Yes         |     Yes     |     No          |
-| Final               |   Yes       |         Yes         |     Yes     |     No          |
+| Permitted Modifiers    | Inner Class  | static nested class  | Local class   | Anonymous class  |
+|------------------------|--------------|----------------------|---------------|------------------|
+| Access modifiers       | All          | All                  | None          | None             |
+| abstract               | Yes          | Yes                  | Yes           | No               |
+| Final                  | Yes          | Yes                  | Yes           | No               |
+
+
+### Table 1.2 Members in nested classes
+
+| Permitted Members    | Inner class    | static nested class | Local class   | Anonymous class |
+|----------------------|----------------|---------------------|---------------| --------------- |
+| Instance methods     | Yes            | Yes                 | Yes           |       Yes       |
+ | Instance variables   | Yes            | Yes                 | Yes           |       Yes       |
+ | static methods       | No             | Yes                 | No            |       No        |
+ | static variables     | Yes (if final) | Yes                 | Yes (if final)|   Yes (if final)|
+
+
+### Table 1.3 Nested class access rules
+
+| Objective                                                          | Inner class | static nested class | Local class | Anonymous class                            |
+|--------------------------------------------------------------------| ----------- | ------------------- | ------------|--------------------------------------------|
+| Can extend any class or implement any number of interfaces         | Yes | Yes | Yes | No-must have exactly one superclass or one interface                       |
+| Can access instance members of enclosing class without a reference | Yes | No  | Yes (if declared in an instance method | Yes (if declared in an instance method) |
+ | Can access local variables of enclosing method                     | N/A | N/A | Yes (if final or effectively final | Yes (if final or effectively final          |
+
+
+## Understanding Interface Members
+
+When Java was first released, there were only two types of members an interface declaration could include: abstract methods and constants (static final) variables.
+Since Java 8 and 9 were released, four new method types have been added that we will cover in this section.
+
+| Description           | Since Java version | Membership Type | Required modifiers | Implicit modifiers  | Has value or body? |
+|-----------------------|--------------------|-----------------|--------------------|---------------------|--------------------|  
+| Constant variable     | 1.0                | Class           | --                 | public static final | Yes                |
+| Abstract method       | 1.0                | Instance        | --                 | public abstract     | No                 |
+| Default method        | 8                  | Instance        | default            | public              | Yes                | 
+| Static method         | 8                  | Class           | static             | public              | Yes                |
+| Private method        | 9                  | Instance        | private            | --                  | Yes                |
+| Private static method | 9                  |  Class          | private static     | --                  | Yes                |
+
+
+## Relying on a default Interface Method
+
+A default method is a method defined in an interface with the default keyword and includes a method body. <br>
+Contrast default methods with abstract methods in an interface, which do not define a method body.
+
+A default method may be overridden by a class implementation the interface. The name default comes from the concept that
+it is viewed as an abstract interface method with a default implementation. The class has the option of overriding the 
+default method, but if it does not, then the default implementation will be used.
+
+- IsWarmBlooded.java
+- Carnivore.java
+
+
+Note: The default interface method modifier is not the same as the default label used in switch statements. Likewise,
+although package-private access is commonly referred to as default access, that feature is implemented by omitting an
+access modifier. We agree Java has overused the word default over the years.
+
+## Default Interface Method Definition Rules
+
+1. A default method may be declared only within an interface
+2. A default method must be marked with the default keyword and include a method body.
+3. A default method is assumed to be public.
+4. A default method cannot be marked abstract, final, or static.
+5. A default method may be overridden by a class that implements the interface.
+6. If a class inherits two or more default methods with the same method signature, then the class must override the method.
+
+## Inheriting Duplicate default Methods
+
+Allowing default methods in interfaces, coupled with the fact that a class may implement multiple interfaces, Java has essentially
+opened the door to multiple inheritance problems.
+
+- Walk.java
+- Run.java
+- Cat.java
+
+If a class implements two interfaces that have default methods with the same method signature, the compiler will report an error.
+Note: In this section, all of our conflicting methods had identical declarations. These rules also apply to methods with the same 
+signature but different return types or declared exceptions.
+
+
+## Using static Interface Methods
+
+- Java now supports static interface methods. These methods are defined explicitly with the static keyword and for the
+most part behave just like static methods defined in classes
+
+### Static Interface Method Definition Rules
+
+1. A static method must be marked with the static keyword and include a method body.
+2. A static method without an access modifiers is assumed to be public.
+3. A static method cannot be marked abstract or final.
+4. A static method is not inherited and cannot be accessed in a class implementing the interface without a reference to 
+the interface name.
+
+These rules should follow from what you know so far of classes, interfaces, and static methods.
+
+- Hop.java
+- Bunny.java
+
+## Introducing private Interface Methods
+
+- New to Java 9, interface may now include private interface methods.
+- Private methods can be used to reduce code duplication.
+
+- Schedule.java
+
+### Private Interface Method Definition Rules
+
+1. A private interface method must be marked with the private modifier and include a method body.
+2. A private interface method may be called only by default and private (non-static) methods within the interface 
+definition.
+
+Note: Private Interfaces methods behave a lot like instance methods within a class. Like private methods in a class,
+they cannot be declared abstract since they are not inherited.
+
+
+## Introducing private static Interface Methods
+
+- Swim.java
+
+### Private Static Interface Method Definition Rules
+
+1. A private static method must be marked with the private and static modifiers and include a method body.
+2. A private static interface method may be called only by other methods within the interface definition.
+
+Both private and private static methods can be called from default and private methods. This is equivalent to how
+an instance method is able to call both static and instance methods. On the other hand, a private method cannot be 
+called from a private static method. This would be like trying to access an instance method from a static method 
+in a class.
+
+Note: Encapsulation and security work best when the outside caller knows as little as possible about the internal
+implementation of a class or an interface. Using private interface methods doesn't just provide a way to reduce code 
+duplication, but also a way to hide some of the underlying implementation details from users of the interface.
+
+
+## Reviewing Interface Members - Table 1.5
+
+| Description           | Accessible from default and private methods within the interface definition | Accessible from static methods within the interface definition? | Accessible from instance methods implementing or extending the interface? | Accessible outside the interface without an instance of interface? |
+|-----------------------|-----------------------------------------------------------------------------|-----------------------------------------------------------------|---------------------------------------------------------------------------|--------------------------------------------------------------------|
+| Constant variable     | Yes                                                                         | Yes                                                             | Yes                                                                       | Yes                                                                |
+| abstract method       | Yes                                                                         | No                                                              | Yes                                                                       | No                                                                 |
+| default method        | Yes                                                                         | No                                                              | Yes                                                                       | No                                                                 |
+| private method        | Yes                                                                         | No                                                              | No                                                                        | No                                                                 |
+| static method         | Yes                                                                         | Yes                                                             | Yes                                                                       | Yes                                                                |
+| private static method | Yes                                                                         | Yes                                                             | No                                                                        | No                                                                 |
+
 
 
 
