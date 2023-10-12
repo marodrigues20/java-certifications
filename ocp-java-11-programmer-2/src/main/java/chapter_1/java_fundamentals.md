@@ -374,6 +374,39 @@ A lambda expression is a block of code that gets passed around, sort of like an 
 
 ## Defining a Functional Interfaces
 
+Let's take a look at an example of a functional interface and a class that implements it:
+
+- Sprint.java
+- Tiger.java
+
+Consider the following for interfaces. Given our previous Sprint functional interfaces, which of the following are
+functional interfaces?
+
+- Dash.java (Functional interface)
+- Skip.java (Not a valid functional interface)
+- Sleep.java (Not a valid functional interface)
+- Climb.java (Functional interface)
+
+All four of these are valid interfaces, but not all of them are functional interfaces.
+
+# Declaring a Functional Interfaces with Object Methods
+
+All classes inherit certain methods from Object. For the exam, you should be familiar with the following Object method declaration
+
+- String toString()
+- boolean equals(Object)
+- int hashCode()
+
+If a functional interface includes an abstract methods with the same signature as a public method found in Object,
+then those methods do not count towards the single abstract method test. The motivation behind this rule is that 
+any class that implements the interface will inherit from Object, as all classes do, and therefore always implement
+these methods.
+
+Note: Since Java assumes all classes from Object, you also cannot declare an interface method that is incompatible 
+with Object. For example, declaring an abstract  method "int toString()" in an interface would not compile since 
+Object's version of the method returns a String.
+
+
 
 
 
