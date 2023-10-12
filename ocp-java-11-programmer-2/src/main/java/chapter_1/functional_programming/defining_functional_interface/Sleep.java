@@ -1,4 +1,4 @@
-package chapter_1.functional_programming;
+package chapter_1.functional_programming.defining_functional_interface;
 
 /**
  * It is not a valid functional interface. Neither snore() nor getZzz() meet the criteria of a single abstract method.

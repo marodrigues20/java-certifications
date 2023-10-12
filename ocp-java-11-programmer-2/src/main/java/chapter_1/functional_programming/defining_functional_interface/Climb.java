@@ -1,4 +1,4 @@
-package chapter_1.functional_programming;
+package chapter_1.functional_programming.defining_functional_interface;
 
 /**
  * It is a functional interface. Despite defining a slew of methods, it contains only one abstract method: reach().
