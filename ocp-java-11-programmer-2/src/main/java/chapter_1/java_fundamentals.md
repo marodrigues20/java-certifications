@@ -408,9 +408,176 @@ Object's version of the method returns a String.
 
 
 
+# Overriding toString(), equals(Object), and hashCode()
+
+- toString(): The toString() method is called when you try to print an object or concatenate the object with a String.
+- equals(Object): The equals(Object) method is used to compare objects, with the default implementation just using the
+  == operator. You should override the equals(Object) method anytime you want to conveniently compare elements for 
+  equality, specially if this requires checking numerous fields.
+- hashCode(): Any time you override equals(Object), you must override hashCode() to be consistent. This means that for 
+  any two objects, if a.equals(b) is true, then a.hashCode()==b.hashCode() must also be true.
+
+All of these methods provide a default implementation in Object, but if you want to make intelligent use out of them,
+then you should override them.
 
 
+## Implementing Functional Interfaces with Lambdas
+
+In addition to functional interfaces you write yourself, Java provides a number of predefined ones. You'll learn about 
+many of these in Chapter 4, "Functional Programming". For now, let's work with the Predicate interface. Excluding any 
+static or default methods defined in the interface, we have the following:
+
+```
+  public interface Predicate<T> {
+    boolean test(T t);
+  }
+```
+
+- Any functional interface can be implemented as a lambda expression
+- Even older Java interfaces that pass the single abstract method test are functional interfaces, which can be 
+  implemented with lambda expressions.
 
 
+- Animal.java
+- TraditionalSearch.java
+
+Note: Lambda expressions rely on the notion of deferred execution. Deferred execution means that code is specified now
+but runs later. In this case, later is when the print() method calls it. Even though the execution is deferred, the 
+compiler will still validate that the code syntax is correct.
 
 
+## Writing Lambda Expressions
+
+
+- The left side of the lambda expression lists the variables. It must be compatible with the type and number of input
+  parameter of the functinal interface's single abstract method.
+- The right side of the lambda expression represents the body of the expression. It must be compatible with the return
+  type of the functional interface's abstract method.
+
+- TraditionalSearch.java
+
+```
+ a -> a.canHop()
+ | |     |--> body
+ | |--------> Arrow
+ |----------> Parameter name
+```
+
+The code above represents the short form of this functional interface and has three parts:
+  1. A single parameter specified with the name 'a'.
+  2. The arrow operator to separate the parameter and body.
+  3. A body that calls a single method and returns the result of that method.
+
+
+### Verbose Version
+
+1. A single parameter specified with the name 'a' and stating the type is Animal
+2. The arrow operator to separate the parameter and body
+3. A body that has one or more lines of code, including a semicolon and a return statement.
+
+```
+(Animal a) -> { return a.canHop(); }
+        |  |           |--- Body
+        |  |---> Arrow
+        |-----> Parameter name
+
+```
+
+- The parentheses can be omitted only if there is a single parameter and its type is not explicitly.
+- What is different here is that the rules change when you omit the braces. Java doesn't require you to type 'return'
+  or use a semicolon when no braces are used.
+
+
+Note: As a fun fact, 's -> {}' is a valid lambda. If the return type of the functional interface method is void, then
+you don't need the semicolon or return statement.
+
+### Valid lambda expressions
+
+```
+- () -> new Duck()
+- d -> {return d.quack(); }
+- (Duck d) -> d.quack()
+- (Animal a, Duck d) -> d.quack()
+```
+
+### Invalid Syntax
+
+Let's assume we needed a lambda that returns a boolean value.
+
+```
+3: a, b -> a.startsWith("test")         // DOES NOT COMPILE - REQUIRE PARENTHESES AROUND EACH PARAMETER LIST
+4: Duck d -> d.canQuack();              // DOES NOT COMPILE - REQUIRE PARENTHESES AROUND EACH PARAMETER LIST   
+5: a -> { a.startsWith("test"); }       // DOES NOT COMPILE - MISSING RETURN KEYWORD
+6: a -> { return a.startsWith("test") } // DOES NOT COMPILE - MISSING THE SEMICOLON INSIDE OF THE BRACES
+7: (Swan s, t) -> s.compareTo(t) != 0   // DOES NOT COMPILE - MISSING THE PARAMETER TYPE FOR t. If the paremter type         
+                                                              is specified for one of the parameters, then it must be 
+                                                              specified for all of them.
+```
+
+
+## Working with Lambda Variable
+
+Variables can appear in three places with respect to lambdas:
+1. The parameter list
+2. Local variables declared inside the lambda body
+3. Variables referenced from the lambda body.
+
+
+### Parameter List
+
+While you can use 'var' inside a lambda parameter list, there is a rule you need to be aware of. If 'var' is used for
+one of the types in the parameter list, then it must be used for all parameters in the list. Given this rule, which 
+of the following lambda expressions do no compile if they were assinged to a variable?
+
+```
+3: (var num) -> 1                         // COMPILE
+4: var w -> 99                            // DOES NOT COMPILE BECAUSE PARENTHESES
+5: (var a, var b) -> "Hello"              // COMPILE BECAUSE ALL OF THE PAREMETERS IN THE LIST USE 'var'
+6: (var a, Integer b) -> true             // DOES NOT COMPILE BECAUSE THE PARAMETERS TYPES INCLUDE A MIX OF var and type names
+7: (String x, var y, Integer z) -> true   // DOES NOT COMPILE BECAUSE THE PARAMETERS TYPES INCLUDE A MIX OF var and type names
+8: (var b, var k, var m) -> 3.14159       // COMPILE BECAUSE ALL OF THE PAREMETERS IN THE LIST USE 'var'
+9: (var x, y) -> "goodbye"                // DOES NOT COMPILE BECAUSE THE PARAMETER TYPE IS MISSING FOR THE SECOND PARAMETER
+```
+
+### Local Variables inside the Lambda Body
+
+- While it is most common for a lambda body to be a single expression, it is legal to define a block. That block can 
+have anything that is valid in a normal Java block, including local variables declaration.
+
+- The following code does just that. It creates a local variable named 'c' that is scoped to the lambda block.
+
+```
+(a, b) -> { int c = 0; return 5; }
+```
+
+Note: When writing your own code, a lambda block with a local variable is a good hint that you should extract that code
+into a method.
+
+- Now let's try another one. Do you see what's wrong here?
+
+```
+(a, b) -> { int a = 0; return 5; }  // DOES NOT COMPILE
+```
+
+- We tried to declare 'a', which is not allowed. Java doesn't let you create a local variable with the same name as one
+already declared in that scope.
+
+```
+11: public void variables (int a) {
+12:  int b = 1;
+13:  Predicate<Integer> p1 = a -> {  // Variable 'a' already been used in line 11
+14:    int b = 0;                    // Code tries to redeclare local variable in line 12.
+15:    int c = 0;
+16:    return b == c; 
+17:  }                              // The variable p1 is missing a semicolon at the end.
+18: }
+```
+
+### Variable Referenced from the Lambda Body
+
+- Lambda bodies are allowed to use static variables, instance variables, and local variables if they are final or
+  effectively final. Behind the scenes, anonymous classes are used for lambda expression. Let's take a look at an 
+  example.
+
+- Crow.java
+- CrowV2.java
