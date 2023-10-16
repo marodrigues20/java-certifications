@@ -581,3 +581,9 @@ already declared in that scope.
 
 - Crow.java
 - CrowV2.java
+
+
+# Highlight points
+
+- Effectively final refers to local variables whose value is not changed after it is set.
+- As lambda expressions can access final and effectively final variables.
