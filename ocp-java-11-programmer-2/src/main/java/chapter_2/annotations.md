@@ -135,6 +135,6 @@ annotation.
 
 ## Reviewing Annotation Rules
 
-![alt text](https://github.com/marodrigues20/udemy_java/blob/main/JavaSpring%26ApacheKafkaBootcamp-BasicToComplete/Sections/Section-16/pic_01.png?raw=true)
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_2/review.png?raw=true)
 
 
