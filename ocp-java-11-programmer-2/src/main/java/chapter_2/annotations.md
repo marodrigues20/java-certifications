@@ -62,15 +62,15 @@ utilized where they are defined.
 - We use an annotation to create an annotation! The Exercise annotation is referred to as a marker annotation, since
 it does not contain any elements.
 
-  - chapter_2.stage_01.Exercise.java
+  - chapter_2.creating_annotation.stage_01.Exercise.java
 
 - How do we use our new annotation? It's easy. We use the at (@) symbol, followed by the type name. In this case,
 the annotation it @Exercise. Then, we apply the annotation to other Java code, such as class.
 - Let's apply @Exercise to some classes.
 
-- chapter_2.stage_01.Cheetah.java
-- chapter_2.stage_01.Sloth.java
-- chapter_2.stage_01.ZooEmployee.java
+- chapter_2.creating_annotation.stage_01.Cheetah.java
+- chapter_2.creating_annotation.stage_01.Sloth.java
+- chapter_2.creating_annotation.stage_01.ZooEmployee.java
 
 - You might have noticed that Cheetah.java and Sloth.java differ on their usage of the annotation. One uses parentheses, (),
   while the other does not. When using a marker annotation, parentheses are optional. Once we start adding elements,
@@ -96,13 +96,13 @@ chapter.
 - An annotation element is an attribute that stores values about the particular usage of an annotation. To make our 
 previous example more useful, let's change @Exercise from a marker annotation to one that includes an element.
 
-- chapter_2.stage_02.Exercise.java
+- chapter_2.creating_annotation.stage_02.Exercise.java
 
 ## Providing an Optional Element
 
 - For an element to be optional, rather than required, it must include a default value.
 
-- chapter_2.stage_02.Exercise.java
+- chapter_2.creating_annotation.stage_02.Exercise.java
 
 - When we have more than one element value within an annotation, we separate them by comma(,). Next, each element is
 written using the syntax elementName = elementValue. It's a shorthand for a Map. Also, the order of each element does 
@@ -114,7 +114,7 @@ not matter. Cheetah, could have listed hoursPerDay first.
 - Similar to a default element value, an annotation element cannot be declared with just any type. It must be a 
 primitive type, a String, a Class, an enum, another annotation, or an array of any of these types.
 
-- chapter_2.stage_03.Panda.java
+- chapter_2.creating_annotation.stage_03.Panda.java
 
 
 ## Applying Element Modifiers
@@ -122,7 +122,7 @@ primitive type, a String, a Class, an enum, another annotation, or an array of a
 - Like abstract interfaces methods, annotation elements are implicitly abstracts and public, whether you declare them
 that way or not.
 
-- chapter_2.stage_04.Fluffy.java
+- chapter_2.creating_annotation.stage_04.Fluffy.java
 
 
 ## Adding a Constant Variable
@@ -130,7 +130,7 @@ that way or not.
 - Annotations can include constant variables that can be accessed by other classes without actually creating the 
 annotation.
 
-- chapter_2.stage_05.ElectricitySource.java
+- chapter_2.creating_annotation.stage_05.ElectricitySource.java
 
 
 ## Reviewing Annotation Rules
@@ -138,3 +138,21 @@ annotation.
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_2/review.png?raw=true)
 
 
+## Applying Annotations
+
+It's time to discuss other ways to apply annotations.
+
+### Using Annotations in Declaration
+
+- We've only been applying annotations to classes and methods, but they can be applied to any Java declaration including
+the following.
+
+- Classes, interfaces, enums, and modules
+- Variables (static, instance, local)
+- Methods and constructors
+- Method, constructor, and lambda parameters
+- Cast expression
+- Other annotations
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_2/annotation_in_declaration.png?raw=true)

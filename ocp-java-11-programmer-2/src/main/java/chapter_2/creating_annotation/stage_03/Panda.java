@@ -1,6 +1,6 @@
-package chapter_2.stage_03;
+package chapter_2.creating_annotation.stage_03;
 
-import chapter_2.stage_02.Exercise;
+import chapter_2.creating_annotation.stage_02.Exercise;
 
 public @interface Panda {
     //Integer height(); // primitive types like int and long are supported, wrapper classes like Integer and Long are not.

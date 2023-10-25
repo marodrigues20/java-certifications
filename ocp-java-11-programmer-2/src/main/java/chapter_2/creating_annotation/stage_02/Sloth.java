@@ -1,4 +1,4 @@
-package chapter_2.stage_02;
+package chapter_2.creating_annotation.stage_02;
 
 
 /**

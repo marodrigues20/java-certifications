@@ -1,4 +1,4 @@
-package chapter_2.stage_02;
+package chapter_2.creating_annotation.stage_02;
 
 /**
  * The syntax for the hoursPerDay() element may seen a little strange at first. It looks a lot like an abstract method,
