@@ -9,11 +9,11 @@ public class GroupingByExamples {
     public static void main(String[] args) {
 
         groupingByExample();
-        groupingBySetExample();
-        groupingByTreeMapExample();
-        groupingByTreeMapListExample();
-        groupingByCountingExample();
-        groupingByMappingExample();
+        //groupingBySetExample();
+        //groupingByTreeMapExample();
+        //groupingByTreeMapListExample();
+        //groupingByCountingExample();
+        //groupingByMappingExample();
 
 
     }

@@ -135,7 +135,7 @@ annotation.
 
 ## Reviewing Annotation Rules
 
-![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_2/review.png?raw=true)
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_2/images/review.png?raw=true)
 
 
 ## Applying Annotations
@@ -155,4 +155,79 @@ the following.
 - Other annotations
 
 
-![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_2/annotation_in_declaration.png?raw=true)
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_2/images/annotation_in_declaration.png?raw=true)
+
+- Lines 1, 4, and 5 apply annotations to the interface and class declarations. Some of the annotations, like @Cuddly, 
+do not require any values, while others, like @Speed, do provide values.
+- Lines 6 and 8 contain annotations applied to constructor and method declarations. These lines also contain annotations
+applied to their parameters.
+- Line 9 contains the annotation @Food applied to a local variable, along with the annotation @Tasty applied to a cast
+expression.
+
+Note: When applying an annotation to an expression, a cast operation including the Java type is required. On line 9, the 
+expression was cast to String, and the annotation @Tasty was applied to the type.
+
+- Line 11 applies an annotation to the type in the anonymous class declaration, and line 17 shows an annotation in a 
+lambda expression parameter.
+
+## Mixing Required and Optional Elements
+
+- One of the most important rules when applying annotations is the following: to use an annotation, all required values
+must be provided.
+
+- chapter_2.applying_annotation.Amphibiam.java
+- chapter_2.applying_annotation.Tadpole.java
+- chapter_2.applying_annotation.Frog.java
+- chapter_2.applying_annotation.Reptile.java
+- chapter_2.applying_annotation.Snake.java
+
+## Creating a value() Element
+
+- In your development experience, you may have seen an annotation with a value, written without the elementName. For 
+example, the following is valid syntax under the right condition:
+
+- chapter_2.value_element.Monkey.java
+
+- This is considered a shorthand or abbreviated annotation notation. An annotation must adhere to the following rules
+to be used without a name:
+
+- The annotation declaration must contain an element named value(), which may be optional or required.
+- The annotation declaration must not contain any other elements that are required.
+- The annotation usage must not provide values for any other elements.
+
+- chapter_2.value_element.Monkey.java
+- chapter_2.value_element.Elephant.java
+
+
+Tip: Typically, the value() of an annotation should be related to the name of the annotation. In our previous example,
+@Injured was the annotation name, and the value() referred to the item that was impacted. This is especially important
+since all shorthand elements use the same element name, value().
+
+- The following annotation declaration cannot be used with a shorthand annotation:
+  - chapter_2.value_element.Sleep.java
+  - chapter_2.value_element.Wake.java
+
+- This annotation is not valid as it provides more than on value:
+  - chapter_2.value_element.Bear.java
+
+
+## Passing an Array of Values
+
+- Annotations support a shorthand notation for providing an array that contains a single element.
+
+  - chapter_2.array_values.Music.java
+
+- We can provide two ways to write the annotation.
+
+  - chapter_2.array_values.Giraffe.java
+
+- Check a class and see with annotations compiles:
+  - chapter_2.array_values.Reindeer.java
+
+
+## Combining Shorthand Notations
+
+- chapter_2.array_values.Rhythm.java
+- chapter_2.array_values.Capybara.java
+
+
