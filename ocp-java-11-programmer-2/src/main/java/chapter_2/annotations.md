@@ -231,3 +231,131 @@ since all shorthand elements use the same element name, value().
 - chapter_2.array_values.Capybara.java
 
 
+## Limiting Usage with @Target
+
+- When defining your own annotation, you might want to limit it to a particular type or set of types. After all, it may not
+make sense for a particular annotation to be applied to a method parameter or local variable.
+- Many annotation declaration include @Target annotation, which limits the types the type the annotation can be applied to.
+More specifically, the @Target annotation takes an array of ElementType enum values as its value() element.
+
+## Learning the ElementType Values
+
+- Table 2.1 shows all of the values available for the @Target annotation.
+
+| ElementType value | Applies to                                                        |
+|-------------------|-------------------------------------------------------------------|
+| TYPE              | Classes, interfaces, enums, annotations                           |
+| FIELD             | Instances and static variables, enum values                       |
+| METHOD            | Method declarations                                               |
+| PARAMETER         | Constructor, method, and lambda parameters                        |
+| CONSTRUCTOR       | Constructor declarations                                          |
+| LOCAL_VARIABLE    | Local variables                                                   |
+| ANNOTATION_TYPE   | Annotations                                                       |
+| PACKAGE*          | Packages declared in package-info.java                            |
+| TYPE_PARAMETER    | Parameterized types, generic declarations                         |
+| TYPE_USE          | Able to be applied anywhere there is a Java type declared or used |
+| MODULE*           | Modules                                                           |
+
+
+* Applying these with annotations is out of scope for the exam.
+
+- You might notice that some of the ElementType applications overlap. For example, to create an annotation usable on
+other annotation, you could declare an @Target with ANNOTATION_TYPE or TYPE. Either will work for annotations, although
+the second option opens the annotation usage to other types like classes and interfaces.
+
+### Consider the following annotation
+
+- Explanations are in the classes
+  - chapter_2.target_annotation.ZooAttraction.java
+  - chapter_2.target_annotation.RollerCoaster.java
+  - chapter_2.target_annotation.Events.java
+
+## Understanding the TYPE_USE Value
+
+- While most of the value in Table 2.1 are straightforward, TYPE_USE is without a doubt the most complex. The TYPE_USE
+parameter can be used anywhere there is a Java type. By including, it in @Target, it actually includes nearly all the 
+values in Table 2.1 including classes, interfaces, constructors, parameters, and more. There are a few exceptions;
+for example, it can be used only on a method that returns a value. Methods that return void would still need the METHOD
+value defined in the annotation.
+
+
+  - chapter_2.type_used.NetworkRepair.java
+
+- For the exam, you don't need to know all of the places TYPE_USE can be used, nor what applying it to these locations
+actually does, but you do need to recognize that they can be applied in this manner if TYPE_USE is one of the @Target
+options.
+
+
+## Storing Annotations with @Retention
+
+- The compiler discards certain types of information when converting your source code into a .class file. With generics,
+this is known as type erasure.
+- Annotations may be discarded by the compiler or at runtime.
+- We say 'may' because we can actually specify how they are handled using the @Retention annotation. This annotation takes
+a value() of the enum RetentionPolicy.
+
+| RetentionPolicy value | Description                                                                         |
+|-----------------------|-------------------------------------------------------------------------------------|
+| SOURCE                |  Used only in the source file, discarded by the compiler                            |
+| CLASS                 | Stored in the .class file but not available at runtime (default compiler behaviour) | 
+| RUNTIME               | Stored in the .class file and available at runtime                                  |
+
+
+    - chapter_2.retention_annotation.Flier.java
+    - chapter_2.retention_annotation.Swimmer.java
+
+- In this example, both annotations will retain the annotation information in their .class files, although only Swimmer
+will be available (via reflection) at runtime.
+
+## Generating Javadoc with @Documented
+
+- When trying to determine what methods or classes are available in Java or a third-party, you've undoubtedly relied
+on we pages built with Javadoc.
+
+    - chapter_2.documented_annotation.Hunter.java
+    - chapter_2.documented_annotation.Lion.java
+
+In this example, the @Hunter annotation would be published with the Lion Javadoc information because it's marked with the
+@Documented annotation.
+
+Note: Be careful not to confuse Javadoc annotations with the Java annotations. Annotation "@deprecated" and "@Deprecated".
+
+## Inheriting Annotations with @Inherited
+
+- When this annotation is applied to a class, subclasses will inherit the annotation information found in the parent class.
+
+
+## Supporting Duplicates with @Repeatable
+
+- The @Repeatable annotation is used when you want to specify an annotation more than once on a type.
+- First rule: Without the @Repeatable annotation, an annotation can be applied only once.
+- Second rule: To declare @Repeatable annotation, you must define a containing annotation type value.
+
+    - chapter_2.repeatable_annotation.Zoo.java
+    - chapter_2.repeatable_annotation.Risks.java
+    - chapter_2.repeatable_annotation.Risk.java
+
+
+## Repeatable Annotations vs. an Array of Annotations
+
+- Repeatable annotations were added in Java 8. Prior to this, you would have had to use the @Risks containing annotation
+directly. With this implementation, @Repeatable is not required in the Risk annotation declaration.
+
+
+## Reviewing Annotation-Specific Annotations
+
+| Annotation  | Marker annotation | Type of value()      | Default compiler behavior (if annotation not present)                             |
+|-------------|-------------------|----------------------|-----------------------------------------------------------------------------------|
+| @Target     | No                | Array of ElementType | Annotation able to be applied to all locations except TYPE_USE and TYPE_PARAMETER |
+| @Retention  | No                | RetentionPolicy      | RetentionPolicy.CLASS                                                             |
+| @Documented | Yes               | -------------------- | Annotations are not included in the generated Javadoc                             |
+| @Inherited  | Yes               | -------------------- | Annotations in supertypes are not inherited                                       |
+| @Repeatable | No                | Annotation           | Annotation cannot be repeated                                                     |
+
+
+Note: The @Target annotation is a bit of a special case. When @Target is not present, an annotation can be used in any 
+place except TYPE_USE or TYPE_PARAMETER scenarios (cast operations, object creation, generic declarations, etc.).
+
+
+## Using Common Annotations
+
