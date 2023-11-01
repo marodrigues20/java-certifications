@@ -359,3 +359,103 @@ place except TYPE_USE or TYPE_PARAMETER scenarios (cast operations, object creat
 
 ## Using Common Annotations
 
+For the exam, you'll need to know about a set of built-in annotations, which apply to various types and methods.
+
+## Marking Methods with @Override
+
+The @Override is a marker annotation that is used to indicate a method is overriding an inherited method, whether it be 
+inherited from an interface or parent class.
+
+    - chapter_2.override_annotation.Intelligence.java
+    - chapter_2.override_annotation.Canine.java
+    - chapter_2.override_annotation.Wolf.java
+    - chapter_2.override_annotation.Dog.java
+
+
+- In this example, the @Override annotation is applied to three methods that it inherits from the parent class or interface.
+
+Note: The annotation in this section are entirely optional but help improve the quality of the code.
+
+
+## Declaring Interfaces with @FunctionalInterface
+
+- The @FunctionalInterface marker annotation can be applied to any valid functional interface.
+
+
+    - chapter_2.funcional_interface_annotation.Intelligence.java
+    - chapter_2.funcional_interface_annotation.Reptile.java
+    - chapter_2.funcional_interface_annotation.Rough.java
+    - chapter_2.funcional_interface_annotation.Scaley.java
+    - chapter_2.funcional_interface_annotation.Slimy.java
+    - chapter_2.funcional_interface_annotation.Smooth.java
+
+
+## Retiring Code with @Deprecated
+
+- What we want is a way to notify our users that a new version of the method is available and give them time to migrate
+their code code to the new version before we finally remove the old version.
+- With those ideas in mind Java includes the @Deprecate annotation. The @Deprecated annotation is similar to a marker 
+annotation, in that it can be used without any values, but it includes some optional elements. The @Deprecated annotation
+can be applied to nearly any Java declaration, such as classes, methods, or variables.
+
+- chapter_2.deprecated_annotation.ZooPlanner.java
+
+### Always Document the Reason for Deprecation
+
+- Earlier, we discussed @Deprecated and @deprecated, the former being a Java annotation and the latter being a Javadoc
+annotation. Whenever you deprecate a method, you should add a Javadoc annotation to instruct users on how they should
+update their code.
+- For the exam, you should know that it is good practice to document why a type is being deprecated and be able to
+suggest possible alternatives.
+
+- chapter_2.deprecated_annotation.ZooPlanner.plan()
+
+Note that the @Deprecate annotation does not allow you to provide any suggested alternatives. For that, you should use 
+the Javadoc annotation.
+
+
+## Ignoring Warnings with @SuppressWarnings
+
+- While the compiler can be helpful in warning you of potential coding problems, sometimes you need to perform a
+particular operation, an dyou don't care whether or not it is a potential programming problem.
+
+### Table 2.4 Common @SupressWarnings values
+
+| Value           | Description                                                                           |
+|-----------------|---------------------------------------------------------------------------------------|
+| "deprecation"   | Ignore warnings related to types or methods marked with the @Deprecated annotation.   |
+| "unchecked"     | Ignore warnings related to the use of raw types, such as List instead of List<String> |
+
+
+The annotation actually supports a lot of other values, but for the exam, you only need to know the ones listed in this
+table. Let's try an example:
+
+
+- chapter_2.surpresswarnings_annotation.Nightingale.java
+
+
+## Protecting Arguments with @SafeVarargs
+
+- The @SafeVargs marker annotation indicates that the method does not perform any potential unsafe operations on its 
+varargs parameter. It can be applied only to constructors or methods that cannot be overriden (aka methods marked private
+, static, or final)
+- The @SafeVargs annotation is used to indicate to other developers that your method does not perform any unsafe operations.
+It basically tells other developers, "Don't worry about the varargs parameter; I promise this method won't do anything
+bad with it!" It also suppresses unchecked compiler warnings for the varargs parameter.
+
+- In the following example, thisIsUnsafe() performs an unsafe operation using its varargs parameter:
+
+- chapter_2.safevarargs_annotation.NeverDoThis.java
+
+Note: For the exam you don't need to know how to create or resolve unsafe operations, as that can be complex.
+You just need to be able to identify unsafe operations and know they often involve generics.
+
+Note 2: You should also know the annotation can be applied only to methods that contain a varargs parameter and are not 
+able to be overridden. For example:
+
+```
+@SafeVarargs
+public static void eat(int meal) {} // DOES NOT COMPILE
+```
+
+## Reviewing Common Annotations
