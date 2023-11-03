@@ -459,3 +459,28 @@ public static void eat(int meal) {} // DOES NOT COMPILE
 ```
 
 ## Reviewing Common Annotations
+
+- Table 2.5 List the common annotaions that you will need to know for the exam along with how they are structured.
+
+| Annotation           | Marker annotation | Type of value() | Optional members                    |
+|----------------------|-------------------|-----------------|-------------------------------------|
+| @override            | Yes               | -               | -                                   |
+| @FunctionalInterface | Yes               | -               | -                                   |
+| @Deprecated          | No                | -               | String since() boolean forRemoval() |
+| @SuppressWarnings    | No                | String[]        | -                                   |
+| @SafeVarargs         | Yes               | -               | -                                   |
+
+- Some of these annotations have special rules that will trigger a compiler error if used incorrectly, as shown in
+Table 2.6
+
+Table 2.6 Applying common annotations
+
+| Annotation           | Applies to             | Compiler error when                                                                                                        |
+|----------------------|------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| @Override            | Methods                | Method signature does not match the signature of an inherited method                                                       |
+| @FunctionalInterface | Interfaces             | Interfaces does not contain a single abstract method                                                                       |
+| @Deprecated          | Most Java declarations | -                                                                                                                          |
+| @SuppressWarnings    | Most Java declarations | -                                                                                                                          |
+| @SafeVarargs         | Methods, constructors  | Method or constructor does not contain a varargs parameter or is applied to a method not marked  private, static, or final | 
+
+- While none of these annotations is required, they do improve the quality of your code. They also help prevent you from marking a mistake.
