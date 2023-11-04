@@ -484,3 +484,6 @@ Table 2.6 Applying common annotations
 | @SafeVarargs         | Methods, constructors  | Method or constructor does not contain a varargs parameter or is applied to a method not marked  private, static, or final | 
 
 - While none of these annotations is required, they do improve the quality of your code. They also help prevent you from marking a mistake.
+
+
+
