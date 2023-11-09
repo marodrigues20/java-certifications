@@ -28,5 +28,28 @@ A: Unexpected.java
 A: Driver.java
 
 7. Annotations can be applied to which of the following?
-A:
+A: The annotations can be applied for Class declarations, Constructor parameters, Local variable declarations,
+Cast operations, Lambda expression parameters and Interface declarations.
+
+8. Fill in the blanks with the correct answers that allow the entire program to compile.
+A: B, F. In this question, Ferocious is the repeatable annotation, while FerociousPack is the containing type annotation.
+The containing type annotation should contain a single value() element that is an array of the repeatable annotation type.
+For the reason, option B is correct. Option A would allow FerociousPack to compile, but not Ferocious.
+Option C is an invalid annotation element type.
+The repeatable annotation needs to specify the class name of its containing type annotation, making option F correct.
+While it is expected for repeatable annotations to contain elements to differentiate its usage, it is not required.
+For this reason, the usage of @Ferocious is a valid marker annotation on the Lion class, making option G incorrect.
+question_8.Ferocious.java
+question_8.FerociousPack.java
+
+9. What properties must be true to use an annotation with an element value, but no element name?
+A: D. To use an annoation with a value but not element name, the element must be declared with the name value(), not 
+values(), making option A incorrect.
+
+10. Which statement about the following code is correct?
+chapter_2.review_questions.question_10.Furry.java
+chapter_2.review_questions.question_10.Bunny.java
+
+11. What properties of applying @SafeVarargs are correct?
+
 
