@@ -51,5 +51,66 @@ chapter_2.review_questions.question_10.Furry.java
 chapter_2.review_questions.question_10.Bunny.java
 
 11. What properties of applying @SafeVarargs are correct?
+A: C, D, F. The @SafeVarargs annotation can be applied to a constructor or private, static, or final method that includes
+a varargs parameter. For these reason, options C, D, and F are correct. Option A is incorrect, as the compiler cannot 
+actually enforce that the operations are safe. It is up to the developer writing the method to verify that. Option B is 
+incorrect as the annotation can be applied only to methods that cannot be override. Finally, option E is incorrect, 
+as it is applied to the declaration, not the parameters.
+
+12. Which of the following lines of code do not compile?
+A:
+chapter_2.review_questions.Cold.java
+
+13. Which statements about an optional annotation are correct?
+A: A, D. An optional annotation element is one that is declared with a default value that may be optionally replaced 
+used in an annotation. For these reason, options A and D are correct.
+
+14. Fill in the blanks: The _________________________ annotation determines whether annotations are discarded at runtime,
+while the _________________ annotation determines whether they are discarded in generated Javadoc.
+A: D. The @Retention annotation determines whether annotations are discarded when the code is compiled, at runtime. The
+presence, or absence, of the @Documented annotation determines whether annotations are discarded within generated Javadoc.
+For these reasons, option D is correct.
+
+15. What statement about marker annotations is correct?
+A: B. A marker annotation is an annotation with no elements. It may or may not have constant
+variable, making option B correct. Option E is incorrect as no annotation can be extended.
+
+16. Which options, when inserted into the blank in the code, allow the code to compile without any warnings?
+A: chapter_2.review_questions.Donkey.java
+
+17. What motivations would a developer have for applying the @FunctionalInterface annotation to an interface?
+A: B, E. The @FunctionalInterface marker annotation is used to document that an interface is a valid functional interface
+that contains exactly one abstract method, making option B correct. It is also useful in determining whether an interface
+is a valid functional interface, as the compiler will report an error if used incorrectly, making option E correct.
+The compiler can detect whether an interface is a functional interface even without the annotation, making options A and
+C incorrect.
+
+18. Which of the following lines of code do not compile?
+A: chapter_2.review_questions.Wind.java
+
+19. Which annotations can be added to an existing method declaration but could cause a compiler error depending on the 
+method signature?
+A: A, F. The @Override annotation can be applied to a method but will trigger a compiler error if the method signature
+does not match an inherited method, making option A correct. The annotation @Deprecated can be applied to a method
+but will not trigger any compiler errors based on the method signature. The annotations @FunctionalInterface, 
+@Repeatable, and @Retention cannot be applied to methods, making these options incorrect. Finally, @SafeVarargs can be
+applied to a method but will trigger a compiler error if the method does not contain a varargs parameter or is able to
+be overridden (not marked private, static, or final).
+
+20. Given the Floats annotation declaration, which lines in the Birch class contain compiler errors?
+A: chapter_2.review_questions.question_20.Birch.java
+
+21. Fill in the blanks. The ___________________________ annotation determines what annotations from a superclass or 
+interface are applied, while the _______________________________ annotation determines what declarations an annotation
+can be applied to.
+A: G. The @Inherited annotation determines whether or not annotation defined in a super type are automatically inherited 
+in a child type. The @Target annotation determines the location or locations an annotation can be applied to. Since this
+was not an answer choice, option G is correct Note that ElementType is an enum used by @Target, but it is not an 
+annotation.
+
+22. Which annotation can cancel out a warning on a method using @Deprecated API at compile time?
+A: F. If @SuppressWarnings("deprecation") is applied to a method that is using a deprecated API, then warnings related
+to the usage will not be shown at compile time, making option F correct. Note that there are no built-in annotations
+called @Ignore or @IgnoreDeprecated.
 
 
