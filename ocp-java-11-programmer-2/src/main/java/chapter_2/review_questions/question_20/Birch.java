@@ -16,8 +16,10 @@ class Duck{}
  */
 @Floats
 public class Birch implements @Floats Wood {
-    @Floats(10) boolean mill(){
+    //@Floats(10) // just to compile the code
+    boolean mill(){
         Predicate<Integer> t = (@Floats Integer a) -> a > 10;
-        return (@Floats) t.test(12);
+        //return (@Floats) t.test(12); //original line
+        return t.test(12); // just to compile the code
     }
 }
