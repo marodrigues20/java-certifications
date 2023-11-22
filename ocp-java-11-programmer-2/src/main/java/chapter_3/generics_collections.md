@@ -294,9 +294,7 @@ var list = new ArrayList<>();         // CREATE AN OBJECT ARRAY
 
 ### Figure 3.1 shows the Collection interface
 
-- [Figure 3.1 shows the Collection interface](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_3/z_images/Figure_3_1.png)
-
-
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_3/z_images/Figure_3_1.png?raw=true)
 
 
 
