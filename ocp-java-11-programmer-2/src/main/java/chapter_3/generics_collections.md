@@ -296,6 +296,188 @@ var list = new ArrayList<>();         // CREATE AN OBJECT ARRAY
 
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_3/z_images/Figure_3_1.png?raw=true)
 
+- Notice that Map doesn't implement the Collection interface. It is considered part of the Java Collections Framework, 
+even though it isn't technically a Collection. It's because the maps need different methods due to being key/value pairs.
+
+
+## Common Collection Methods
+
+- In this section, we use ArrayList and HashSet as our implementation classes, but they can apply to any class that 
+inherits the Collection interface. We'll cover the specific properties of each Collection class in the next section.
+
+### add() 
+
+- The add() method inserts a new element into the Collection and returns whether it was successful. The method signature
+is as follows:
+
+  - boolean add(E element)
+
+- The Collections Framework uses generics. You will see E appear frequently. It means the generic type that was used to
+create the collection.
+
+- i.e: chapter_3.commoncollections.CommonCollectionMethods.java
+
+
+### remove()
+
+- The remove() method removes a single matching value in the Collection and returns whether it was successful. The 
+method signature is a follows:
+
+- boolean remove(Object object)
+
+- This time, the boolean return value tell us whether a match was removed
+
+- i.e: chapter_3.commoncollections.CommonCollectionMethods.java
+
+- If we call remove() on a List with an int uses the index, an index that doesn't exist will throw an exception. 
+For example, birds.remove(100); throws an IndexOutOfBoundsException. Remember that there are overloaded remove() methods.
+One takes the element to remove. The other takes the index of the element to remove.
+
+- Deleting while Looping
+
+```
+Collection<String> birds = new ArrayList<>();
+birds.add("hawk");
+birds.add("hawk");
+birds.add("hawk");
+
+for(String bird: birds) // ConcurrentModificationException
+  birds.remove(bird);
+```
+
+- Wait a minute. Concurrent modification? We don't get to concurrency until Chapter 7. That's right. It is possible to 
+get a ConcurrentModificationException without threads. This is Java's way of complaining that you are trying to modify 
+the list while looping through it. In Chapter 7, we'll return to this example and show how to fix it with the 
+CopyOnWriteArrayList class.
+
+
+### isEmpty() and size()
+
+- The isEmpty() and size() methods look at how many elements are in the Collection. The method signatures are as follow:
+
+
+```
+boolean isEmpty()
+int size()
+```
+
+- The following show how to use these methods:
+
+```
+chapter_3.commoncollections.EmptyAndSize.java
+```
+
+
+### clear()
+
+- The clear() method provides an easy way to discard all elements of the Collection. The method signature is as follows:
+
+```
+void clear()
+```
+
+- The following shows how to use this method:
+
+```
+chapter_3.commoncollections.CleanCollection.java
+```
+
+### contains()
+
+- The contains() method checks whether a certain value is in the Collection. The method signature is as follows:
+
+```
+boolean contains(Object object)
+```
+
+- The following shows how to use this method:
+
+```
+chapter_3.commoncollections.ContainsCollection.java
+```
+
+- The contains() method calls equals() on elements of the ArrayList to see whether there are any matches.
+
+## removeIf()
+
+- The removeIf() method all elements that match a condition. We can specify what should be deleted using a block of code
+or even a method reference.
+- The method signature looks like the following. (We will explain wht the ? super means in the "Working with Generics" 
+section later in this chapter.)
+
+```
+boolean removeIf(Predicate<? super E> filter)
+```
+
+- It uses a Predicate, which takes one parameter and returns a boolean. Let's take a look at an example:
+
+```
+chapter_3.commoncollections.RemoveIfCollection.java (collectionArrayList())
+```
+
+- Let's try one more example that does use a method reference.
+
+
+```
+chapter_3.commoncollections.RemoveIfCollection.java (collectionSet())
+```
+
+### forEach()
+
+- Looping through a Collection is common. There's also a forEach() method that you can call on a Collection. It uses a 
+Consumer that takes a single parameter and doesn't return anything. The method signature is a follows:
+
+```
+ void forEach(Consumer<? super T> action)
+```
+
+- Cats like to explore, so let's print out two of them using both method references and streams.
+
+```
+chapter_3.commoncollections.ForEachCollection.java
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

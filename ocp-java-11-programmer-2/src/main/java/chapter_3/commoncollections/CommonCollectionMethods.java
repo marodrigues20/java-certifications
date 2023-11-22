@@ -12,20 +12,6 @@ public class CommonCollectionMethods {
         removeCollection();
     }
 
-    private static void removeCollection() {
-        System.out.println("Starting removeCollection methods. ");
-
-        Collection<String> birds = new ArrayList<>();
-        birds.add("hawk");
-        birds.add("hawk");
-        System.out.println(birds.remove("cardinal")); //false
-        System.out.println(birds.remove("hawk")); //true
-        System.out.println(birds);
-
-
-
-    }
-
     private static void addCollection(){
         System.out.println("Starting addCollection methods. ");
 
@@ -37,5 +23,16 @@ public class CommonCollectionMethods {
         System.out.println(set.add("Sparrow")); //true
         System.out.println(set.add("Sparrow")); //false Not allowed duplicated items
 
+    }
+
+    private static void removeCollection() {
+        System.out.println("Starting removeCollection methods. ");
+
+        Collection<String> birds = new ArrayList<>();
+        birds.add("hawk");
+        birds.add("hawk");
+        System.out.println(birds.remove("cardinal")); //false
+        System.out.println(birds.remove("hawk")); //true
+        System.out.println(birds);
     }
 }
