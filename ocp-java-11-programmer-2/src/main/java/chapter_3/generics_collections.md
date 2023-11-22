@@ -437,7 +437,39 @@ Consumer that takes a single parameter and doesn't return anything. The method s
 chapter_3.commoncollections.ForEachCollection.java
 ```
 
+## Using the List Interface
 
+- You use a list when you want an ordered collection that can contain duplicate entries. Items can be retrieved and 
+inserted at specific positions in the list based on an int index much like an array. Unlike an array, though, many List
+implementation can change in size after they are declared.
+
+- Figure 3.2 shows how you can envision a List. Each element of the list has an index, and the indexes begin with zero.
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_3/z_images/List_Interface.png?raw=true)
+
+- The main thing that all List implementations have in common is that they are ordered and allow duplicates.
+
+### Comparing List Implementations
+
+#### ArrayList
+- The main benefit of an ArrayList is that you can look up any element in constant time.
+- Adding or removing an element is slower than accessing an element.
+- ArrayList a good choice when you are reading more often than(or the same amount as) writing to the ArrayList.
+
+
+#### LinkedList
+
+- A LinkedList is special because it implements both List and Queue.
+- It has all the methods of a List.
+- It also has additional methods to facilitate adding or removing from the beginning and/or end of the list.
+- The main benefits of a LinkedList are that you can access, add, and remove from the beginning and end of the list in
+  constant time.
+- The trade-off is that dealing with an arbitrary index linear time.
+- LinkedList a good choice when you'll be using it as Queue.
+- As you saw in Figure 3.1, a LinkedList implements both the List and Queue interface.
+
+
+### Creating a List with a Factory
 
 
 
