@@ -471,12 +471,178 @@ implementation can change in size after they are declared.
 
 ### Creating a List with a Factory
 
+- When you create a List of type ArrayList or LinkedList, you know the type. They are a few special methods where you
+get a List back but don't know the type. These methods let you create a List including data in one line using a factory
+method. This is convenient, especially when testing.
+
+- TABLE 3.4 Factory methods to create a List
+
+| Method                   | Description                                                       | Can add elements? | Can replace element? | Can delete elements? |
+|--------------------------|-------------------------------------------------------------------|-------------------|----------------------|----------------------|
+| Arrays.asList(varargs)   | Returns fixed size list backed by an array                        | No                | Yes                  | No                   |
+| List.of(varargs)         | Returns immutable list                                            | No                | No                   | No                   |
+| List.copyOf(collection)  | Returns immutable list with copy of original collection's values  | No                | No                   | No                   |
 
 
+- Let's take a look at an example of these three methods.
+
+```
+i.e: chapter_3.commoncollections.factorymethods.FactoryMethods.java
+```
+
+### Working with List Methods
+
+- The methods in the List interface are for working with indexes. In addition to the inherited Collection methods, the
+method signatures that you need to know are in Table 3.5
+
+TABLE 3.5 List methods
+
+| Method                               | Description                                                                                                                        |
+|--------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| boolean add(E element)               | Adds element to end (available on all Collection APIs)                                                                             |
+| void add(int index, E element        | Adds element at index  and moves the rest toward the end                                                                           |
+| E get(int index                      | Returns element at index                                                                                                           |
+| E remove(int index)                  | Removes elements at index and moves the rest towards the front                                                                     |
+| void replaceAll(UnaryOperator<E> op> | Replaces each element in the list with the result of the operator                                                                  |
+| E set(int index, E e)                | Replaces element at index and returns original. Throws IndexOutOfBoundsException if the index is larger than the maximum one set   |
+
+- The following statement demonstrate most of these methods for working with a List:
+
+```
+i.e: chapter_3.commoncollections.ListInterfaceMethods
+```
+
+- The output would be the same if you tried these examples with LinkedList. Although the code would be less efficient,
+it wouldn't be noticeable until you have very large lists.
+
+- Let's look at using the replaceAll() method. It takes a UnaryOperator that takes one parameter and returns a value of
+the same type.
+
+```
+i.e: chapter_3.commoncollections.ListInterfaceMethods
+
+List<Integer> numbers = Arrays.asList(1,2,3);
+numbers.replaceAll(x -> x*2);
+System.out.println(numbers); // [2, 4, 6]
+```
+
+- This lambda doubles the value of each element in the list. The replaceAll() method calls the lambda on each element
+of the list and replaces the value at that index.
 
 
+## Using the Set Interface
+
+- You use a set when you don't want to allow duplicate entries.
+- You aren't concerned with the order in which you see these animals.
+
+### Compering Set implementation
 
 
+#### HashSet
+
+- HashSet stores its elements in a hash table, which means the keys are a hash and the values are an Object. This means
+that it uses the hashCode() method of the objects to retrieve them more efficiently.
+- Adding Element and Check an element have a constant time.
+- There is no order.
+
+#### TreeSet
+
+- A TreeSet stores its elements in a sorted tree structure.
+- The main benefit is that the set is always in ordered order.
+- The trade-off is that adding and checking whether an element exists take longer than with a HashSet, especially as 
+ tree grows larger.
+
+- Figures 3.4 shows how you can envision HashSet and TreeSet being stored.
+
+
+#### Working with Set Methods
+
+- Like list, you can create an immutable Set in one line or make a copy of an existing one.
+
+```
+Set<Character> letters = Set.of('z','o','o');
+Set<Character> copy = Set.copyOf(letters);
+```
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_3/z_images/Figure_3_4.png?raw=true)
+
+- Those are the only methods you need to know for the Set interface for the exam! You have to know how sets behave with
+respect to the traditional Collection methods. You also have to know the differences between the types of sets.
+
+```
+3: Set<Integer> set = new HashSet<>();
+4: boolean b1 = set.add(66); //true
+5: boolean b2 = set.add(10); //true
+6: boolean b3 = set.add(66); //false
+7: boolean b4 = set.add(8);  //true
+8: set.forEach(System.out::println);
+```
+This code prints three lines:
+66
+8
+10
+
+- Now let's look at the same example with TreeSet.
+
+```
+3: Set<Integer> set = new TreeSet();
+4: boolean b1 = set.add(66); //true
+5: boolean b2 = set.add(10); //true
+6: boolean b3 = set.add(66); //false
+7: boolean b4 = set.add(8);  //true
+8: set.forEach(System.out::println);
+```
+
+- This time, the code prints the following:
+
+8
+10
+66
+
+- The elements are printed out in their natural sorted order. Numbers implement the Comparator in Java, which is used for
+sorting. Later in the chapter, you will learn how to create your own Comparable objects.
+
+### Using the Queue Interface
+
+- You use a queue when elements are added and removed in a specific order.
+- A queue is assumed to be FIFO (first-in, first-out). (Some queue implementation change this to use a different order)
+- The other format is LIFO (last-in, first-out), which is commonly referred to as a stack.
+
+### Comparing Queue Implementation
+
+- A double-ended queue is different from a regular queue in that you can insert and remove elements from both the front
+and back of the queue.
+- The main benefit of a LinkedList is that it implements both the List and Queue interfaces.
+- The trade-off is that it isn't as efficient as a "pure" queue.
+- You can use the ArrayDeque class (short for double-ended queue) if you need a more efficient queue. However, ArrayDeque
+is not in scope for the exam.
+
+### Working with Queue Methods
+
+- The Queue interface contains many methods. Luckily, there are only six methods that you need to focus on.
+These methods are shown in Table 3.6.
+
+| Method             | Description                                                                      | Throws exception on failure |
+|--------------------|----------------------------------------------------------------------------------|-----------------------------|
+| boolean add(E e)   | Adds an element to the back of the queue and returns true or throws an exception | Yes                         |
+| E element()        | Returns next element or throws an exception if empty queue                       | Yes                         |
+| boolean offer(E e) | Adds an element to the back of the queue and returns whether successful          | No                          |
+| E remove()         | Removes and returns next element or throws an exception if empty queue           | Yes                         |
+| E poll()           | Removes and returns next element or returns null if empty queue                  | No                          |
+| E peek()           | Returns next element or returns null if empty queue                              | No                          |
+
+- As you can see, there are basically two sets of methods:
+  - One set throws an exception when something goes wrong.
+  - The other uses a different return value when something goes wrong.
+  - The offer()/pool()/peek() methods are more common.
+
+```
+i.e: chapter_3.commoncollections.QueueInterfaceMethods.java
+```
+
+
+## Using the Map Interfaces
 
 
 
