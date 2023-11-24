@@ -644,28 +644,344 @@ i.e: chapter_3.commoncollections.QueueInterfaceMethods.java
 
 ## Using the Map Interfaces
 
+- You use a map when you want to identity values by a key.
+- You don't need to know the names of the specific interfaces that the different maps implement, but you do need to 
+  know that TreeMap is sorted.
+- The main thing that all Map classes have in common is that they all have keys and values.
+
+
+## Map.of() and Map.copyOf()
+
+- Just like List and Set, there is a helper method to create a Map. You pass any number of pairs of keys and values.
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (helperMethods)
+Map.of("key1", "value1", "key2", "value2");
+```
+
+- Unlike, List and Set, this is less than ideal. Suppose you miscount and leave out a value.
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (helperMethods)
+Map.of("key1", "value1", "key2"); // INCORRECT
+```
+
+- This code compiles but throws an error at runtime. Passing keys and values is also harder to read because you have to 
+keep track of which parameter is which. Luckily, there is a better way. Map also provides a method that lets you supply
+key/value pairs.
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (helperMethods)
+Map<String, String> myMap2 = Map.ofEntries(
+        Map.entry("key1", "value1"),
+        Map.entry("key2", "value2")); //Better way to build a new map. Less error prone.
+```
+
+- If we leave out a parameter, the entry() method won't compile. Conveniently, Map.copyOf(map) works just like the List
+and Set interface copyOf() methods.
+
+## Comparing Map Implementations
+
+### HashMap
+
+- A HashMap stores the keys in a hash table. This means that it uses the hashCode() method of the keys to retrieve their
+values more efficiently.
+- The main benefit it that adding elements and retrieving the element by key both have constant time.
+- The trade-off is that you lose the order in which you inserted the elements.
+- If you concern with the order you should use LinkedHashMap, but that's not in scope for the exame.
+
+### ThreeMap
+
+- A TreeMap stores the keys in a sorted tree structure. The main benefit is that the keys are always in sorted order.
+- Like a TreeSet, the trade-off is that adding and checking whether a key is present takes longer as the tree grows larger.
+
+## Working with Map Methods
+
+- Given that Map doesn't extend Collection, there are more methods specified on the Map interface.
+
+### TABLE 3.7 Map methods
+
+| Method                                            | Description                                                                                                  |
+|---------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| void clear()                                      | Removes all keys and values from the map                                                                     |
+| boolean containsKey(object key)                   | Returns whether key is in map                                                                                |
+| boolean containsValue(Object value)               | Returns whether value is in map                                                                              |
+| Set<Map.Entry<K,V>> entrySet()                    | Returns a Set of key/value pairs.                                                                            |
+| void forEach(BiConsumer(K key, V value))          | Loop through each key/value pair.                                                                            |
+| V get(Object key)                                 | Returns the value mapped by key or null if none is mapped.                                                   |
+| V getOrDefault(Object key, V defaultValue)        | Returns the value mapped by the key or the default value if non is mapped.                                   |
+| boolean isEmpty()                                 | Returns whether the map is empty.                                                                            |
+| Set<K> keySet()                                   | Returns set of all keys.                                                                                     |
+| V merge(K key, V value, Function(<V, V, V> func)) | Sets value if key not set. Runs the function if they key is set to determine the new value. Removes if null. |
+| V put(K key, V value)                             | Adds or replaces key/value pair. Returns previous value or null.                                             |
+| V putIfAbsent(K key, V value)                     | Adds value if key not present and returns null. Otherwise, returns existing value.                           |
+| V remove(Object key)                              | Removes and returns value mapped to key. Returns null if none.                                               |
+| V replace(K key, V value)                         | Replaces the value for a given key if the key is set. Returns the original value or null if none.            |
+| void replaceAll(BiFunction<K, V, V> func          | Replaces each value with the results of the function.                                                        |
+| int size()                                        | Returns the number of entries (key/value pairs) in the map.                                                  |
+| Collection<V> values()                            | Returns Collection of all values.                                                                            |
+
+
+## Basic Methods
+
+- Let's start out by comparing the same code with two Map types. First up is HashMap.
+
+### HashMap
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (hashMapExample)
+
+Map<String, String> map = new HashMap<>();
+map.put("koala", "bamboo");
+map.put("lion", "meat");
+map.put("giraffe", "leaf");
+String food = map.get("koala"); // bamboo
+for(String key: map.keySet()){
+    System.out.println(key + " "); // koala, giraffe, lion
+}
+```
+
+- Java uses the hashCode() of the key to determine the order. The order here happens to not be
+sorted order, or the order in which we typed the value.
+
+
+### TreeMap
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (treeMapExample)
+
+//TreeMap order by Key not Value
+Map<String, String> map = new TreeMap<>();
+map.put("koala", "bamboo");
+map.put("lion", "meat");
+map.put("giraffe", "leaf");
+String food = map.get("koala");
+for(String key: map.keySet()){
+    System.out.println(key + " "); // giraffe koala lion
+```
+
+- TreeMap sorts the keys as we would expect. If we were to have called values() instead of
+  keySet(), the order of the values would correspond to the order of the keys.
+
+- With our same map, we can try some boolean checks.
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (treeMapExample)
+
+//System.out.println(map.contains("lion")); //NOT COMPILE. Method contains is just in Collection interface.
+System.out.println(map.containsKey("lion")); //true
+System.out.println(map.containsValue("lion")); //false
+System.out.println(map.size()); //3
+map.clear();
+System.out.println(map.size()); //0
+System.out.println(map.isEmpty()); //0
+```
+
+### forEach() and entrySet()
+
+- You saw the forEach() method earlier in the chapter. Note that it works a little different on a Map. This time, the 
+lambda used by the forEach() method has two parameter; the key and the value. Let's look at an example, shown here:
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (mapForEachExample)
+
+Map<Integer, Character> map = new HashMap<>();
+map.put(1,'a');
+map.put(2,'b');
+map.put(3,'c');
+map.forEach((k,v) -> System.out.println(v));
+```
+
+- The lambda has both the key and values as the parameters. Interestingly, if you don't care about the key, this 
+  particular code could have written with the values() method and a method reference instead.
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (mapForEachExample)
+
+map.values().forEach(System.out::println);
+```
+
+- Another way of going through all the data in a map is to get the key/value pairs in a Set. Java has a static interface 
+  inside Map called Entry. It provides method to get the key and value of each pair.
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (mapForEachExample)
+
+map.entrySet().forEach( e -> System.out.println(e.getKey() + e.getValue()));
+```
+
+### getOrDefault()
+
+- The get() method returns null if the requested key is not in map. Sometimes you prefer to have a different value
+returned. Luckily, the getOrDefault() method makes this easy. 
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (getOrDefaultExample)
+
+3: Map<Character, String> map = new HashMap<>();
+4: map.put('x', "spot");
+5: System.out.println("X marks the " + map.get('x'));
+6: System.out.println("X marks the " + map.getOrDefault('x',""));
+7: System.out.println("Y marks the " + map.get('y'));
+8: System.out.println("Y marks the " + map.getOrDefault('y',""));
+```
+
+This code prints the following:
+
+```
+X marks the spot
+X marks the spot
+Y marks the null
+Y marks the
+```
+
+### replace() and replaceAll()
+
+- These methods are similar to the Collection version except a key is involved.
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (replaceExamples)
+
+  Map<Integer, Integer> map = new HashMap<>();
+  map.put(1, 2);
+  map.put(2, 4);
+  Integer original = map.replace(2, 10); // Replace 2 by 10. Return the value replaced
+  System.out.println(map);
+  map.replaceAll((k,v) -> k + v); // Sum key and value and replace the original value for each key.
+  System.out.println(map); // {1=3, 2=12}
+```
+
+### putIfAbsent()
+
+- The putIfAbsent method sets a value in the map but skips it if the value is already set to a non-null value.
+
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (pullIfAbsentExamples)
+
+Map<String, String> favorites = new HashMap<>();
+favorites.put("Jenny", "Bus Tour");
+favorites.put("Tom", null);
+favorites.putIfAbsent("Jenny", "Tram"); // Not add because the Jenny has already existed.
+favorites.putIfAbsent("Sam", "Tram"); // Added
+favorites.putIfAbsent("Tom", "Tram"); //Added because the value was null
+System.out.println(favorites); // {Tom=Tram, Jenny=Bus Tour, Sam=Tram}
+```
+
+
+### merge()
+
+- The merge() method adds logic of what to choose. Suppose we want to choose the ride with the longest name. We can write 
+code express this by passing a mapping function to the merge() method.
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (mergeExamples)
+
+11: BiFunction<String, String, String> mapper = (v1, v2) 
+12:     -> v1.length() > v2.length() ? v1: v2;
+13: 
+14: Map<String, String> favorites = new HashMap<>();
+15: favorites.put("Jenny","Bus Tour");
+16: favorites.put("Tom", "Tram");
+17:
+18: String jenny = favorites.merge("Jenny", "Skyride", mapper);
+19: String tom = favorites.merge("Tom", "Skyride", mapper);
+20:
+21: System.out.println(favorites); // {Tom=Skyride, Jenny=Bus Tour}
+22: System.out.println(jenny);     // Bus Tour
+23: System.out.println(tom);       // Skyride
+```
+
+- The code on line 11 and 12 take two parameters and returns a value. Our implementation returns the one with the longest
+  name.
+- The merge() method also has logic for what happens if null values or missing keys are involved. In this case, it doesn't 
+  call the BiFunction at all, an it simply uses the new value.
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (merge2Examples)
+
+BiFunction<String, String, String> mapper = 
+   (v1, v2) -> v1.length() > v2.length() ? v1: v2;
+Map<String, String> favorites = new HashMap<>();
+favorites.put("Sam",null);
+favorites.merge("Tom", "Skyride", mapper);
+favorites.merge("Sam", "Skyride", mapper); // Not called otherwise we'll receive NullPointerException
+System.out.println(favorites); // {Tom=Skyride, Sam=Skyride}
+```
+
+- Notice that the mapping function isn't called. If it were, we'd have a NullPointerException. The mapping function is 
+  used only when there are two actual values to decide between.
+
+- The final thing to know about merge() is what happens when the mapping function is called and returns null. The key is
+removed from the map when this happens:
+
+```
+i.e: chapter_3.commoncollections.MapInterfaceMethods.java (merge4NullExample)
+
+BiFunction<String, String, String> mapper = (v1, v2) -> null;
+Map<String, String> favorites = new HashMap<>();
+favorites.put("Jenny", "Bus Tour");
+favorites.put("Tom", "Bus Tour");
+favorites.merge("Jenny", "Skyride", mapper);
+favorites.merge("Sam", "Skyride", mapper); 
+System.out.println(favorites); // {Tom=Bus Tour, Sam=Skyride}
+```
+
+- Tom was left alone since there was no merge() call for that key. Sam was added since that key was not in the original
+list. Jenny was removed because the mapping function returned null.
+
+
+### TABLE 3.8 Behavior of the merge() method
+
+| If the requested key        | And mapping function returns       | Then:                                                                           |
+|-----------------------------|------------------------------------|---------------------------------------------------------------------------------|
+| Has a null value in map     | N/A (mapping function not called   | Update key's value in map with value parameter.                                 |
+| Has a non-null value in map | null                               | Remove key from map                                                             |
+| Has a non-null value in map | A non-null value                   | Set key to mapping function result.                                             |
+| Is not in map               | N/A (mapping function not called)  | Add key with value parameter to map directly withou calling mapping function.   |
 
 
 
+## Comparing Collection Types
+
+### TABLE 3.9 Java Collections Framework types
+
+| Type  | Can contain duplicate elements? | Elements always ordered?        | Has keys and values? | Must add/remove in specific order? |
+|-------|---------------------------------|---------------------------------|----------------------|------------------------------------|
+| List  | Yes                             | Yes (by index)                  | No                   | No                                 |
+| Map   | Yes (for values)                | No                              | Yes                  | No                                 |
+| Queue | Yes                             | Yes (retrieved in defined order | No                   | Yes                                |
+| Set   | No                              |  No                             | No                   | No                                 |
 
 
+- Additionally, make sure you can fill in Table 3.10 to describe the types on the exam.
+
+### TABLE 3.10 Collection attributes
+
+| Type        | Java Collections Framework interface | Sorted? | Calls hashCode? | Calls compareTo? |
+|-------------|--------------------------------------|---------|-----------------|------------------|
+| ArrayList   | List                                 | No      | No              | No               |
+| HashMap     | Map                                  | No      | Yes             | No               |
+| HashSet     | Set                                  | No      | Yes             | No               |
+| LinkedList  | List, Queue                          | No      | No              | No               |
+| TreeMap     | Map                                  | Yes     | No              | Yes              |
+| TreeSet     | Set                                  | Yes     | No              | Yes              |
 
 
+- The exam expects you to know which data structures allow null values. The data structure that involve sorting do not 
+null values.
 
+### Note - Older Collection
 
+- There are a few collections that are no longer on the exam that you might come across in older code. All three were 
+early Java data structures you could use with threads. In Chapter 7, you'll learn about modern alternatives if you need a 
+concurrent collection.
 
+  - Vector: Implements List. If you don't need concurrency, use ArrayList instead.
+  - Hashtable: Implements Map. If you don't need concurrency, use HashMap instead.
+  - Stack: Implements Queue. If you don't need concurrency, use a LinkedList instead.
 
-
-
-
-
-
-
-
-
-
-
-
+## Sorting Data
 
 
 

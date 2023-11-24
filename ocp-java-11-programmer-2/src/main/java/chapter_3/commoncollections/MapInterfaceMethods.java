@@ -23,7 +23,18 @@ public class MapInterfaceMethods {
         //pullIfAbsentExamples();
         //mergeExamples();
         //merge2Examples();
-        merge3Example();
+        //merge3Example();
+        merge4NullExample();
+    }
+
+    private static void merge4NullExample(){
+        BiFunction<String, String, String> mapper = (v1, v2) -> null;
+        Map<String, String> favorites = new HashMap<>();
+        favorites.put("Jenny", "Bus Tour");
+        favorites.put("Tom", "Bus Tour");
+        favorites.merge("Jenny", "Skyride", mapper);
+        favorites.merge("Sam", "Skyride", mapper);
+        System.out.println(favorites); // {Tom=Bus Tour, Sam=Skyride}
     }
 
     private static void merge3Example() {
@@ -57,9 +68,9 @@ public class MapInterfaceMethods {
         String jenny = favorites.merge("Jenny", "Skyride", mapper);
         String tom = favorites.merge("Tom", "Skyride", mapper);
 
-        System.out.println(favorites);
-        System.out.println(jenny);
-        System.out.println(tom);
+        System.out.println(favorites); // {Tom=Skyride, Jenny=Bus Tour}
+        System.out.println(jenny);     // Bus Tour
+        System.out.println(tom);       // Skyride
 
     }
 
@@ -70,10 +81,7 @@ public class MapInterfaceMethods {
         favorites.putIfAbsent("Jenny", "Tram"); // Not add because the Jenny has already existed.
         favorites.putIfAbsent("Sam", "Tram"); // Added
         favorites.putIfAbsent("Tom", "Tram"); //Added because the value was null
-        System.out.println(favorites);
-
-
-
+        System.out.println(favorites); // {Tom=Tram, Jenny=Bus Tour, Sam=Tram}
     }
 
     private static void replaceExamples() {
@@ -84,7 +92,7 @@ public class MapInterfaceMethods {
         Integer original = map.replace(2, 10); // Replace 2 by 10. Return the value replaced
         System.out.println(map);
         map.replaceAll((k,v) -> k + v); // Sum key and value and replace the original value for each key.
-        System.out.println(map);
+        System.out.println(map); // {1=3, 2=12}
     }
 
     private static void getOrDefaultExample() {
@@ -98,7 +106,7 @@ public class MapInterfaceMethods {
 
     }
 
-    private static void forEachExample() {
+    private static void mapForEachExample() {
         Map<Integer, Character> map = new HashMap<>();
         map.put(1,'a');
         map.put(2,'b');
@@ -118,6 +126,14 @@ public class MapInterfaceMethods {
         for(String key: map.keySet()){
             System.out.println(key + " "); // giraffe koala lion
         }
+
+        //System.out.println(map.contains("lion")); //NOT COMPILE. Method contains is just in Collection interface.
+        System.out.println(map.containsKey("lion")); //true
+        System.out.println(map.containsValue("lion")); //false
+        System.out.println(map.size()); //3
+        map.clear();
+        System.out.println(map.size()); //0
+        System.out.println(map.isEmpty()); //0
     }
 
     private static void hashMapExample() {
