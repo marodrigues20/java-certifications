@@ -30,7 +30,7 @@ public class DuckPlus implements Comparable<DuckPlus> {
         return this.name;
     }
 
-    @Override
+    //@Override
     public int compareTo(DuckPlus d) {
         return this.name.compareTo(d.name);
     }

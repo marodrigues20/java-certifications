@@ -983,8 +983,250 @@ concurrent collection.
 
 ## Sorting Data
 
+- We discussed "order" for the TreeSet and TreeMap classes.
+- For numbers, order is numerical order
+- For String objects, order is defined according to the Unicode characters mapping.
+- Numbers sort before letters
+- Uppercase letters sort before lowercase letters
+
+- You can also sort objects that you create yourself. Java provides an interface called Comparable.
+- There is also a class called Comparator, which is used to specify that you want to use a different order than the 
+object itself provides.
+
+## Creating a Comparable Class
+
+- The Comparable interfaces has only one method. In fact, this is the entire interface:
+
+```
+public interface Comparable<T>{
+  int compareTo(T o);
+}
+```
+
+```
+i.e: chapter_3.sort.comparable.Duck.java
+
+import java.util.*;
+public class Duck implements Comparable<Duck>{
+  private String name;
+  
+ ...
+ 
+ public int comparateTo(Duck d) {
+    return name.compareTo(d.name); // sorts ascendingly by name
+ }
+ 
+}
+```
+
+- Without implementing that interface, all we have is a method named compareTo(), but it wouldn't be a Comparable object.
+We could also implement Comparable<Object> or some other class for T, but his wouldn't be as useful for sorting a group
+of Duck objects with each other.
 
 
+- Finally, the Duck class implements compareTo(). Since Duck is comparing objects of type String and the String class
+already has a compareTo() method, it can just delegate.
+- We still need to know what the compareTo() method returns so that we can write our own. There are three rule to know.
+  - The number 0 is returned when the current object is equivalent to the argument to compareTo().
+  - A negative number (less than 0) is returned when the current object is smaller than the argument to compareTo().
+  - A positive number (greater than 0) is returned when the current object is larger than the argument to compareTo().
+
+
+
+- Let's look at an implementation of compareTo() that compares numbers instead of String objects.
+
+```
+i.e: chapter_3.sort.comparable.Animal.java
+```
+
+## Casting the compareTo() Argument
+
+- When dealing with legacy code or code that does not use generics, the compareTo() method requires a cast since it is 
+passed an Object.
+
+```
+public class LegacyDuck implements Comparable{
+  private String name;
+  
+  public int compareTo(Object obj){
+    LegacyDuck d = (LegacyDuck) obj; // cast because no generics
+    return name.compareTo(d.name);
+  }
+}
+```
+
+- Since we don't specify a generic type for Comparable, Java assumes that we want an Object, which means that we have to
+cast to LegacyDuck before accessing instance variables on it.
+
+## Checking for null
+
+- When writing your own compare methods, you should check the data before comparing it if is not validated ahead of time.
+
+```
+i.e: chapter_3.sort.comparable.MissingDuck.java
+```
+
+## Keeping compareTo() and equals() Consistent
+
+- The compareTo() method returns 0 if two objects are equal, while your equals() method returns true if two objects are 
+  equal. 
+- A natural ordering that uses compareTo() is said to be consistent with equals if, x.equal(y) is true whenever 
+  x.compareTo(y) equals 0;
+- Similarly, x.equals(y) must be false whenever x.compareTo(y) is not 0. You are strongly encouraged to make your 
+  Comparable classes are consistent with equals because not all collection classes behave predictably if the compareTo() and
+  equals() methods are not consistent.
+
+- For example, the following Product class defines a compareTo() method that is not consistent with equals:
+
+```
+chapter_3.sort.comparable.Product.java
+
+public class Product implements Comparable<Product>{
+
+    private int id;
+    private String name;
+
+    public int hashCode() {
+        return id;
+    }
+
+    public boolean equals(Object obj){
+        if(!(obj instanceof Product)) return false;
+        var other = (Product) obj;
+        return this.id == other.id;
+    }
+    @Override
+    public int compareTo(Product o) {
+        return this.name.compareTo(o.name);
+    }
+}
+```
+
+- You might be sorting Product objects by name, but names are not unique. Therefore, the return value of compareTo() 
+  might not be 0 when comparing two equal Product objects, so this compareTo() method is not consistent with equals. 
+  One way to fix that is to use a Comparator to define the sort elsewhere.
+
+
+## Comparing Data with a Comparator
+
+- Sometimes you want to sort an object that did not implement Comparable, or you want to sort objects in different ways 
+at difference times. Suppose that we add weight to our Duck class. We no have the following:
+
+```
+i.e: chapter_3.sort.DuckPlus.java
+```
+
+- Comparator is a functional interface since there is only one abstract method to implement. This means that we can 
+rewrite the comparator on lines 18-22 using lambda expression, as shown here:
+
+```
+Comprator<DuckPlus> byWeight = (d1, d2) -> d.getWeight() - d2.getWeight();
+```
+
+- Alternatively, we can use a method reference and a helper method to specify we want to sort by weight.
+
+```
+Comparator<DuckPlus> byWeight = Comparator.comparing(Duck::getWeight);
+```
+
+- In this example, Comparator.comparing() is a static interface method that creates a Comparator given a lambda 
+expression or method reference. Convenient, isn't?
+
+## Is Comparable a Functional Interface?
+
+- We said that Comparator is a functional interface because it has a single abstract method. Comparable is also a 
+functional interface since it also has a single abstract method. However, using a lambda for Comparable would be silly. 
+The point of Comparable is to implement it inside the object being compared.
+
+## Comparing Comparable and Comparator
+
+- TABLE 3.11 Comparison of Comparable and Comparator
+
+| Difference                                        | Comprable   | Comparator  |
+|---------------------------------------------------|-------------|-------------|
+| Package name                                      | java.lang   | java.util   |
+| Interface must be implemented by class comparing? | Yes         | No          |
+| Method name in interface                          | compareTo() | compare()   |
+| Number of parameters                              | 1           | 2           |
+| Common to declare using a lambda                  | No          | Yes         |
+
+
+## Comparing Multiple Fields
+
+- When writing a Comparator that compares multiple instance variables, the code gets a little messy. Suppose that we 
+have a Squirrel class, as shown here:
+
+```
+i.e: chapter_3.sort.comparator.Squirrel.java
+
+public class Squirrel {
+    private int weight;
+    private String species;
+}
+```
+
+- We want to write a Comparator to sort by species name. If two squirrels are from the same species, we ant to sort the 
+one that weights the last first. We could do this with code that looks like this:
+
+```
+i.e: java.util.Comparator.MultiFieldComparator.java
+
+public class MultiFieldComparator implements Comparator<Squirrel> {
+    @Override
+    public int compare(Squirrel s1, Squirrel s2) {
+
+        int result = s1.getSpecies().compareTo(s2.getSpecies());
+        if(result != 0){
+            return result;
+        }else {
+            return s1.getWeight() - s2.getWeight();
+        }
+    }
+}
+```
+
+- Alternatively, we can use method references and build the comparator. This code represents logic for the same 
+comparison.
+
+```
+i.e: chapter_3.sort.comparator.Test.java
+
+//Comparing what's the grater using species after using weight.
+        Comparator<Squirrel> c = Comparator.comparing(Squirrel::getSpecies)
+                .thenComparingInt(Squirrel::getWeight);
+
+//Using method reference but reverse the order. (asc / desc)
+var c2 = Comparator.comparing(Squirrel::getSpecies).reversed();
+```
+
+
+- Table 3.2 shows the helper methods you should know for building Comparator. We've omitted the parameter types to keep
+you focused on the methods. They are many of the functional interfaces you'll be learning about in the next chapter.
+
+| Method                     | Description                                                                                            |
+|----------------------------|--------------------------------------------------------------------------------------------------------|
+| comparing(function)        | Compare by the result of a function that returns any Object (or object autoboxed into an Object).      |
+| comparingDouble(function)  | Compare by the results of a function that returns a double.                                            |
+| comparingInt(function)     | Compare by the result of a funtion that returns an int.                                                |
+| comparingLong ( function ) | Compare by the result of a function that returns a long.                                               |
+| naturalOrder()             | Sort using the order specified by the Comparable implementation on the object itself.                  |
+| reverseOrder()             | Sort using the reverse of the order specified by the Comparable implementation on the object itself.   |
+
+
+- Table 3.13 shows the methods that you can chain to a Comparator to further specify its behavior.
+
+- TABLE 3.13 Helper default methods for building a Comparator.
+
+| Method                       | Description                                                                                                                                |
+|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| reversed()                   | Reverse the order the chained Comparator.                                                                                                  |
+| thenComparing(function)      | If the previous Comparator returns 0, use this comparator that returns an Object or can be autoboxed into one.                             |
+| thenComparingDouble(funtion) | If the previous Comparator returns 0, use this comparator that returns a double. Otherwise, return the value from the previous Comparator. |
+| thenComparatingInt           | If the previous Comparator returns 0, use this comparator that returns an int. Otherwise, return the value from the previous Comparator.   |
+| thenComparingLong(function)  | If the previous Comparator returns 0, use this comparator that returns a long. Otherwise, return the value from the previous Comparator.   |
+
+
+## Sorting and Searching
 
 
 

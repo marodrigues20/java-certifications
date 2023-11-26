@@ -12,7 +12,7 @@ public class Animal implements Comparable<Animal>{
     @Override
     public int compareTo(Animal a) {
         return this.id - a.id; // sorts ascending by
-        //return this.id - a.id; // sorts descending order.
+        //return a.id - this.id; // sorts descending order.
     }
 
     public static void main(String[] args) {
