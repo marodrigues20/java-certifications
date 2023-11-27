@@ -1228,14 +1228,75 @@ you focused on the methods. They are many of the functional interfaces you'll be
 
 ## Sorting and Searching
 
+- The Collections.sort() method uses the compareTo() method to sort. It expects the object to be sorted to be Comparable.
+
+```
+public class SortRabbits {
+    static class Rabbit { int id; }
+    public static void main(String[] args){
+        List<Rabbit> rabbits = new ArrayList<>();
+        rabbits.add(new Rabbit());
+        Collections.sort(rabbits); // DOES NOT COMPILE
+    }
+}
+```
+
+- Java knows that the Rabbit class is not Comparable. It knows sorting will fail, so it doesn't even let the code
+compile. You can fix this by passing a Comparator to sort().
+- Remember that a Comparator is useful when you want to specify sort order without using a compareTo() method.
+
+```
+i.e: chapter_3.sort.SortRabbits.java
+
+public class SortRabbits {
+    static class Rabbit { int id; }
+    public static void main(String[] args){
+        List<Rabbit> rabbits = new ArrayList<>();
+        rabbits.add(new Rabbit());
+        Comparator<Rabbit> c = (r1,r2) -> r1.id = r2.id;
+        Collections.sort(rabbits, c);
+    }
+}
+```
+
+- The sort() and binarySearch() methods allow you to pass in a Comparator object when you don't want to use the natural
+  order.
+
+
+## Reviewing binarySearch()
+
+- The binarySearch() method requires a sorted List.
+
+```
+11: List<Integer> list = Arrays.asList(6,9,1,8);
+12: Collections.sort(list); // [1, 6, 8, 9]
+13: System.out.println(Collections.binarySearch(list, 6)); // 1
+14: System.out.println(Collections.binarySearch(list, 3)); // -2 
+```
+
+- Line 13 prints the index at which a match is found.
+- Line 14 prints one less than the negated index of where the requested value would need to be inserted.
+- The number 3 would need to be inserted at index 1 (after the number 1 but before the number 6). 
+- Negating that give us -1, and subtracting 1 gives us -2.
+
+- There is a trick in working with binarySearch(). What do you think the following outputs?
+
+```
+3: var names = Arrays.asList("Fluffy", "Hoppy");
+4: Comparator<String> c = Comparator.reverseOrder();
+5: var index = Collections.binarySearch(names, "Hoppy", c);
+6: System.out.println(index);
+```
+
+- You do need to know that the answer is not defined.
+- Line 3 creates a list, ["Fluffy", "Hoppy"]. This list happens to be sorted in ascending order.
+- Line 4 creates a Comparator that reverses the natural order.
+- Line 5 requests a binary search in descending order.
+- Since the list is in ascending order, we don't meed the precondition for doing a search.
 
 
 
-
-
-
-
-
+- Going back to our Rabbit that does not implement Comparable, we try to add it to a TreeSet.
 
 
 
