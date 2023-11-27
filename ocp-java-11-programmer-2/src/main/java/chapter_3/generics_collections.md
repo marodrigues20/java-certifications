@@ -1298,11 +1298,44 @@ public class SortRabbits {
 
 - Going back to our Rabbit that does not implement Comparable, we try to add it to a TreeSet.
 
+```
+i.e: chapter_3.sort.binarysearch.UseTreeSet.java
 
+2: public class UseTreeSet {
+3:    static class Rabbit { int id; }
+4:    public static void main(String[] args) {
+5:        Set<Duck> ducks = new TreeSet<>();
+6:        ducks.add(new Duck("Puddles"));
+7:
+8:        Set<Rabbit> rabbits = new TreeSet<>();
+9:        rabbits.add(new Rabbit()); // ClassCastException
+10: } }
+```
 
+- Line 6 is fine. Duck does implement Comparable. TreeSet is able to sort it into the proper position in the set.
+- Line 9 is a problem.
+- When TreeSet tries to sort it, Java discovers the fact that Rabbit does not implement Comparable.
+- Java throws an exception that looks like this.
 
+```
+Exception in thread "main" java.lang.ClassCastException: 
+  class chapter_3.sort.binarysearch.UseTreeSet$Rabbit cannot be cast to class java.lang.Comparable
+```
 
+- It may seen weird for this exception to be thrown when the first object is added to the set. After all, there is
+  nothing to compare yet. Java works this way for consistency.
 
+- Just like searching and sorting, you can tell collections that require sorting that you want to use a specific
+  Comparator, for example:
+
+```
+8: Set<Rabbit> rabbits = new TreeSet<>((r1, r2) -> r1.id - r2.id);
+9: rabbits.add(new Rabbit());
+```
+
+- Now Java knows that you want to sort by id and all is well.
+
+## Working with Generics
 
 
 
