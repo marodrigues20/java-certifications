@@ -15,4 +15,12 @@ public class SizeLimitedCrate<T, U> {
         this.contents = contents;
         this.sizeLimit = sizeLimit;
     }
+
+    @Override
+    public String toString() {
+        return "SizeLimitedCrate{" +
+                "contents=" + contents +
+                ", sizeLimit=" + sizeLimit +
+                '}';
+    }
 }

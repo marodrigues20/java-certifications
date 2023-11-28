@@ -11,6 +11,7 @@ public class Test {
                 = new SizeLimitedCrate<>(elephant, numPounds);
 
 
+        System.out.println(c1);
 
     }
 }

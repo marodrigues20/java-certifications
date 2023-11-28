@@ -1337,15 +1337,234 @@ Exception in thread "main" java.lang.ClassCastException:
 
 ## Working with Generics
 
+- Generics is useful to avoid if we have a list doesn't add anything inside it. 
+
+```
+14: static void printNames(List list) {
+15:   for (int i = 0; i < list.size(); i++) {
+16:    String name = (String) list.get(i); //ClassCastException
+17:    System.out.println(name);
+18:   }
+19: }
+20: public static void main(String[] args){
+21:  List names = new ArrayList();
+22:  name.add(new StringBuilder("Webby"))
+23:  printNames(names);
+24: }
+```
+
+- This code throws a ClassCastException. Line 22 adds a StringBuilder to list. This is legal because a nongeneric list
+can contain anything. However, line 16 is written to expect a specific  class to be in there. It casts to a String,
+reflecting this assumption.
+- Generics fix this by allowing you to write and use parameterized types. You specify that you want an ArrayList of 
+String  objects.
 
 
+## Generic Classes
+
+- You can introduce generics into your own classes. The sintax for introducing a generic is to declare a formal type
+parameter in angle brackets.
+
+```
+public class Crate<T>{
+  private T contents;
+  public T emptyCrate() {
+    return contents;
+  }
+  public void packCrate(T contents){
+      this.contents = contents;
+  }
+}
+```
+
+## Naming Convention for Generics
+
+- A type parameter can be named anything you want.
+- The convention is to use single uppercase letters to make it obvious that they aren't real class names.
+- The following are common letters to use.
+  - E for an element
+  - K for a map key
+  - V for a map value
+  - N for a number
+  - T for a generic data type
+  - S, U, V, and so forth for multiple generic types
+
+- Generic classes aren't limited to having a single type parameter. This class shows two generic parameters.
+
+```
+i.e: chapter_3.generics.SizeLimitedCrate.java
 
 
+public class SizeLimitedCrate<T, U>{
+  private T contents;
+  private U sizeLimit;
+  public SizeLimitedCrate(T contents, U sizeLimit){
+      this.contents = contents;
+      this.sizeLimit = sizeLimit;
+  }
+}
+```
+
+- To use this generic class, we can write the following:
+
+```
+Elephant elephant = new Elephant();
+Integer numPounds = 15_000;
+SizeLimitedCrate<Elephant, Integer> c1
+    = new SizeLimiteCrate<>(elephant, numPounds);
+```
+
+- Here we specify that the type is Elephant, and the unit is Integer.
+- We also throw in a reminder that numeric literals can contain underscore.
 
 
+## What Is Type Erasure?
+
+- Specifying a generic type allows the compiler to enforce proper use of the generic type.
+- Behind the scenes, the compiler replaces all references to T in Crate with Object.
+- In other words, after the code compiles, your generics are actually just Object types.
+- The Crate class looks like the following at runtime:
+
+```
+  public class Crate {
+    private Object contents;
+    public Object emptyCreate(){
+        return contents;
+    }
+    public void packCrate(Object contents){
+        this.contents = contents;
+    }
+  }
+```
+
+- This means there is only one class file. There aren't different copies for different parameterized types.
+  (Some other languages work that way.)
+- This process of removing the generics syntax from your code is referred to as type erasure.
+- Type erasure allows your code to be compatible with older versions of Java that do not contain generics.
+
+- The compiler adds the relevant casts for your code to work with this type of erased class.
+- For example, you type the following:
+
+```
+  Robot r = crate.emptyCrate();
+```
+
+- The compiler turns it into the following:
+
+```
+  Robot r = (Robot) crate.emptyCrate();
+```
 
 
+## Generic Interfaces
+
+- Just like a class, an interface can declare a formal type parameter. For example, the following Shippable interface 
+  uses a generic type as the argument to its ship() method:
+
+```
+i.e: chapter_3.generics.interfaces.Shippable.java
+
+public interface Shippable<T> {
+    void ship(T t);
+}
+```
+
+- There are three ways a class can approach implementing this interface. 
+- The first is to specify the generic type in the class.
+- The following concrete class says that it deals only with robots.
+- This lets it declare the ship() method with a Robot parameter.
+
+```
+  class ShippableRobotCrate implements Shippable<Robot>{
+    public void ship(Robot t) {}
+  }
+```
+
+- The next way is to create a generic class. The following concrete class allows the caller to specify the type of the 
+  generic:
+
+```
+  class ShippableAbstractCrate<U> implements Shippable<U>{
+    public void ship(U t) { }
+  }
+```
+
+- In this example the type parameter could have been named anything, including T.
+- We used U in the example so that it isn't confusing as to what T refers to.
+- The exam won't mind trying to confuse you by using the same type parameter name.
+
+## Raw Types
+
+- The final way is to now use generics at all.
+- This is the old way of writing code. It generates a compiler warning about Shippable being a raw type, but it does 
+  compile.
+- Here the ship() method has an Object parameter since the generic type is not defined:
+
+```
+  class ShippableCrate implements Shippable{
+    public void ship(Object t) { }
+  }
+```
+
+## What You Can't Do with Generic Types
+
+- There are some limitations on what you can do with a generic type. These aren't on the exam, but it will be helpful to
+refer to this scenario when you are writing practice programs and run into one of these situations.
+- Most of the limitation are due to type erasure. Oracle refers to types whose information is fully available at runtime
+as reifiable. Reifiable types can do anything that Java allows. Nonreifiable types have some limiations.
+- Here are the things that you can't do with generics (and by "can't," we mean without resorting to contortions like
+passing  in a class object):
 
 
+- Calling a constructor: Writing new T() is not allowed because at runtime it would be new Object().
+- Creating an array of that generic type: This one is the most annoying, but it makes sense because you'd be creating
+  an array of Object values.
+- Calling instanceof: This is not allowed because at runtime List<Integer> and List<String> look the same to Java
+  thanks to type erasure.
+- Using a primitive type as a generic type parameter: This isn't a big deal because you can use the wrapper class 
+  instead. If you want a type of int, just use Integer.
+- Creating a static variable as a generic type parameter: This is not allowed because the type is linked to the 
+  instance of the class.
 
+
+## Generic Methods
+
+- It is also possible to declare them on the method level. This is often useful for static methods since they aren't 
+  part of an instance than can declare the type. However, it is also allowed on non-static methods.
+
+```
+i.e: chapter_3.generics.Handler.java
+
+public class Handler {
+
+    public static <T> void prepare(T t){
+        System.out.println("Preparing " + t);
+    }
+
+    public static <T> Crate<T> ship(T t){
+        System.out.println("Shipping " + t);
+        return new Crate<T>();
+    }
+}
+```
+- The method parameter is the generic type T. Before the return type, we declare the formal type parameter of <T>. 
+In the ship() method, we show how you can use the generic parameter in the return type, Crate<T>, for the method.
+- Unless a method is obtaining the generic formal type parameter from the class/interface, it is specified immediately
+before the return type of the method. This can lead to some interesting-looking code!
+
+```
+i.e: chapter_3.generics.More.java
+
+2: public class More {
+3:    public static <T> void sink(T t){ }
+4:    public static <T> T identity(T t) { return t; }
+5:    public static T noGood(T t){ return t; } // DOES NOT COMPILE
+6: }
+```
+
+- Line 3 shows the formal parameter type immediately before the return type of void.
+- Line 4 shows the return type being the formal parameter type. It looks weird, but it is correct.
+- Line 5 omits the formal parameter type, and therefore it does not compile.
+
+## Optional Syntax for Invoking a Generic Method
 
