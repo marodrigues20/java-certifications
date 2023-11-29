@@ -1568,3 +1568,336 @@ i.e: chapter_3.generics.More.java
 
 ## Optional Syntax for Invoking a Generic Method
 
+- You can call a generic method normally, and the compiler will try to figure out which one you want.
+- Alternatively, you can specify the type explicitly to make it obvious what the type is.
+
+```
+  Box.<String>ship("package");
+  Box.<String[]>ship(args);
+```
+
+- As to whether this makes things clearer, it is up to you. 
+- You should at least be aware that this syntax exist.
+
+## Bounding Generic Types
+
+- You might have notice that generics don't seem particularly useful since they are treated as an Object and therefore 
+don't have many methods available.
+- Bounded wildcards solve this by restricting what types can be used in a wildcard.
+- A bounded parameter type is a generic type that specifies a bound for the generic.
+- A wildcard generic type is an unknown generic type represented with a question mark (?).
+
+### TABLE 3.4 Types of bounds
+
+| Types of bounds               | Syntax         | Example                                                          |
+|-------------------------------|----------------|------------------------------------------------------------------|
+| Unbounded                     | ?              | List<?> a = new ArrayList<String>();                             |
+| Wildcard with an upper bound  | ? extends type | List<? extends Exception> a = new ArrayList<RuntimeException>(); |
+| Wildcard with a lower bound   |  ? super type  | List<? super Exception> a = new ArrayList<Object>();             | 
+
+
+## Unbounded Wildcards
+
+- An unbounded wildcard represents any data type.
+- You use ? when you want to specify that any type is okay with you.
+
+```
+  public static void printList(List<Object> list) {
+    for (Object x: list)
+      System.out.println(x);
+  }
+  
+  public static void main(String[] args){
+    List<String> keywords = new ArrayList<>();
+    keywords.add("java");
+    printList(keywords); // DOES NOT COMPILE
+  }
+```
+
+- Java is trying to protect us from ourselves with this one. Imagine if we could write code like this:
+
+```
+4: List<Integer> numbers = new ArrayList<>();
+5: numbers.add(new Integer42));
+6: List<Object> objects = numbers; // DOES NOT COMPILE
+7: objects.add("forty two");
+8: System.out.println(numbers.get(1));
+```
+
+
+- Going back to printing a list, we cannot assign a List<String> to a List<Object>.
+- That's fine; we don't really need a List<Object>. What we really need is a List of "whatever".
+- That's what List<?> is. The following code does what we expect:
+
+```
+  public static void printList<List<?> list){
+    for(Object x: list)
+      System.out.println(x);
+  }
+  
+  public static void main(String[] args){
+    List<String> keywords = new ArrayList<>();
+    keywords.add("java");
+    printList(keywords);
+  }
+```
+
+- The printList() method takes any type of list as a parameter.
+- The keyword variable is of type List<String>.
+- We have a match! List<String> is a list of anything.
+- "Anything" just happens to be a String here.
+
+- Finally, let's look at the impact of var. Do you think these two statement are equivalent?
+
+```
+  List<?> x1 = new ArrayList<>();
+  var x2 = new ArrayList<>();
+```
+
+- They are not. There are two key differences. 
+- First, x1 is of type List, while x2 is of type of ArrayList.
+- We can only assign x2 to a List<Object>.
+- These two variable do have one thing in common. Both return type Object when calling the get() method.
+
+
+## Upper-Bounded Wildcards
+
+- Let's try to write a method that adds up the total of a list of numbers. We've established that a generic type 
+can't just use a subclass.
+
+```
+ ArrayList<Number> list = new ArrayList<Integer>(); // DOES NOT COMPILE
+```
+
+Instead, we need to use a wildcard.
+
+```
+ List<? extends Number> list = new ArrayList<Integer>();
+```
+
+- The upper-bounded wildcard says that any class that extends Number or Number itself can be used as the formal 
+parameter type:
+
+```
+ public static long total(List<? extends Number> list {
+    long count = 0;
+    for (Number number: list)
+        count += number.longValue();
+    }
+ }
+```
+
+- Remember how we kept saying that type erasure makes Java think that a generic type is an Object? That is still 
+  happening here. Java converts the previous code to something equivalent to the following:
+
+```
+  public static long total(List list){
+      long count = 0;
+      for (Object obj: list){
+        Number number = (Number) obj;
+        count += number.longValue();
+      }
+  }
+```
+
+- Something interesting happens when we work with upper bounds or unbounded wildcards. The list becomes logically 
+immutable and therefore cannot be modified. Technically, you can remove elements from the list, but the exam won't ask
+about this.
+
+```
+2: static class Sparrow extends Bird { }
+3: static class Bird { }
+4:
+5: public static void main(String[] args) {
+6:   List<? extends Bird> birds = new ArrayList<Bird>();
+7:   birds.add(new Sparrow());  // DOES NOT COMPILE
+8:   birds.add(new Bird());     // DOES NOT COMPILE
+9: }
+```
+
+- The problem stems from the fact that Java doesn't know what type List<? extends Bird> really is. It could be List<Bird>
+or List<Sparrow> or some other generic type that hasn't  even been written yet.
+- Line 7 doesn't compile because we can't add a Sparrow to List<? extends Bird>, 
+- Add line 8 doesn't compile because we can't add a Bird to List<Sparrow>. 
+- From Java's point of view, both scenarios are equally possible, so neither is allowed. 
+
+- Now let's try an example with an interface. We have an interface and two classes that implement it.
+
+```
+  interface Flyer { void fly(); }
+  class HangGlider implements Flyer { public void fly() }
+  class Goose implements Flyer { public void fly() {} }
+```
+
+- We also have two methods that use it. One just lists the interface, and the other uses an upper bound.
+
+
+```
+  private void anyFlyer(List<Flyer> flyer) { }
+  private void groupOfFlyers(List<? extends Flyer> flyer) {}
+```
+
+- Note that we used the keyword extends rather than implements. Upper bounds are like anonymous classes in that they 
+  use extends regardless of whether we working witha class or an interface.
+
+- You already learned that a variable of type List<Flyer> can be passed to either method. A variable of type List<Goose>
+can be passed only to the one with the upper bound.
+
+## Lower-Bounded Wildcards
+
+- Let's try to write a method that ads a string "quack" to two lists.
+
+
+```
+List<String> strings = new ArrayList<String>();
+strings.add("tweet");
+
+List<Object> objects = new ArrayList<Object>(string);
+addSound(strings);
+addSound(objects);
+```
+
+- The problem is that we want to pass a List<String> and a List<Object> to the same method. First, make sure that you 
+understand why the first three examples in Table 3.15 do not solve this problem.
+
+
+### TABLE 3.5 Why we need a lower bound
+
+| public static void addSount(______________ list) { list.add("quack");} | Method compiles                             | Can pass a List<String>                   | Can pass a List<Object> |
+|------------------------------------------------------------------------|---------------------------------------------|-------------------------------------------|-------------------------|
+| List<?>                                                                | No (unbounded generics are immutable)       | Yes                                       | Yes                     |
+| List<? extends Object>                                                 | No (upper-bounded generics are immutable)   | Yes                                       | Yes                     |
+| List<Object>                                                           | Yes                                         | No (with generics, must pass exact match) | Yes                     |
+| List<? super String>                                                   | Yes                                         | Yes                                       | Yes                     |
+
+
+
+```
+public static void addSound(List<? super String> list) {
+  list.add("quack");
+}
+```
+
+- With a lower bound, we are telling Java that the list will be a list of String objects or a list of some objects that
+  are a superclass of String. Either way, it is safe to add a String to that list.
+- Just like generic classes, you probably won't use this in your code unless you are writing code for others to reuse.
+  Even then it would be rare. But it's one the exam, so now is the time to learn it!
+
+
+```
+3: List<? super IOException> exceptions = new ArrayList<Exception>();
+4: exceptions.add(new Exception()); // DOES NOT COMPILE
+5: exceptions.add(new IOException());
+6: exceptions.add(new FileNotFoundException());
+```
+
+- Line 3 references a List that could be List<IOException> or List<Exception> or List<Object>.
+- Line 4 does not compile because we could have a list<IOException> and an Exception object wouldn't fit in there.
+- Line 5 is fine. IOException can be added to any of those types.
+- Line 6 is also fine. FileNotFoundException can also be added any of those three types.
+- This is tricky because FileNotFoundException is a subclass of IOException, and the keyword says super.
+- What happens is that Java says, "Well, FileNotFoundException also happens to be an IOException, so everything is fine".
+
+
+## Combining Generic Declarations
+
+- Let's try an example. First, we declare three classes that the example will use.
+
+```
+class A {}
+class B extends A {}
+class C extends B {}
+```
+
+- Ready? Can you figure out why these do or don't compile? Also, try to figure out what they do.
+
+```
+6: List<?> list1 = new ArrayList<A>();
+7: List<? extends A> list2 = new ArrayList<A>();
+8: List<? super A> list3 = new ArrayList<A>();
+```
+
+- Line 6 creates an ArrayList that can hold instance of class A. It is stored in a variable with an unbounded wildcard.
+- Any generic type can be referenced from an unbounded wildcard, making this okay.
+- Line7 tries to store a list in variable declaration with an upper-bounded wildcard. This is okay. You can have 
+  ArrayList<A>, ArrayList<B>, or ArrayList<C> stored in that reference.
+- Line 8 is also okay. This time, you have a lower-bounded wildcard. The lowest type you can reference is A. Since that 
+  is what you have, it compiles.
+
+
+- Did you get those right? Let's try a few more.
+
+```
+9:  List<? extends B> list4 = new ArrayList<A>();  // DOES NOT COMPILE
+10: List<? super B> list5 = new ArrayList<A>();
+11: List<?> list6 = new ArrayList<? extends A>()); // DOES NOT COMPILE
+```
+
+- Line 9 has an upper-bounded wildcard that allows ArrayList<B> or ArrayList<C> to be referenced. Since you have 
+  ArrayList<A> that is trying to be referenced, the code does not compile.
+- Line 10 has a lower-bounded wildcard, which allows a reference to ArrayList<A>, ArrayList<B>, ArrayList<Object>.
+- Line 11 allows a reference to any generic type since it is an unbounded wildcard. The problem is that you need to know
+  what that type will be when instantiating the ArrayList. It wouldn't be useful anyway, because you can't add any 
+  elements to that ArrayList.
+
+
+## Passing Generic Arguments
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
