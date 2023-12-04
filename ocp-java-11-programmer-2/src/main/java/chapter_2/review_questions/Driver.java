@@ -1,7 +1,5 @@
 package chapter_2.review_questions;
 
-import jdk.jfr.MemoryAddress;
-
 import java.lang.annotation.Documented;
 
 /**
