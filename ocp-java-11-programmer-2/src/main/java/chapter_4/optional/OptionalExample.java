@@ -37,7 +37,8 @@ public class OptionalExample {
         Optional<Double> opt7 = average(90, 100);
         System.out.println(opt7.orElse(Double.NaN));
         System.out.println(opt7.orElseGet(() -> Math.random()));
-        System.out.println(opt.orElseThrow());
+        Optional<Double> opt8 = average();
+        System.out.println(opt8.orElseThrow());
 
     }
 

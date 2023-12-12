@@ -344,6 +344,196 @@ Predicate<String> brown = s -> s.contains("brown");
 
 ## Returning an Optional
 
+- How do we express this "we don't know" or "not applicable" answer in Java? We use the Optional type.
+- An Optional is created using a factory.
+- You can either request an empty Optional or pass a value for the Optional to wrap.
+- Think of an Optional as a box that might have something in it or might instead be empty.
+
+## Creating an Optional
+
+
+i.e: chapter_4.optional.OptionalExample.java
+
+```
+10:  public static Optional<Double> average(int... scores){
+11:    if (scores.length == 0) return Optional.empty();
+12:    int sum = 0;
+13:    for (int score: scores) sum += score;
+14:    return Optional.of((double) sum / scores.length)
+15:  }
+```
+
+- Calling the method show what is in our two boxes.
+
+```
+  System.out.println(average(90, 100)); // Optional[95.0]
+  System.out.println(average()); // Optional.empty
+```
+
+- You can see that one Optional contains a value and the other is empty. Normally, we want to check whether a value is
+  there and/or get it out of the box. Here's one way to do that:
+
+```
+20: Optional<Double> opt = average(90, 100);
+21: if (opt.isPresent())
+22:    System.out.println(opt.get()); // 95.0
+```
+
+- Line 21 checks whether the Optional actually contains a value. Line 22 prints it out. What if we didn't do the check
+  and the Optional was empty?
+
+```
+26: Optional<Double> opt = everage();
+27: System.out.println(opt.get()); //95.0
+```
+
+- We'd get an exception since there is no value inside the Optional.
+
+```
+java.util.NoSuchElementException: No value present
+```
+
+- When creating an Optional, it is commomn to want to use empty() when the value is null. You can do this with an if 
+  statement or ternary operator. We use the ternary operator(? :) to simplify the code.
+
+```
+Optional o = (value == null) ? Optional.empty() : Optional.of(value);
+```
+
+- If value is null, o is assigned the empty Optional. Otherwise, we wrap the value. Since this is such a common pattern,
+  Java provides a factory method to do the same thing.
+
+```
+Optional o = Optional.ofNullable(value);
+```
+
+Table 4.3 Optional instance methods
+
+| Method                  | When Optional is empty                      | When Optional contains value |
+|-------------------------|---------------------------------------------|------------------------------|
+| get()                   | Throws an exception                         | Returns value                |
+| ifPresent (Consumer c)  | Does nothing                                | Calls Consumer with value    |
+| isPresent()             | Returns false                               | Returns true                 |
+| orElse(T other)         | Returns other parameter                     | Returns value                |
+| orElseGet(Supplier s)   | Returns result of calling Supplier          | Returns value                |
+| orElseThrow()           | Throws NoSuchElementException               | Returns value                |
+| orElseThrow(Supplier s) | Throws exception create by calling Supplier | Returns value                |
+
+
+- You've already seen get() and isPresent(). The other methods allow you to write code that uses an Optional in one line
+  without having to use the ternary operator. This makes the code easier to read.
+
+
+## Dealing with an Empty Optional
+
+- The remaining methods allow you to specify what to do if a value isn't present. There are a few choices. The first two
+  allow to specify a return value either directly or using a Supplier.
+
+
+i.e: java.util.Optional.OptionalExample.java
+```
+30: Optional<Double> opt = average();
+31: System.out.println(opt.orElse(Double.NaN));
+32: System.out.println(opt.orElseGet(() -> Math.random());
+```
+
+- This prints something like the following:
+
+```
+NAN
+0.49775932295380165
+```
+
+- We can have the code throw an exception if the Optional is empty.
+
+```
+30: Optional<Double> opt = evarage();
+31: System.out.println(opt.orElseThrow()); 
+```
+
+- This prints something like the following:
+
+```
+Exception in thread "main" java.util.NoSuchElementException: No value present
+	at java.base/java.util.Optional.orElseThrow(Optional.java:377)
+	at chapter_4.optional.OptionalExample.main(OptionalExample.java:41)
+```
+
+- Without specifying a Supplier for the exception. Java will throw a NoSuchElementException. This method was added in 
+Java 10. Remember that the stack trace looks weird because the lambdas are generated rather than names classes. 
+- Alternatively, we can have the code throw a custom exception if the Optional is empty.
+
+```
+30: Optional<Double> opt = everage();
+31: System.out.println(opt.orElseThrow(
+32:      () -> new IllegalStateException())); 
+```
+
+- This prints something like the following:
+
+```
+Exception in thread "main" java.lang.IllegalStateException    
+    at optionals.Methods.lambda$orElse$1(Methods.java:30)    
+    at java.base/java.util.Optional.orElseThrow(Optional.java:408)
+```
+
+- Line 32 shows using a Supplier to create an exception that should be thrown. Notice that we do not write throw new
+  IllegalStateException(). The orElseThrow() method takes care of actually throwing the exception when we run it.
+
+- The two methods that takes a Supplier have different names. Do you see why this code does not compile?
+
+```
+  System.out.println(opt.orElseGet( 
+      () -> new IllegalStateException())); // DOES NOT COMPILE
+```
+
+- The opt variable is an Optional<Double>. This means the Supplier must return a Double. Since this supplier returns an
+exception, the type does not match.
+
+
+
+## Is Optional the Same as null?
+
+- There were a few shorcommings with this approach. 
+- One was that there wasn't a clear way to express that null might be a special value. By contrast, returning an Optional
+is a clear statement in the API that there might not be a value in there.
+- Another advantage of Optional is that you can use a functional programming style with ifPresent() and the other methods
+rather than needing an if statement. Finally, you'll see towards the end of the chapter that you can chain Optional calls.
+
+
+## Using Streams
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
