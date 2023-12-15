@@ -20,11 +20,11 @@ public class CreateStreamExample {
 
     public static void main(String[] args) {
 
-        createStreamSource();
-        createStreamFromCollection();
-        createParallelStream();
+        //createFiniteStream();
+        //createStreamFromCollection();
+        //createParallelStream();
         createInfiniteStream();
-        createStreamOddNumbers();
+        //createStreamOddNumbers();
     }
 
     private static void createStreamOddNumbers() {
@@ -36,9 +36,11 @@ public class CreateStreamExample {
     private static void createInfiniteStream() {
         // Creates Stream by calling the Supplier for each element upon request
         Stream<Double> randoms = Stream.generate(Math::random);
+        System.out.println(randoms);
         // Create Stream by using the seed for the first element and then calling the UnaryOperator for each subsequent
         // element upon request.
         Stream<Integer> oddNumbers = Stream.iterate(1, n -> n + 2);
+        //oddNumbers.forEach(System.out::println);
     }
 
     private static void createParallelStream() {
@@ -53,7 +55,7 @@ public class CreateStreamExample {
         Stream<String> fromList = list.stream();
     }
 
-    private static void createStreamSource() {
+    private static void createFiniteStream() {
 
         Stream<String> empty = Stream.empty();
         // count = 0
