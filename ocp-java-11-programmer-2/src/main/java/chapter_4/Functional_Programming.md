@@ -665,7 +665,7 @@ Stream<String> s = Stream.of("monkey", "gorilla", "bonobo");
 System.out.println(s.count()); //3
 ```
 
-## min() and max()
+### min() and max()
 
 - The min() and max() methods allow you to pass a custom comparator and find the smallest or largest value in a finite 
   stream according to that sort order.
@@ -981,6 +981,346 @@ System.out.println(set2); // [f, w, l, o]
 
 
 ## Using Common Intermediate Operations
+
+- Unlike a terminal operation, an intermediate operation produces a stream as its result. An intermediate operation can 
+  also deal with an infinite stream simply by returning another infinite stream. Since elements are produced only as 
+  needed, this works fine. The assembly line worker doesn't need to worry about how many more elements are coming
+  through and instead can focus on the current element.
+
+### filter()
+
+- The filter() method returns a Stream with elements that match a given expression. 
+- Here is the method signature:
+
+```
+Stream<T> filter(Predicate<? super T> predicate)
+```
+
+- This operation is easy to remember and powerful because we can pass any Predicate to it. For example, this filters
+  all elements that begin with the letter m:
+
+i.e: chapter_4.streams.IntermediateOperationsExample.java#methodFilter()
+```
+Stream<String> s = Stream.of("monkey", "gorilla", "bonobo");
+ss.filter(x -> x.startsWith("m"))
+    .forEach(System.out::print); // monkey
+```
+
+
+### limit() and skip()
+
+- The limit() and skip() methods can make a Stream smaller, or they could make a finite stream out of an infinite stream.
+- The method signatures are shown here:
+
+```
+Stream<T> limit(long maxSize)
+Stream<T> skip(long n)
+```
+
+- The following code creates an infinite stream of number counting from 1.
+- The skip() operation returns an infinite stream starting with the numbers counting from 6, since it skips
+  the first five elements.
+- The limit() call takes the first two of those. 
+- Now we have a finite stream with two elements, which we can then print with the forEach() method.
+
+i.e: chapter_4.streams.IntermediateOperationsExample.java#methodLimitAndSkip()
+```
+Stream<Integer> s = Stream.iterate(1, n -> n + 1);
+s.skip(5)
+  .limit(2)
+  .forEach(System.out::print);  // 67
+```
+
+### map()
+
+- The map() method creates a one-to-one mapping from the elements in the stream to the elements of the next step in the
+  stream.
+- The method signature is as follows:
+
+```
+<R> Stream<R> map(Function<? super T, ? extends R> mapper)
+```
+
+- It uses the lambda expression to figure out the type passed to that function and the one returned.
+- The return type is the stream that gets returned.
+
+Note: The map() method on streams is for transforming data. Don't confuse it with the Map interface, which maps keys to
+      values.
+
+- As an example, this code converts a list of String objects to a list of Integer objects representing their lenghts.
+
+i.e: chapter_4.streams.IntermediateOperationsExample.java#methodMap()
+```
+Stream<String> s = Stream.of("monkey", "gorilla", "bonobo);
+s.map(String::length)
+  .forEach(System.out::print); // 676
+```
+
+- Remember that String::length is shorthand for the lambda x -> x.length(), which clearly shows it is a function that
+  turns a String into a Integer.
+
+
+### flatMap()
+
+- The flatMap() method takes each element in the stream and makes any elements it contains top-level elements in a 
+  single stream. This is helpful when you want to remove empty elements from a stream or you want to combine a stream of 
+  lists.
+- You aren't expected to be able to read this:
+
+
+```
+<R> Stream<R> flatMap(
+  Function<? super T, ? extends Stream<? extends R>> mapper)
+```
+
+- This gibberish basically says that it returns a Stream of the type that the function contains at a lower level.
+- Don't worry about the signature. It's a headache.
+- What you should understand is the example. This gets all of the animals into the same level along with getting rid of 
+  the empty list.
+
+i.e: chapter_4.streams.IntermediateOperationsExample.java#methodFlatMap()
+```
+List<String> zero = List.of();
+var one = List.of("Bonobo");
+var two = List.of("Mama Gorilla", "Baby Gorilla");
+Stream<List<String>> animals = Stream.of(zero, one, two);
+
+animals.flatMap(m -> m.stream())
+    .forEach(System.out::println);
+```
+
+- Here's the output:
+
+```
+Bonobo
+Mama Gorilla
+Baby Gorilla
+```
+
+- As you can see, it removes the empty list completely and changed all elements of each list to be at the top level of
+  the stream.
+
+### sorted()
+
+- The sorted() method returns a stream with the elements sorted. Just like sorting arrays, Java uses natural ordering 
+  unless we specify a comparator. The method  signatures are these:
+
+```
+Stream<T> sorted()
+Stream<T> sorted(Comparator<? super T> comparator)
+```
+
+Calling the first signature uses de default sort order.
+
+i.e: chapter_4.streams.IntermediateOperationsExample.java#methodSorted()
+```
+Stream<String> s = Stream.of("brown-", bear-);
+s.sorted()
+  .forEach(System.out::print); // bear-brown-
+```
+
+We can optionally use a Comparator implementation via a method or a lambda. In this example, we are using a method.
+
+
+i.e: chapter_4.streams.IntermediateOperationsExample.java#methodSorted()
+```
+Stream<String> s = Stream.of("brown bear-", "grizzly-");
+s.sorted(Comparator.reverseOrder())
+  .forEach(System.out::print);  // grizzly-brown bear-
+```
+
+- Here we passed a Comparator to specify that we want to sort in the reverse of natural sort order.
+
+### peek()
+
+- The peek() method is our final intermediate operation. It is useful for debugging because it allows us to perform a
+  stream operation without actually changing the stream. The method signature is as follows:
+
+```
+Stream<T> peek(Consumer<? super T> action)
+```
+
+- You might notice the intermediate peek() operation takes the same argument as the terminal forEach() operation.
+- Think of peek as an intermediate version of forEach() that returns the original stream back to you.
+- The most common use for peek() is to output the contents of the stream as it goes by.
+- Suppose that we made a type and counted bears beginning with the letter g instead of b.
+- We are puzzled why the count is 1 instead of 2. We can add a peek() method to find out why.
+
+
+i.e: chapter_4.streams.IntermediateOperationsExample.java#methodPeek()
+```
+var stream = Stream.of("black bear", "brown bear", "grizzly");
+long count = stream.filter(s -> s.startWith("g"))
+    .peek(System.out::println).count();           // grizzly
+System.out.println(count);
+```
+
+### Danger: Changing State with peek()
+
+- Remember that peek() is intended to perform an operation without changing the result.
+- You can write bad peek code. Like this:
+
+```
+Stream<List<?>> bad = Stream.of(number, letters);
+bad.peek(x -> x.remove(0))
+  .map(List::size)
+  .forEach(System.out::println()); //00
+```
+
+- This example is bad because peek() is modifying the data structure that is used in the stream, which causes
+  the result of the stream pipeline to be different than if the peek wasn't present.
+
+
+### Putting Together the Pipeline
+
+- Streams allow you to use chaining and express what you want to accomplish rather than how to do so.
+- Let's say that we wanted to get the first two names of our friends alphabetically that are four characters long.
+- Without streams we are focus on how to do not what to do.
+
+```
+var list = List.of("Toby", "Anna", "Leroy","Alex");
+list.stream()
+  .filter(n -> n.lenght() == 4)
+  .sorted()
+  .limit(2)
+  .forEach(System.out::println);
+```
+
+- The difference is that we express what is going on.
+- Once you start using streams in your code, you may find yourself using them in many places.
+- Having shorter, briefer, and clearer code is definitely a good thing!
+
+
+- You can even chain two pipelines together. See if you can identify the two sources and two terminal operations in 
+  this code.
+
+```
+30: long count = Stream.of("goldfish", "finch")
+31:   .filter(s -> s.length() > 5)
+32:   .collect(Collectors.toList())
+33:   .stream()
+34:   .count()
+35: System.out.println(count);    // 1   
+```
+
+- Lines 30-32 are one pipeline, and lines 33 and 34 are another. For the first pipeline, line 30 is the source, and 
+  line 32 is the terminal operation.
+- For the second pipeline, line 33 is the source, and line 34 is the terminal operation.
+- Now that's a complicated way of outputting the number 1!
+
+- Our prior example can be written as follows:
+
+
+```
+ long count = Stream.of("goldfish", "finch")
+   .filter(s -> s.length() > 5)
+   .collect(Collectors.toList())
+ long count = helper.stream()
+    .count();
+System.out.println(count);    // 1   
+```
+
+- Which style you use is up to you. However, you need to be able to read both styles before you take the exam.
+
+
+## Working with Primitive Stream
+
+- Up until now, all of the streams we've created used the Stream class with a generic type, like Stream<String>,
+  Stream<Integer>, etc. For numeric values, we have been using the wrapper classes you learned about in Chapter 3.
+- We did this with the Collections API so it would feel natural.
+- Java actually includes other stream classes besides Stream that you can use to work with select primitives: int, 
+  double, and long.
+- Let's take a look at why this is needed. 
+- Suppose that we want to calculate the sum of numbers in a finite stream.
+
+```
+Stream<Integer> stream = Stream.of(1, 2, 3);
+System.out.println(stream.reduce(0, (s, n) -> s + n));
+```
+
+- Not bad, I wasn't hard to write a reduction. We started the accumulator with zero. We then added each number to that 
+  running total as it came up in the stream. There is another way of doing that, shown here:
+
+
+```
+Stream<Integer> stream = Stream.of(1, 2, 3);
+System.out.println(stream.mapToInt(x -> x).sum());  // 6
+```
+
+- This time, we converted our Stream<Integer> to an IntStream and asked the IntStream to calculate the sum to us.
+- An IntStream has many of the same intermediate and terminal methods as a Stream but includes specialized methods for 
+ working with numeric data.
+
+
+- Java recognizes that calculating an everage is a common thing to do, and it provides a method to calculate the average 
+  on the stream classes for primitives.
+
+```
+IntStream intStream = IntStream.of(1, 2, 3);
+OptionalDouble avg = intStream.average();
+System.out.println(avg.getAsDouble()); // 2.0
+```
+
+- Not only is it possible to calculate the average, but it is also easy to do so.
+- Clearly primitives streams are important.
+- We will look at creating and using such streams, including optionals and functional interfaces.
+
+
+## Creating Primitive Streams
+
+- Here are three types of primitive streams.
+  - IntStream: Used for teh primitive types int, short, byte, and char
+  - LongStream: Used for the primitive type long
+  - DoubleStream: Used for the primitive types double and float
+
+- Table 4.7 shows some of the methods that are unique to primitive streams. Notice that we don't include methods in the 
+  table like empty() that you already know from the Stream interface.
+
+TABLE 4.7 Common primitive stream methods
+
+
+| Method                    | Primitive stream                      | Description                           |
+|---------------------------|---------------------------------------|---------------------------------------|
+| OptionalDouble average()  | IntStream; LongStream; DoubleStream   | The arithmetic mean of the elements   |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
