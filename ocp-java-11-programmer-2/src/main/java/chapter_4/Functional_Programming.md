@@ -1279,14 +1279,241 @@ System.out.println(avg.getAsDouble()); // 2.0
 TABLE 4.7 Common primitive stream methods
 
 
-| Method                    | Primitive stream                      | Description                           |
-|---------------------------|---------------------------------------|---------------------------------------|
-| OptionalDouble average()  | IntStream; LongStream; DoubleStream   | The arithmetic mean of the elements   |
+| Method                                      | Primitive stream                    | Description                                                                                  |
+|---------------------------------------------|-------------------------------------|----------------------------------------------------------------------------------------------|
+| OptionalDouble average()                    | IntStream; LongStream; DoubleStream | The arithmetic mean of the elements                                                          |
+| Stream<T> boxed()                           | IntStream; LongStream; DoubleStream | A Stream<T> where T is the wrapper class associated with the primitive value                 |
+| OptionalInt max()                           | IntStream                           | The maximum element of the stream                                                            |
+| OptionalLong max()                          | LongStream                          | The maximum element of the stream                                                            |
+| OptionalDouble max()                        | DoubleStream                        | The maximum element of the stream                                                            |
+| OptionalInt min()                           | IntStream                           | The minimum element of the stream                                                            |
+| OptionalLong min()                          | LongStream                          | The minimum element of the stream                                                            |
+| OptionalDouble min()                        | DoubleStream                        | The minimum element of the stream                                                            |  
+| IntStream range(int a, int b)               | IntStream                           | Returns a primitive stream from a (inclusive) to b (exclusive)                               |
+| LongStream range(long a, long b)            | LongStream                          | Returns a primitive stream from a (inclusive) to b (exclusive)                               |
+| IntStream rangeClosed(int a, int b)         | IntStream                           | Returns a primitive stream from a (inclusive) to b (inclusive)                               |
+| LongStream rangeClosed(long a, long b)      | LongStream                          | Returns a primitive stream from a (inclusive) to b (inclusive                                |
+| int sum()                                   | IntStream                           | Returns the sum of the elements in the stream                                                |
+| long sum()                                  | LongStream                          | Returns the sum of the elements in the stream                                                |
+| double sum()                                | DoubleStream                        | Returns the sum of the elements in the stream                                                |
+| IntSummaryStatistics summaryStatistics()    | IntStream                           | Returns an object containing numerous stream statistics such as the average, min, max, etc.  |
+| LongSummaryStatistics summaryStatistics()   | LongStream                          | Returns an object containing numerous stream statistics such as the average, min, max, etc.  |
+| DoubleSummaryStatistics summaryStatistics() | DoubleStream                        | Returns an object containing numerous stream statistics such as the average, min, max, etc.  |
 
 
+- Some of the methods for creating a primitive streams are equivalent to how we create the source for a regular Stream.
+- You can create an empty stream with this:
+
+```
+DoubleStream empty = DoubleStream.empty();
+```
 
 
+- Another way is to use the of() factory method from a single value or by using the varargs overload.
 
+```
+DoubleStream oneValue = DoubleStream.of(3.14);
+oneValue.forEach(System.out::println);
+
+DoubleStream varargs = DoubleStream.of(1.0, 1.1, 1.2);
+varargs.forEach(System.out::println);
+```
+
+
+- You can also use the two methods for creating infinite streams, just like we did with Stream.
+
+```
+var random = DoubleStream.generate(Math::random);
+var fractions = DoubleStream.iterate(.5, d-> d / 2);
+random.limit(3).forEach(System.out::println);
+fractions.limit(3).forEach(System.out::println);
+```
+
+- Since the streams are infinite, we added a limit intermediate operation so that the output doesn't print values forever.
+- Suppose that we wanted a stream with the number from 1 through 5.
+- We could write this using what we've explained so far:
+
+```
+IntStream count = IntStream.iterate(1, n -> n + 1).limit(5);
+count.forEach(System.out::println);
+```
+
+- This code does print out the numbers 1-5, one per line. However, it is a lot of code to do something so simple.
+- Java provides a method that can generate a range of numbers.
+
+```
+IntStream range = IntStream.range(1, 6);
+range.forEach(System.our::println);
+```
+
+- This is better. If we wanted number 1-5, why did we pass 1-6? 
+- The first parameter to the range() method is inclusive, which means it includes the number.
+- The second parameter to the range() method is exclusive, which means it stops right before that number.
+
+
+- We want the number 1-5 inclusive. Luckily, there's another method, rangeClosed(), which is inclusive on both parameters.
+
+```
+IntStream rangeClosed = IntStream.rangeClosed(1, 5);
+rangeClosed.forEach(System.out::println);
+```
+
+## Mapping Streams
+
+- Another way to create a primitive stream is by mapping from another stream type.
+
+TABLE 4.8 Mapping methods between types of stream
+
+| Source stream class | To create Stream | To create DoubleStream | To create IntStream | To create LongStream |
+|---------------------|------------------|------------------------|---------------------|----------------------|
+| Stream<T>           | map()            | mapToDouble()          | mapToInt()          | mapToLong()          |
+| DoubleStream        | mapToObj()       | map()                  | mapToInt()          | mapToLong()          |
+| IntStream           | mapToObj()       | mapToDouble()          | map()               | mapToLong()          |
+| LongStream          | mapToObj()       | mapToDouble()          | mapToInt()          | map()                |
+
+- Obviously, they have to be compatible types for this to work. Java requires a mapping function to be provided as a 
+  parameter, for example:
+
+```
+Stream<String> objStream = Stream.of("penguin", "fish");
+IntStream intStream = objStream.mapToInt(s -> s.length());
+```
+
+- Table 4.9 shows the mapping between types of streams
+
+| Source stream class | To create Stream  | To create DoubleStream | To create IntStream | To create LongStream |
+|---------------------|-------------------|------------------------|---------------------|----------------------|
+| Stream<T>           | Function<T,R>     | ToDoubleFunction<T>    | ToIntFunction<T>    | ToLongFunction<T>    |
+| DoubleStream        | DoubleFunction<R> | DoubleUnaryOperator    | DoubleToIntFunction | DoubleToLongFunction |
+| IntStream           | IntFunction<R>    | IntToDoubleFunction    | IntUnaryOperator    | IntToLongFunction    |
+| LongStream          | LongFunction<R>   | LongToDoubleFunction   | LongToIntFunction   | LongUnaryOperator    |
+
+
+- You do have to memorize Table 4.8 and Table 4.9. It's not as hard as it might seem.
+
+### Using flatMap()
+
+- The flatMap() method exists on primitive stream as well. It works the same way as on a regular Stream except the method
+  name is different.
+
+```
+var integerList = new ArrayList<Integer>();
+IntStream ints = integerList.Stream()
+  .flatMapInt(x -> IntStream.of(x));
+
+DoubleStream doubles = integerList.stream()
+  .flatMapToDouble(x -> DoubleStream.of(x));
+
+LongStream longs = integerList.stream()
+  .flatMapToLong(x -> LongStream.of(x));
+
+```
+
+- Additionally, you can create a Stream from a primitive stream.
+
+```
+private static Stream<Integer> mapping(IntStream stream){
+  return stream.mapToObj(x -> x);
+}
+
+private static Stream<Integer> boxing(IntStream stream){
+  return stream.boxed();
+}
+```
+
+- The first one uses the mapToObj() method we saw earlier.
+- The second one is more succinct. It does not require a mapping function because all it does is autobox each primitive
+  to the corresponding wrapper object.
+- The boxed() method exists on all three types of primitive streams.
+
+
+## Using Optional with Primitive Streams
+
+- Earlier in the chapter, we wrote a method to calculate the average of an int[].
+- Now we can calculate the average in one line.
+
+```
+var stream = IntStream.rangeClosed(1,10);
+OptionalDouble optional = stream.average();
+```
+
+- Why do not use Optional<Double> rather than OptionalDouble?
+- The difference is that OptionalDouble is for a primitive and Optional<Double> is for the Double wrapper class.
+
+```
+optional.ifPresent(System.out::println);                  // 5.5
+System.out.println(optional.getAsDouble());               // 5.5 
+System.out.println(optional.orElseGet(() -> Double.NaN);  // 5.5
+```
+
+- The only noticeable difference is that we called getAsDouble() rather than get(). 
+- This makes it clear that we are working with a primitive.
+- Also, orElseGet() takes a DoubleSupplier instead of a Supplier.
+
+- As with the primitive streams, there are three type-specific classes for primitives.
+
+TABLE 4.10 Optional types for primitives
+
+
+| Description                    | OptionalDouble | OptionalInt | OptionalLong |
+|--------------------------------|----------------|-------------|--------------|
+| Getting as a primitive         | getAsDouble()  | getAsInt()  | getAsLong()  |
+| orElseGet() parameter type     | DoubleSupplier | IntSupplier | LongSupplier |
+| Return type of max() and min() | OptionalDouble | OptionalInt | OptionalLong |
+| Return type of sum()           | double         | int         | long         |
+| Return type of average()       | OptionalDouble | OptionalInt | OptionalLong |
+
+
+- Let's try an example to make sure that you understand this.
+
+```
+5: LongStream longs = LongStream.of(5, 10);
+6: long sum = longs.sum();
+7: System.out.println(sum);     // 15
+8: DoubleStream double = DoubleStream.generate(() -> Math.PI);
+9: OptionalDouble min = doubles.min(); // runs infinietly
+```
+
+##  Summarizing Statistics
+
+- You've learned enough to be able to get the maximum value from a stream of int primitives. 
+- If the stream is empty, we want to throw an exception.
+
+```
+private static int max(IntStream ints) {
+  OptionalInt optional = ints.max();
+  return optional.orElseThrow(RuntimeException::new);
+}
+```
+
+- If the optional contains a value, we return it. Otherwise, we throw a new RuntimeException.
+
+- Now we want to change the method to take an IntStream and return a range.
+- The range is the minimum value subtracted from the maximum value.
+- Uh-oh. Both min() and max() are terminal operations, which means that they use up the stream when they are run.
+- We can't run two terminal operations against the same stream.
+- Luckily, this is a common problem and the primitive streams solve it for us with summary statistics.
+- Statistic is just a big word for a number that was calculated from data.
+
+```
+private static int range(IntStream ints){
+  IntSummaryStatistics stats = ints.summaryStatistics();
+  if (stats.getCount() = 0) throw new RuntimeException();
+  returns stats.getMax()-stats.getMin();
+}
+```
+
+- Here we asked Java to perform many calculations about the stream.
+- Summary statistics include the following:
+  - Smallest number (minimum): getMin()
+  - Largest number (maximum): getMax()
+  - Average: getAverage()
+  - Sum: getSum()
+  - Number of values: getCount()
+- If the stream were empty, we'd have a count and sum of zero. The other methods would return an empty optional.
+
+
+## Learning the Functional Interfaces for Primitives
 
 
 
