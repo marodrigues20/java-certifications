@@ -1515,6 +1515,60 @@ private static int range(IntStream ints){
 
 ## Learning the Functional Interfaces for Primitives
 
+- Most of the functional interfaces are for double, int, and long to match the stream and optionals that we've been 
+  using for primitives.
+- You have to memorize TABLE 4.1, TABLE 4.11
+
+- TABLE 4.11 Common functional interfaces for primitives
+
+| Functional interfaces                                       | # parameters                                       | Return type       | Single abstract method                  |
+|-------------------------------------------------------------|----------------------------------------------------|-------------------|-----------------------------------------|
+| DoubleSupplier; IntSupplier; LongSupplier                   | 0                                                  | double; int; long | getAsDouble; getAsInt; getAsLong        |
+| DoubleConsumer; IntConsumer; LongConsumer                   | 1 (double); 1 (int); 1 (long)                      | void              | accept                                  |
+| DoublePredicate; IntPredicate; LongPredicate                | 1 (double); 1 (int); 1 (long)                      | boolean           | test                                    |
+| DoubleFunction<R>; IntFunction<R>; LongFunction<R>          | 1 (double); 1 (int); 1(long)                       | R                 | apply                                   |
+| DoubleUnaryOperator; IntUnaryOperator; LongUnaryOperator    | 1 (double); 1 (int); 1 (long)                      | double; int; long | applyAsDouble; applyAsInt; applyAsLong  |
+| DoubleBinaryOperator; IntBinaryOperator; LongBinaryOperator | 2 (double, double); 2 (int, int); 2 (long, long)   | double; int; long | applyAsDouble; applyAsInt; applyAsLong  |
+
+
+
+- There are a few things to notice that are different between Table 4.1 and Table 4.11.
+  - Generic are gone from some of the interfaces, and instead the type name tells us what primitive type is involved.
+  - In other cases, such as IntFunction, only the return type generic is needed because we're converting a primitive 
+    int into an object.
+  - The single abstract method is often renamed when a primitive type is returned.
+
+- In addition to Table 4.1 equivalents, some interfaces are specific to primitives Table 4.12 list these.
+
+
+- TABLE 4.12 Primitive-specific functional interfaces
+
+
+| Functional interfaces                                                                                                      | # parameters                                                 | Return type                          | Single abstract method                                                         |
+|----------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|--------------------------------------|--------------------------------------------------------------------------------|
+| ToDoubleFunction<T>; ToIntFunction<T>; ToLongFunction<T>                                                                   | 1 (T)                                                        | double; int; long                    | applyAsDouble; applyAsInt; applyAsLong                                         |
+| ToDoubleBiFunction<T, U>; ToIntBiFunction<T, U>; ToLongBiFunction<T, U>                                                    | 2 (T, U)                                                     | double; int; long                    | applyAsDouble; applyAsInt; applyAsLong                                         |
+| DoubleToIntFunction; DoubleToLongFunction; IntToDoubleFunction; IntToLongFunction; LongToDoubleFunction; LongToIntFunction | 1 (double); 1 (double); 1 (int); 1 (int); 1 (long); 1 (long) | int; long; double; long; double; int | applyAsInt; applyAsLong; applyAsDouble; applyAsLong; applyAsDouble; applyAsInt | 
+| ObjDoubleConsumer<T>; ObjIntConsumer<T>; ObjLongConsumer<T>                                                                | 2 (T, double); 2 (T, int); 2 (T, long)                       | void                                 | accept                                                                         |
+
+
+- When you see something like that. Which functional interface you could use?
+
+```
+var d = 1.0;
+___________________ f1 = x -> 1;
+f1.applyAsInt(d);
+```
+
+- When you see a question like this, look for clues. You can see that the functional interface in question takes a 
+  a double parameter and returns an int.
+- You can also see that it has a single abstract method named applyAsInt.
+- The DoubleToIntFunction and ToIntFunction meet all three of those criteria.
+
+
+## Working with Advanced Stream Pipeline Concepts
+
+
 
 
 
