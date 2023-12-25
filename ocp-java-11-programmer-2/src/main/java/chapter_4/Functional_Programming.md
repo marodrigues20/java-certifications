@@ -1568,10 +1568,96 @@ f1.applyAsInt(d);
 
 ## Working with Advanced Stream Pipeline Concepts
 
+- You'll see the relationship between stream and the underlying data, chaining Optional and grouping collectors.
+
+
+### Linking Stream to the Underlying Data
+
+- What do you think this outputs?
+
+i.e: chapter_4.advanced_stream_pipeline.LinkingStream.java#linkStreamToTheUnderlyingData()
+```
+25: var cats = new ArrayList<String>();
+26: cats.add("Annie");
+27: cats.add("Ripley");
+28: var stream = cats.stream();
+29: cats.add("KC");
+30: System.out.println(stream.count());
+```
+
+- The correct answer is 3.
+- Lines 25-27 create a List with two elements.
+- Line 28 requests that a stream be created from that List.
+- Remember that streams are ***Lazy evaluated***. This means that the stream isn't actually created one line 28.
+- An object is created that knows where to look for the data when it is needed.
+- On line 29, the List gets a new element.
+- On line 30, the stream pipeline actually runs.
+- The stream pipeline runs first, looking at the source and seeing three elements.
+
+### Chaining Optionals
+
+- Suppose that you are given an Optional<Integer> and asked to print the value, but only if it is a three-digit number.
+- Without functional programming, you could write the following:
 
 
 
+i.e: chapter_4.advanced_stream_pipeline.LinkingStream.java#threeDigitRegularWay()
+```
+private static void threeDigit(Optional<Integer> optional){
+  if (optional.isPresent()) {  // outer if
+    var num = optional.get();
+    var string = "" + num;
+    if (string.length() == 3) // inner if
+      System.out.println(string);
+  }
+}
+```
 
+
+- It works, but it contains nested if statements. That's extra complexity.
+- Let's try this again with functional programming.
+
+i.e: chapter_4.advanced_stream_pipeline.LinkingStream.java#threeDigit()
+```
+private static void threeDigit(Optional<Integer> optional) {
+  optional.map(n -> "" + n)           // part 1
+    .filter(s -> s.length() == 3)     // part 2  
+    .ifPresent(System.out::println);  // part 3
+}
+```
+
+- This is much shorter and more expressive.
+- With lambdas, the exam is fond of carving up a single statement and identifying the pieces with comments.
+
+
+- Now suppose that we wanted to get an Optional<Integer> representing the length of the String contained in another 
+  Optional. Easy enough.
+
+```
+Optional<Integer> result = optional.map(String::length);
+```
+
+- What if we had a helper method that did the logic of calculating something for us that returns Optional<Integer>? 
+  Using map doesn't work.
+
+
+```
+Optional<Integer> result = optional
+  .map(ChainingOptionals::calculator);  //DOES NOT COMPILE
+```
+
+- The problem is that calculator returns Optional<Integer>.
+- The map() method adds another Optional, giving us Optional<Optional<Integer>>.
+- Well, that's not good. The solution is to call flatMap() instead.
+
+```
+Optional<Integer> result = optional
+    .flatMap(ChainingOptionals::calculator);
+```
+
+- This one works because ***flatMap removes the unnecessary layer***.
+- In other words, it flattens the result.
+- Chaining calls to flatMap() is useful when you want to transform one Optional type to another.
 
 
 
