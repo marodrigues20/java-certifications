@@ -14,12 +14,12 @@ public class BasicCollectorsExamples {
 
     public static void main(String[] args) {
 
-        joininCollector();
-        averingIntCollector();
+        //joiningCollector();
+        //averingIntCollector();
         toCollectionCollector();
-        mapsCollector();
-        maps2Collector();
-        maps3Collector();
+        //mapsCollector();
+        //maps2Collector();
+        //maps3Collector();
 
     }
 
@@ -77,7 +77,7 @@ public class BasicCollectorsExamples {
         System.out.println(result);
     }
 
-    private static void joininCollector() {
+    private static void joiningCollector() {
 
         var ohMy = Stream.of("lions", "tigers", "bears");
         String result = ohMy.collect(Collectors.joining(", "));

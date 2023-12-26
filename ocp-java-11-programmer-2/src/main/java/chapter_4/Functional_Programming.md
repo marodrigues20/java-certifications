@@ -1660,16 +1660,177 @@ Optional<Integer> result = optional
 - Chaining calls to flatMap() is useful when you want to transform one Optional type to another.
 
 
+## Real World Scenario
+
+### Checked Exception and Functional Interfaces
+
+- You might have notice by now that most functional interfaces do not declare checked exceptions.
+- This is normally OK.
+- However, it is a problem when working with methods that declare checked exceptions.
+- Suppose that we have a class with a method that throws a checked exception.
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class ExceptionCaseStudy {
+    
+    private static List<String> create() throws IOException {
+        throw new IOException();
+    }
+}
+
+```
+
+- Now we use it in a stream.
+
+```
+public void good() throws IOException {
+    ExceptionCaseStudy.create().stream().count();
+        }
+```
+
+- Nothing new here. The create() method throws a checked exception.
+- The calling method handles or declares it.
+- Now what about this one?
+
+```
+public void bad() throws IOException {
+  Supplier<List<String>> s = ExceptionCaseStudy::create; // DOES NOT COMPILE
+}
+```
+
+- The actual compiler error is as follows:
+
+```
+  unhandled exception type IOException
+```
+
+- The problem is that the lambda to which this method reference expands does not declare an exception.
+- The Supplier interface does not allow checked exceptions.
+- There are two approaches to get around this problem.
+
+- First approach is to catch the exception and turn it into an unchecked exception.
+
+```
+public void ugly() {
+  Supplier<List<String>> s = () -> {
+    try{
+        return ExceptionCaseStudy.create();
+    } catch (IOException e){
+      throw new RuntimeException(e);
+    }
+  }
+}
+```
+
+- This works. But the code is ugly
+- Another alternative is to create a wrapper method with the try/catch.
+
+
+```
+private static List<String> createSafe() {
+  try{
+    return ExceptionCaseStudy.create();
+  } catch (IOException e) {
+    throw new RuntimeException(e);
+  }
+}
+```
+
+- Now we can use the safe wrapper in our Supplier without issue.
+
+```
+public void wrapper() {
+    Supplier<List<String>> s2 = ExceptionCaseStudy::createSafe;
+}
+```
+
+
+## Collecting Results
+
+- Early in the chapter, you saw the collect() terminal operation.
+- There are many predefined collectors, including those shown in Table 4.13.
+- These collectors are available via static methods on the Collectors interface.
+
+TABLE 4.13 Examples of grouping / partitioning collectors
+
+| Collector                                                                                                                                     | Description                                                                                                            | Return value when passed to collect                                  |
+|-----------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
+| averagingDouble(ToDoubleFunction f); averagingInt(ToIntFunction f); averagingLong(ToLongFunction f)                                           | Calculate the average for our three core primitive types                                                               | Double                                                               |
+| counting()                                                                                                                                    | Counts the number of elements                                                                                          | Long                                                                 |
+| groupingBy(Function f); groupingBy(Function f, Collector dc), groupingBy(Function f, Supplier s, Collector dc)                                | Creates a map grouping by the specified function with the optional map type supplier and optional downstream collector | Long                                                                 |
+| joining (CharSequence cs)                                                                                                                     | Creates a single String using cs as a delimiter between elements if one is specified                                   | String                                                               |      
+| maxBy(Comparator c); minBy(Comparator c)                                                                                                      | Finds the largest/smallest elements                                                                                    | Optional<T>                                                          |
+| mapping(Function f, Collector dc)                                                                                                             | Adds another level of collectors                                                                                       | Collector                                                            |
+| partitioningBy(Predicate p); partitiong(Predicate p, Collector dc)                                                                            | Creates a map grouping by the specified predicate with the optional further downstream collector                       | Map<Boolean, List<T>>                                                |
+| summarizingDouble(ToDoubleFunction f); summarizingInt(ToIntFunction f); summarizingLong(ToLongFunction f)                                     | Calculates average, min, max, and so on                                                                                | DoubleSummaryStatistics; IntSummaryStatistics; LongSummaryStatistics |
+| toList(); toSet()                                                                                                                             | Creates an arbitrary type of list or set                                                                               | List; Set                                                            |
+| toCollection(Supplier s)                                                                                                                      | Creates an arbitrary type of list or set                                                                               | Collection                                                           |
+| toMap(Function k, Function v); toMap(Function k, Function v, BinaryOperator m); toMap(Function k, Function v, BinaryOperator m, Supplier s)   | Creates a map using functions to map the keys, values, an optional merge function, and an optional map type supplier   | Map                                                                  |  
+
+
+### Collecting Using Basic Collectors
+
+- Luckily, many of these collectors work in the same way. Let's look at an example.
+
+i.e: chapter_4.collectors.BasicCollectorsExamples.java#joiningCollector()
+```
+var ohMy = Stream.of("lions", "tigers", "bears");
+String result = ohMy.collect(Collectors.joining(", "));
+System.out.println(result); // lions, tigers, bears
+```
+
+- Notice how the predefined collectors are in the Collectors class rather than the Collector interface.
+- This is a common theme, which you saw with Collection versus Collections.
+- You'll see this pattern again in Chapter 9, "NIO.2," when working with Paths and Path, and other related types.
+
+- We pass the predefined joining collector to the collect() method. 
+- All elements of the stream are then merged into a String with the specified delimiter between each element.
+- It is important to pass the Collector to the collect method. It exists to help collect elements.
+- A Collector doesn't do anything on its own.
 
 
 
+- Let's try another one.
+- What is the average length of the three animal names?
 
 
+i.e: chapter_4.collectors.BasicCollectorsExamples.java#averingIntCollector()
+```
+var onMy = Stream.of("lions", "tigers", "bears");
+Double result = ohMy.collect(Collectors.averagingInt(String::length));
+System.out.println(result); // 5.333333333333333
+```
+
+- With primitive streams, the result of an average was always a double, regardless of what type is being average.
+- For collectors, it is a Double since those need an Object.
+
+- Often, you'll find yourself interacting with code that was written without streams. 
+- This means that it will expect a Collection type rather than a Stream type.
+- You can still express yourself using a Stream and then convert to a Collection at the end, for example:
 
 
+i.e: chapter_4.collectors.BasicCollectorsExamples.java#toCollectionCollector()
+```
+var ohMy = Stream.of("lions", "tigers", "bears");
+TreeSet<String> result = ohMy
+  .filter(s -> s.startsWith("t"))
+  .collect(Collectors.toCollection(TreeSet::new));
+
+System.out.println(result); // [tigers]
+```
+
+- If we didn't care which implementation of Set we got, we could have written Collectors.toSet() instead.
 
 
+NOTE: At this point, you should be able to use all of the Collectors in TABLE 4.13 except groupingBy(), mapping(),
+partitioningBy(), and toMap().
 
+
+### Collecting into Maps
+
+- 
 
 
 
