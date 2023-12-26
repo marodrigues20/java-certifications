@@ -16,10 +16,10 @@ public class BasicCollectorsExamples {
 
         //joiningCollector();
         //averingIntCollector();
-        toCollectionCollector();
+        //toCollectionCollector();
         //mapsCollector();
         //maps2Collector();
-        //maps3Collector();
+        maps3Collector();
 
     }
 

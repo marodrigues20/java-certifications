@@ -1,5 +1,6 @@
 package chapter_4.collectors;
 
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -8,14 +9,26 @@ public class GroupingByExamples {
 
     public static void main(String[] args) {
 
-        groupingByExample();
+        //groupingByExample();
         //groupingBySetExample();
         //groupingByTreeMapExample();
         //groupingByTreeMapListExample();
         //groupingByCountingExample();
-        //groupingByMappingExample();
+        groupingByMappingExample();
+        //groupingByLength();
 
 
+    }
+
+
+    private static void groupingByLength(){
+        var ohMy = Stream.of("lions", "tigers", "bears");
+        Map<Integer, Long> map = ohMy.collect(
+                Collectors.groupingBy(
+                String::length,
+                Collectors.counting()));
+
+        System.out.println(map);
     }
 
     private static void groupingByMappingExample() {
@@ -43,24 +56,25 @@ public class GroupingByExamples {
     private static void groupingByTreeMapListExample() {
 
         var ohMy = Stream.of("lions", "tigers", "bears");
-        Map<Integer, List<String>> map = ohMy.collect(
+        TreeMap<Integer, List<String>> map = ohMy.collect(
                 Collectors.groupingBy(
                         String::length,
                         TreeMap::new,
                         Collectors.toList()));
         System.out.println(map); // {5=[lions, bears], 6=[tigers]}
-
+        System.out.println(map.getClass()); //class java.util.TreeMap
         //Note: groupingBy cannot return null. It doesn't allow null keys.
     }
 
     private static void groupingByTreeMapExample() {
         var ohMy = Stream.of("lions", "tigers", "bears");
-        Map<Integer, Set<String>> map = ohMy.collect(
+        TreeMap<Integer, Set<String>> map = ohMy.collect(
                 Collectors.groupingBy(
                         String::length,
                         TreeMap::new,
                         Collectors.toSet()));
-        System.out.println(map); // {5=[lions, bears], 6=[tigers]}
+        System.out.println(map);              // {5=[lions, bears], 6=[tigers]}
+        System.out.println(map.getClass());   // class java.util.TreeMap
 
         //Note: groupingBy cannot return null. It doesn't allow null keys.
     }
@@ -83,6 +97,7 @@ public class GroupingByExamples {
                 Collectors.groupingBy(String::length)
         );
         System.out.println(map); // {5=[lions, bears], 6=[tigers]}
+        System.out.println(map.getClass());
 
         //Note: groupingBy cannot return null. It doesn't allow null keys.
     }

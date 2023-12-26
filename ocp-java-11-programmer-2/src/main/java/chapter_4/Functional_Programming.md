@@ -1830,31 +1830,236 @@ partitioningBy(), and toMap().
 
 ### Collecting into Maps
 
-- 
+- Code using Collectors involving maps can get quite long. We will build it up slowly. Make sure that you understand 
+  each example before going on to the next one. Let's start with a straightforward example to create a map from a stream.
+
+
+i.e: chapter_4.collectors.BasicCollectorsExamples.java#mapsCollector()
+
+```
+var ohMy = Stream.of("lions", "tigers", "bears");
+Map<String, Integer> map = ohMy.collect(
+  Collectors.toMap(s -> s, String::length));
+System.out.println(map); // {lions=5, bears=5, tigers=6}
+
+```
+
+- When creating a map, you need to specify two functions. The first function tells the collector how to create the key.
+
+Note: Returning the same value into a lambda is a common operation, so Java provides a method for it. You can rewrite
+      s -> s as Function.identity(). 
+
+- Let's suppose that our requirement is to create a comma-separated String with the animals names. We could write this:
+
+
+i.e: chapter_4.collectors.BasicCollectorsExamples.java#maps2Collector()
+
+```
+var ohMy = Stream.of("lions", "tigers", "bears");
+Map<Integer, String> map = ohMy.collect(Collectors.toMap(
+    String::length,
+    k -> k,
+    (s1, s2) -> s1 + "," + s2));
+    
+System.out.println(map);              // {5=lions,bears, 6=tigers}
+System.out.println(map.getClass());   // class java.util.HashMap
+```
+
+- It so happens that the Map returned is a HashMap. This behavior is not guaranteed.
+- Suppose that we want to mandate that the code return a TreeMap instead. No problem.
+- We would just add a constructor reference as a parameter.
+
+
+i.e: chapter_4.collectors.BasicCollectorsExamples.java#maps3Collector()
+```
+ var ohMy = Stream.of("lions", "tigers", "bears");
+        Map<Integer, String> map = ohMy.collect(
+                Collectors.toMap(String::length, s -> s,
+                        (s1,s2) -> s1 + "," + s2,
+                        TreeMap::new)
+        );
+
+System.out.println(map); // {5=lions,bears, 6=tigers}
+System.out.println(map.getClass());  //class java.util.TreeMap
+```
+
+- This time we got the type that we specified
+
+
+### Collecting Using Grouping, Partitioning, and Mapping
+
+- Now suppose that we want to get groups of names by their length.
+- We can do that by saying that we want to group by length.
+
+
+i.e: chapter_4.collectors.GroupingByExamples.java#groupingByExample()
+
+```
+var ohMy = Stream.of("lions", "tigers", "bears");
+Map<Integer, List<String>> map = ohMy.collect(
+        Collectors.groupingBy(String::length)
+);
+System.out.println(map);              // {5=[lions, bears], 6=[tigers]}
+System.out.println(map.getClass());  //class java.util.HashMap
+
+//Note: groupingBy cannot return null. It doesn't allow null keys.
+```
+
+- The groupingBy() collector tells collect() that it should group all of the elements of the stream into a Map. 
+- The function determines the keys in the Map.
+- Each value in the Map is a List of all entries that match that keys.
+
+
+- Suppose that we don't want a List as the value in the map and prefer a Set instead.
+- No problem. There's another method signature that let us pass a downstream collector.
+
+i.e: chapter_4.collectors.GroupingByExamples.java#groupingBySetExample()
+```
+var ohMy = Stream.of("lions", "tigers", "bears");
+Map<Integer, Set<String>> map = ohMy.collect(
+        Collectors.groupingBy(
+                String::length,
+                Collectors.toSet()));
+                
+System.out.println(map); // {5=[lions, bears], 6=[tigers]}
+
+//Note: groupingBy cannot return null. It doesn't allow null keys.
+```
+
+
+- We can even change the type of Map returned through yet another parameter.
+
+i.e: chapter_4.collectors.GroupingByExamples.java#groupingByTreeMapExample()
+```
+var ohMy = Stream.of("lions", "tigers", "bears");
+TreeMap<Integer, Set<String>> map = ohMy.collect(
+        Collectors.groupingBy(
+                String::length,
+                TreeMap::new,
+                Collectors.toSet()));
+                
+System.out.println(map);            // {5=[lions, bears], 6=[tigers]}
+System.out.println(map.getClass()); //class java.util.TreeMap
+```
+
+- This is very flexible.
+- What if we want to change the type of Map returned but leave the type of values alone as a List?
+
+i.e: chapter_4.collectors.GroupingByExamples.java#groupingByTreeMapListExample()
+```
+var ohMy = Stream.of("lions", "tigers", "bears");
+        TreeMap<Integer, List<String>> map = ohMy.collect(
+                Collectors.groupingBy(
+                        String::length,
+                        TreeMap::new,
+                        Collectors.toList()));
+        System.out.println(map); // {5=[lions, bears], 6=[tigers]}
+        System.out.println(map.getClass()); //class java.util.TreeMap
+
+```
 
 
 
+### Partitioning
+
+- Partitioning is a special case of grouping.
+- With partitioning, there are only two possible groups-true and false.
+- Partitioning is like splitting a list into two parts.
+
+
+- Suppose that we are making a sign to put outside each animal's exhibit. 
+- We have two sizes of signs.
+- One can accommodate names with five or fewer characters.
+- The other is needed for longer names.
+- We can partition the list according to which sign we need.
 
 
 
+i.e: chapter_4.collectors.PartitioningByExamples.java#partitioningByExample()
+```
+var ohMy = Stream.of("lions", "tigers", "bears");
+Map<Boolean, List<String>> map = ohMy.collect(
+        Collectors.partitioningBy(s -> s.length() <= 5)
+);
+System.out.println(map); //{false=[tigers], true=[lions, bears]}
+```
+
+- Here we passed a Predicate with the logic for which group each animal name belongs in.
 
 
+- Now suppose that we've figured out how to use a different font, and seven characteres can now fit on the smaller sign.
+- No worries. We just change the Predicate.
 
 
+```
+var ohMy = Stream.of("lions", "tigers", "bears");
+Map<Boolean, List<String>> map = ohMy.collect(
+        Collectors.partitioningBy(s -> s.length() <= 7)
+);
+System.out.println(map); {false=[], true=[lions, tigers, bears]}
+```
 
 
+- Notice that there are still two keys in the map-one for each boolean value.
+- As with groupingBy(), we can change the type of List to something else.
+
+```
+var ohMy = Stream.of("lions", "tigers", "bears");
+Map<Boolean, Set<String>> map = ohMy.collect(
+    Collectors.partitioningBy(s -> s.length() <= 7,
+            Collectors.toSet())
+);
+System.out.println(map); //{false=[tigers], true=[lions, bears]}
+```
 
 
+- Unlike groupingBy(), we cannot change the type of Map that gets returned. However, there are only two keys in the map,
+  so does it really matter which Map type we use?
+
+- Instead of using the downstream collector to specify the type, we can use only of the collectors that we've already
+  shown. For example, we can group by the length of the animal name to see how many of each length we have.
 
 
+i.e: chapter_4.collectors.GroupingByExamples.java#groupingByLength()
+```
+var ohMy = Stream.of("lions", "tigers", "bears");
+Map<Integer, Long> map = ohMy.collect(
+        Collectors.groupingBy(
+        String::length,
+        Collectors.counting()));
+
+System.out.println(map);  // {5=2, 6=1}
+```
 
 
+### mapping()
+
+- Finally, there is a mapping() collector that lets us go down a level and another collector.
+- Suppose that we wanted to get the first letter of the first animal alphabetically of each length.
+- Why? Perhaps for random sampling.
+- The examples on this part of the exam are fairly contrived as well.
+- We'd write the following:
 
 
+i.e: chapter_4.collectors.GroupingByExamples.java#groupingByMappingExample()
+````
+var ohMy = Stream.of("lions", "tigers", "bears");
+Map<Integer, Optional<Character>> map = ohMy.collect(
+        Collectors.groupingBy(String::length,
+                Collectors.mapping(
+                        s -> s.charAt(0),
+                        Collectors.minBy((a,b) -> a - b)))
+);
+System.out.println(map); //{5=Optional[b], 6=Optional[t]}
+````
+
+- We aren't going to tell you that this code is easy to read.
+- We will tell you that it is the most complicated thing you need to understand for the exam.
+- Comparing it to the previous example, you can see that we replaced counting() with mapping().
+- It so happens that mapping() takes two parameters: the function for the value and how to group it further.
 
 
-
-
-
+Note: There is one more collector called reducing(). You don't need to know it for the exam.
+      It is a general reduction in case all of the previous collectors don't meet your needs.
 
 

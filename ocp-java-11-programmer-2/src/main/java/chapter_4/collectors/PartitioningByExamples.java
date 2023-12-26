@@ -19,7 +19,7 @@ public class PartitioningByExamples {
     private static void partitioningBySetExample() {
         var ohMy = Stream.of("lions", "tigers", "bears");
         Map<Boolean, Set<String>> map = ohMy.collect(
-                Collectors.partitioningBy(s -> s.length() <= 5,
+                Collectors.partitioningBy(s -> s.length() <= 7,
                         Collectors.toSet())
         );
         System.out.println(map); //{false=[tigers], true=[lions, bears]}
