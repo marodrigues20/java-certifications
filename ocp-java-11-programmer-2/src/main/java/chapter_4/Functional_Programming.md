@@ -1269,7 +1269,7 @@ System.out.println(avg.getAsDouble()); // 2.0
 ## Creating Primitive Streams
 
 - Here are three types of primitive streams.
-  - IntStream: Used for teh primitive types int, short, byte, and char
+  - IntStream: Used for the primitive types int, short, byte, and char
   - LongStream: Used for the primitive type long
   - DoubleStream: Used for the primitive types double and float
 
