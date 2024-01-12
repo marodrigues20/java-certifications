@@ -103,12 +103,12 @@
 
 ### Table 5.1 Unchecked exceptions
 
-| ArithmeticExceptions      | ArrayIndexOutOfBoundException |
-|---------------------------|-------------------------------|
-| ArrayStoreException       | ClassCastException            |
-| IllegalArguementException | IllegalStateException         |
-| MissingResourceException  | NullPointerException          |
-| NumberFormatException     | UnsupportedOperationException |
+| ArithmeticExceptions     | ArrayIndexOutOfBoundException |
+|--------------------------|-------------------------------|
+| ArrayStoreException      | ClassCastException            |
+| IllegalArgumentException | IllegalStateException         |
+| MissingResourceException | NullPointerException          |
+| NumberFormatException    | UnsupportedOperationException |
 
 - Table 5.2 presents the checked exceptions you should also be familiar with.
 
@@ -120,4 +120,162 @@
 | SQLException             | Not Applicable |
 
 ## Inheriting Exception Classes
+
+- When evaluating catch blocks, the inheritance of the exception types can be important.
+- For the exam, you should know that NumberFormatException inherits from IllegalArgumentException.
+- You should also know that FileNotFoundException and NotSerializableException both inherit from IOException.
+
+- This comes up often in multi-catch expression. For example, why does the following not compile?
+
+```
+try{
+  throw new IOException();
+} catch (IOException | FileNotFoundException e) {} // DOES NOT COMPILE  
+```
+
+- Since FileNotFoundException is a subclass of IOException, listing both in a multi-catch expression is redundant, 
+  resulting in a compilation error.
+
+- Ordering of exceptions in consecutive catch blocks matters too. Do you understand why the following does not compile?
+
+```
+try{
+  throw new IOException();
+} catch (IOException e) {
+} catch (FileNotFoundException e) {} // DOES NOT COMPILE
+```
+
+- For the exam, remember that trying to catch a more specific exception (after already catching a broader exception) 
+  results in unreachable code and a compiler error.
+
+
+
+## Creating Custom Exceptions
+
+- Java provides many exception classes out of the box. Sometimes, you want to write a method with a more specialized
+  type of exception. You can create own exception class to do this.
+
+## Declaring Exceptions Classes
+
+- When creating your own exception, you need to decide whether it should be a checked or unchecked exception.
+- While you can extend any exception class, it is most common to extend Exception (for checked) or RuntimeException
+  (for unchecked).
+
+
+- Creating your own exception class is really easy. Can you figure out whether the exception are checked or unchecked
+  in this example?
+
+```
+1: class CannotSwimException extends Exception {}
+2: class DangerInTheWater extends RuntimeException {}
+3: class SharkInTheWaterException extends DangerInTheWater {}
+4: class Dolphin {
+5:    public void swim() throws CannotSwimException {
+6:        // logic here
+7:    }
+8: }
+```
+
+- The method implementation could be written to actually throw it or not. 
+- The method implementation could also be written to throw a SharkInTheWaterException,
+  and ArrayIndexOutOfBoundsExceptions, or any other runtime exception.
+
+
+## Adding Custom Constructors
+
+- Let's see how to pass more information in your exception.
+- The following example shows the three most common constructors defined by the Exception class:
+
+```
+public class CannotSwimException extends Exception {
+  public CannotSwimException() {
+    super();
+  }
+  public CannotSwimException(Exception e){
+    super(e)
+  }
+  public CannotSwimException(String message) {
+    super(message);
+  }
+}
+```
+
+Note: Remember that the default no-argument constructor is provided automatically if you don't write any constructor of
+      your own.
+
+
+- In these examples, our constructors and parent constructors took the same parameters, but these is certainly not 
+  required. For example, the following constructor takes an Exception and calls the parent constructor that takes a 
+  String:
+
+
+```
+public CannotSwimException(Exception e) {
+  super("Cannot swim because: " + e.toString());
+}
+```
+
+- Using a different constructor allows you to provide more information about what went wrong.
+- For example, let's say we have a main() method with the following line:
+
+```
+15: public static void main(String[] unused) throws Exception {
+16:     throw new CannotSwimException();
+17: }
+```
+
+The output for this method is as follow:
+
+```
+Exception in thread "main" CannotSwimException
+  at CannotSwimException.main(CannotSwimException.java:16)
+```
+
+- The JVM give us just the exception and its location. Useful, but we could get more.
+- Now, let's change the main() method to include some text, as shown here:
+
+```
+15: public static void(String[] unused) throws Exception {
+16:   throw new CannotSwimException("broken fin");
+17: }
+```
+
+- The output of this new main() method is as follow:
+
+```
+Exception in thread "main" CannotSwimException: broken fin
+  at CannotSwimException.main(CannotSwimException.java:16)
+```
+
+- This time we see the message text in the result. You might want to provide more information about the exception
+  depending on the problem.
+- We can even pass another exception, if there is an underlying cause for the exception.
+- Take a look at this version of our main() method:
+
+```
+15: public static void main(String[] unused) throws Exception {
+16:   throw new CannotSwimException(
+17:     new FileNotFoundException("Cannot find shark file"));
+18: }
+```
+
+- This would yield the longest output so far:
+
+```
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
