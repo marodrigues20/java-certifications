@@ -88,7 +88,35 @@
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_5/images/Figure_5_3.png?raw=true)
 
 
+- To begin with, a checked exception must be handled or declared by the application code where it is thrown.
+- The handle or declare rule dictates that a checked exception must be either caught in aa catch block or thrown to the 
+  caller by including it in the method declaration.
+- In Java, all exceptions that inherit Exception but not RuntimeException are considered checked exceptions.
+- On the other hand, an unchecked exception does not be handled or declared.
+- Unchecked exception are often referred to as runtime exception, although in java unchecked exception include any class
+  that inherits RuntimeException or Error. An ***Error*** is fatal, and it is considered a poor practice to catch it.
 
+  
+- You need to memorize whether the exceptions are checked or unchecked exceptions.
 
+- Table 5.1 list the unchecked exceptions that inherit RuntimeException that you should be familiar with for the exam.
 
+### Table 5.1 Unchecked exceptions
 
+| ArithmeticExceptions      | ArrayIndexOutOfBoundException |
+|---------------------------|-------------------------------|
+| ArrayStoreException       | ClassCastException            |
+| IllegalArguementException | IllegalStateException         |
+| MissingResourceException  | NullPointerException          |
+| NumberFormatException     | UnsupportedOperationException |
+
+- Table 5.2 presents the checked exceptions you shoudl also be familiar with.
+
+### TABLE 5.2 Checked exceptions
+
+| FileNotFoundException    | IOException    |
+|--------------------------|----------------| 
+| NotSerializableException | ParseException |
+| SQLException             | N/A            |
+
+## Inheriting Exception Classes
