@@ -41,15 +41,23 @@
   one finally block.
 
 
-Tip: Swallowing an exception
+## Tip: Swallowing an exception
   - Swallowing an exception is when you handle it with an empty catch block.
   - When presenting a topic, we often do this to keep things simple.
   - Please, never do this in practice! Oftentimes, it is added by developers who do not want to handle or declare an 
     exception properly and can lead to bugs in production code.
 
 
+## Try-with-resources
+- You can also create a try-resources statement to handle exceptions.
+- A try-with-resources statement looks a lot like a try statement, except that it includes a list of resources inside a 
+  set of parentheses, (). These resources are automatically closed in the reverse order that they are declared at the 
+  conclusion of the try clause.
+- The syntax of the try-with-resources statement is presented in Figure 5.2.
 
 
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_5/images/figure_5_2.png?raw=true)
 
 
 
