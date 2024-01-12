@@ -57,7 +57,7 @@
 
 
 
-![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_5/images/figure_5_2.png?raw=true)
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_5/images/Figure_5_2.png?raw=true)
 
 
 
