@@ -33,7 +33,7 @@
 - Figure 5.1 shows the syntax of a try statement.
 
 
-![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_2/images/figure_5_1.png?raw=true)
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_5/images/figure_5_1.png?raw=true)
 
 
 
