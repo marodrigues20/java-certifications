@@ -110,13 +110,14 @@
 | MissingResourceException  | NullPointerException          |
 | NumberFormatException     | UnsupportedOperationException |
 
-- Table 5.2 presents the checked exceptions you shoudl also be familiar with.
+- Table 5.2 presents the checked exceptions you should also be familiar with.
 
 ### TABLE 5.2 Checked exceptions
 
 | FileNotFoundException    | IOException    |
-|--------------------------|----------------| 
-| NotSerializableException | ParseException |
-| SQLException             | N/A            |
+|--------------------------|----------------|
+| NotSerializableException | ParseException | 
+| SQLException             | Not Applicable |
 
 ## Inheriting Exception Classes
+
