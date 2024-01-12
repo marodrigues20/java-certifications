@@ -36,7 +36,16 @@
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_5/images/figure_5_1.png?raw=true)
 
 
+- A traditional try statement must have at least one of the following:
+- a catch block or a finally block. It can have more than one catch block, including multi-catch blocks, but at most 
+  one finally block.
 
+
+Tip: Swallowing an exception
+  - Swallowing an exception is when you handle it with an empty catch block.
+  - When presenting a topic, we often do this to keep things simple.
+  - Please, never do this in practice! Oftentimes, it is added by developers who do not want to handle or declare an 
+    exception properly and can lead to bugs in production code.
 
 
 
