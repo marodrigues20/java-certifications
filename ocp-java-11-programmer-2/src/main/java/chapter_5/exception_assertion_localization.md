@@ -33,7 +33,7 @@
 - Figure 5.1 shows the syntax of a try statement.
 
 
-![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_5/images/figure_5_1.png?raw=true)
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_5/images/Figure_5_1.png?raw=true)
 
 
 - A traditional try statement must have at least one of the following:
@@ -60,9 +60,32 @@
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_5/images/Figure_5_2.png?raw=true)
 
 
+- Did you notice we used var for the resource type?
+- While var is not required, it is convenient when working with streams, database objects, and especially generics,
+  whose declarations can be lengthy.
 
 
+## Distinguishing between throw and throws
 
+- By now, you should know the difference between ***throw*** and ***throws***.
+- The ***throw*** keyword means an exception is actually being thrown, while the throws keyword indicates that the 
+  method merely has the potential to throw that exception.
+
+```
+10: public String getDataFromDatabase() throws SQLException {
+11:  throw new UnsupportedOperationException();
+12: }
+```
+
+
+## Examining Exception Categories
+
+- In Java, all exceptions inherit from Throwable, although in practice, the only ones you should be handling or declaring
+  extend from the Exception class.
+- Figure 5.3 reviews the hierarchy of the top-level exception classes.
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_5/images/Figure_5_3.png?raw=true)
 
 
 
