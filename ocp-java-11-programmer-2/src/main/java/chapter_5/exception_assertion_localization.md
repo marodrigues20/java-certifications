@@ -290,9 +290,101 @@ try {
 
 ## Automating Resource Management
 
+- As previously described, a try-with-resources statement ensures that any resources declared in the try clause are 
+  automatically closed at the conclusion of the try block.
+- This feature is also known as *** automatic resources management***, because Java automatically takes care of closing 
+  the resources for you.
+- For the exam, a resource is typically a file a database that requires some kind of stream or connection to read or 
+  write data.
+
+### Resources Managament vs. Garbage Collection
+
+- If an object connected to a resource is not closed, then the connection could remain open. In fact, it may interfere 
+  with Java's ability to garbage collect the object.
+
+
+## Constructing Try-With-Resources Statements
+
+- What types of resources can be used with a try-with-resources statements?
+  - try-with-resources statements require resources that implement the AutoCloseable interface.
+
+```
+try (String reptile = "lizard") {
+}
+```
+
+Inheriting AutoCloseable requires implementing a compatible close() method.
+
+```
+interface AutoCloseable{
+  public void close() throws Exception;
+}
+```
+
+- The close() method can choose to throw Exception or a subclass, or not throw any exception at all.
 
 
 
+- Note:
+  - In Chapter 8 and Chapter 9, you will encounter resources that implement Closeable, rather than AutoCloseable.
+  - Since Closeable extends AutoCloseable, they are both supported in try-with-resources statements.
+  - The only difference between the two is that Closeable's close() method declares IOException, while AutoCloseable's 
+    close() method declares Exception.
+
+
+- Let's define our own custom resources class for use in a try-with-resources statement.
+
+i.e: chapter_5.trywithresources.MyFileReader.java
+
+
+```java
+public class MyFileReader implements AutoCloseable{
+    
+    private String tag;
+    
+    public MyFileReader(String tag){
+        this.tag = tag;
+    }
+    
+    @Override
+    public void close() throws Exception {
+        System.out.println("Closed:" + tag);
+    }
+}
+```
+
+- The following code snipped makes use of our custom reader class:
+
+
+i.e: chapter_5.trywithresources.MyReaderFileUse.java
+
+```java
+public class MyReaderFileUse {
+
+
+    public static void main(String[] args) throws Exception {
+
+        try (var bookReader = new MyFileReader("monkey")){
+            System.out.println("Try Block");
+        } finally {
+            System.out.println("Finally Block");
+        }
+    }
+}
+```
+
+- The code prints the following at runtime:
+
+```
+Try Block
+Closed:monkey
+Finally Block
+```
+
+- As you can see, the resources are closed at the end of the try statement, before any catch or finally block are
+  executed.
+- Behind the scenes, the JVM calls the close() method inside a hidden finally block, which we can refer to as the 
+  implicit finally block. The finally block that the programmer declared can be referred to as the explicit finally block.
 
 
 
