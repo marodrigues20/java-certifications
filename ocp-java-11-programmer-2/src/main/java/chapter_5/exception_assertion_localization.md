@@ -16,7 +16,7 @@
   assertions, and localization.
 - One way to make sure your applications respond to change is to build in support early on.
 - For example, ***supporting localization doesn't mean you actually need to support multiple
-  languages right away.*** It just means your application can be more early adapted in the feature.
+  languages right away.*** It just means your application can be more early adapted in the future.
 - By the end of this chapter, we hope we've provided structure for designing applications that better adapt to change
 
 
@@ -262,10 +262,33 @@ Exception in thread "main" CannotSwimException: broken fin
 - This would yield the longest output so far:
 
 ```
-
+Exception in thread "main" CannotSwimException:
+    java.io.FileNotFoundException: Cannot find shark file
+    at CannnotSwimException.main(CannotSwimException.java:16)
+  Caused by: java.io.FileNotFoundException: Cannot find shark file
+     ... 1 more
 ```
 
+## Printing Stack Traces
 
+- The errors messages that we've been showing are called stack traces.
+- A stack trace shows the exceptions along with the method calls it took to get there.
+- The JVM automatically prints a stack trace when an exception is thrown that is not handled by the program.
+
+- You can also print the stack trace on your own.
+- The advantage is that you can read or log information from the stack trace and then continue to handle or 
+even rethrow it.
+
+
+```
+try {
+  throw new CannotSwimException();
+} catch (CannotSwimException e) {
+  e.printStackTrace();
+}
+```
+
+## Automating Resource Management
 
 
 
