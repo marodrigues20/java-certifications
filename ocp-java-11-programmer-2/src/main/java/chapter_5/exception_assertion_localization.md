@@ -386,11 +386,343 @@ Finally Block
 - Behind the scenes, the JVM calls the close() method inside a hidden finally block, which we can refer to as the 
   implicit finally block. The finally block that the programmer declared can be referred to as the explicit finally block.
 
+- Tip:
+  - Remember that the resource will be closed at the completion of the try block, before any declared catch or finally 
+    blocks execute.
+
+- The second rule you should be familiar with is: a try-with-resources statement can include multiple resources, which 
+  closed in the reverse order in which they are declared.
+- Resources are terminated by a semicolon (;), with the last one being optional.
+
+- Consider the following code snipped:
+
+```java
+package chapter_5.trywithresources;
+
+public class MultipleResourcesUse {
+
+    public static void main(String[] args) throws Exception {
+
+        try ( var bookReader = new MyFileReader("1");
+              var movieReader = new MyFileReader("2");
+              var tvReader = new MyFileReader("3");){
+            System.out.println("Try Block");
+        } finally {
+            System.out.println("Finally Block");
+        }
+
+    }
+}
+```
+- When executed, this code prints the following:
+
+```
+Try Block
+Closed:3
+Closed:2
+Closed:1
+Finally Block
+```
+
+- The final rule you should is: resources declared within a try-with-resources statement are in scope only within the 
+  try block.
+- This is another way to remember that the resources are closed before any catch or finally blocks are executed, as the 
+  resources are no longer available. Do you see why lines 6 and 8 don't compile in this example?
 
 
+```
+3: try (Scanner s = new Scanner(System.in)) {
+4:  s.nextLine();
+5: } catch(Exception e) {
+6:    s.nextInt();  // DOES NOT COMPILE
+7: } finally {
+8:    s.nextInt();  // DOES NOT COMPILE
+9: }
+```
+
+- The problem is that Scanner has gone out of scope at the end of the try clause.
+- Lines 6 and 8 do not have access to it. 
+- This is actually a nice feature. You can't accidentally use an object that has been closed.
+- Resources do not need to be declared inside a try-with-resources statement, though, as we will see in the next section.
 
 
+## Learning the New Effectively Final Feature
+
+- Starting with Java 9, it is possible to use resources declared prior to the try-with-resources statement, provided 
+  they are marked final or effectively final.
+
+```java
+package chapter_5.trywithresources;
+
+public class MyFileReaderFinalUse {
+
+    public void relax() throws Exception {
+        final var bookReader = new MyFileReader("4");
+        MyFileReader movieReader = new MyFileReader("5");
+        try (bookReader;
+            var tvReader = new MyFileReader("6");
+            movieReader){
+            System.out.println("Try Block");
+        }finally {
+            System.out.println("Finally Block");
+        }
+    }
+}
+```
+
+- On execution, the code prints the following:
+
+```
+Try Block
+Closed:5
+Closed:6
+Closed:4
+Finally Block
+```
+
+- If you come across a question on the exam that uses a try-with-resources statement with a variable not declared
+  in the try clause, make sure it is effectively final. For example, the following does not compile:
+
+```
+31: var writer = Files.newBufferedWriter(path);
+32: try(writer) { // DOES NOT COMPILE
+33:     writer.append("Welcome to the zoo!");
+34: }
+35: writer = null;
+```
+
+- The writer variable is reassigned on line 35, resulting in the compiler not considering it effectively final.
+- Since it is not an effectively final variable, it cannot be used in a try-with-resources statement on line 32.
+
+- The other place the exam might try to trick you is accessing a resource after it has been closed.
+- Consider the following:
+
+```
+41: var writer = Files.newBufferedWriter(path);
+42: writer.append("This write is permitted but a really bad idea!");
+43: try(writer) {
+44:   writer.append("Welcome to the zoo!");
+45: }
+46: writer.append("This write will fail!");   // IOException
+```
+
+- This code compiles but throws an exception on line 46 with the message Stream closed.
+- While it was possible to write to the resource before the try-with-resources statement,
+  it is not afterward.
+
+## Take Care When Using Resources Declared before try-with-resources Statements
+
+- On line 42 of the previous code example, we used writer before the try-with-resources statement.
+- While this is allowed, it's a really bad idea. What happens if line 42 throws an exception?
+- In this case, the resource declared on line 41 never be closed!
+- What about the following snippet?
+
+```
+51: var reader = Files.newBufferedReader(path1);
+52: var writer = Files.newBufferedWriter(path2); // Don't do this!
+53: try (reader; writer) {}
+```
+
+- It has the same problem.
+- If line 52 throws an exception, such as the file cannot be found, then the resource declared on line 51 will never
+  be closed. We recommended you use this new syntax sapringly or with only one resource at a time.
+- For example, if line 52 was removed, then the resource created on line 52 was removed, then the resource created on 
+  line 51 wouldn't have an opportunity to throw an exception before entering the automatic resource management block.
 
 
+## Understanding Suppressed Exceptions
 
+- What happens if the close() method throws an exception?
+- Let's try an illustrative example:
+
+```java
+
+package chapter_5.trywithresources;
+
+public class TurkeyCage implements AutoCloseable {
+  @Override
+  public void close() throws Exception {
+    System.out.println("Close gate");
+  }
+
+  public static void main(String[] args) throws Exception {
+    try (var t = new TurkeyCage()) {
+      System.out.println("Put turkeys in");
+    }
+  }
+}
+
+```
+
+- If the TurkeyCage doesn't close, the turkeys could all escape.
+- Clearly, we need to handle such a condition.
+- We already know that the resources are closed before any programmer-coded catch blocks are run.
+- This means we can catch the exception thrown by close() if we want.
+- Alternatively, we can allow the caller to deal with it.
+
+- Let's expand our example with a new JammedTurkeyCage implementation, show here:
+
+```java
+package chapter_5.trywithresources.supress_exception;
+
+public class JammedTurkeyCage implements AutoCloseable{
+    @Override
+    public void close() throws IllegalArgumentException {
+        throw new IllegalArgumentException("Cage door does not close");
+    }
+
+    public static void main(String[] args) {
+        try(JammedTurkeyCage t = new JammedTurkeyCage()) {
+            System.out.println("Put turkeys in");
+        } catch (IllegalArgumentException e){
+            System.out.println("Caught: " + e.getMessage());
+        }
+    }
+}
+```
+
+- The closed() method is automatically called by try-with-resources. 
+- It throws an exception, which is caught by our catch block and prints the following:
+
+```
+Put turkeys in
+Caught: Cage door does not close
+```
+
+- This seems reasonable enough.
+- What happens if the try block also throws an exception?
+- When multiple exceptions are thrown, all but the first are called suppressed exceptions.
+- The idea is that Java treats the first exception as the primary one and tacks on any that come up while automatically
+  closing.
+
+- What do you think the following implementation of our main() method outputs?
+
+```java
+package chapter_5.trywithresources.supress_exception;
+
+public class JammedTurkeyCage_v2 implements AutoCloseable{
+
+    @Override
+    public void close() throws IllegalArgumentException {
+        throw new IllegalArgumentException("Cage door does not close");
+    }
+
+    public static void main(String[] args) {
+        try(JammedTurkeyCage_v2 t = new JammedTurkeyCage_v2()){
+            throw new IllegalStateException("Turkeys ran off");
+        }catch (IllegalArgumentException e){
+            System.out.println("Caught: " + e.getMessage());
+            for (Throwable t: e.getSuppressed())
+                System.out.println("Suppressed: " + t.getMessage());
+        }
+    }
+}
+```
+
+- Line 612 throws the primary exception.
+- At this point, the try clause ends, and Java automatically calls the close() method.
+- Line 607 of JammedTurkeyCage_v2 throws an IllegalStateException, which is added as a suppressed exception.
+- Then line 613 the catches the primary exception.
+- Line 614 prints the message for the primary exception.
+- Lines 617 - 618 iterate through any suppressed exceptions and print them.
+- The program prints the following:
+
+```
+Caught: Turkeys ran off
+Suppressed: java.lang.IllegalArgumentException: Cage door does not close
+```
+
+- Keep in mind that the catch looks for matches on the primary exception.
+- What do you think this code prints?
+
+```java
+package chapter_5.trywithresources.supress_exception;
+
+public class JammedTurkeyCage_v3 implements AutoCloseable{
+
+  @Override
+  public void close() throws IllegalArgumentException {
+    throw new IllegalArgumentException("Cage door does not close");
+  }
+
+  public static void main(String[] args) {
+    try(JammedTurkeyCage_v3 t = new JammedTurkeyCage_v3()){
+      throw new RuntimeException("Turkeys ran off");
+    }catch (IllegalArgumentException e){
+      System.out.println("Caught: " + e.getMessage());
+    }
+  }
+}
+```
+
+- Line 650 again throws the primary exception.
+- Java calls the close() method and adds a suppressed exception.
+- Line 651 would catch the IllegalStateException.
+- However, we don't have one of those.
+- The primary exception is a RuntimeException.
+- Since this does not match the catch clause, the exception is thrown to the caller.
+- Eventually the main() method would output something like the following:
+
+```
+Exception in thread "main" java.lang.RuntimeException: Turkeys ran off
+	at chapter_5.trywithresources.supress_exception.JammedTurkeyCage_v3.main(JammedTurkeyCage_v3.java:12)
+	Suppressed: java.lang.IllegalArgumentException: Cage door does not close
+		at chapter_5.trywithresources.supress_exception.JammedTurkeyCage_v3.close(JammedTurkeyCage_v3.java:7)
+		at chapter_5.trywithresources.supress_exception.JammedTurkeyCage_v3.main(JammedTurkeyCage_v3.java:11)
+```
+
+
+- Java remembers the suppressed exceptions that go with a primary exception even if we don't handle them in the code.
+
+- NOTE
+  - if more than two resources throw an exception, the first one to be thrown becomes the primary exception, with the 
+    rest being grouped as suppressed exceptions.
+  - And since resources are closed in reverse order in which they are declared, the primary exception would be on the 
+    last declared resource that throws an exception.
+
+
+- Keep in mind that suppressed exceptions apply only to exceptions thrown in the try clause.
+- The following example does not throw a suppressed exception:
+
+
+```java
+package chapter_5.trywithresources.supress_exception;
+
+import chapter_1.interface_members.inheritance_duplicate.Run;
+
+public class JammedTurkeyCage_v4 implements AutoCloseable{
+    @Override
+    public void close() throws Exception {
+
+    }
+
+    public static void main(String[] args) {
+        try(JammedTurkeyCage_v4 t = new JammedTurkeyCage_v4()){
+            throw new IllegalStateException("Turkeys run off");
+        }finally {
+            throw new RuntimeException("and we couldn't find them");
+        }
+    }
+}
+```
+
+- Line 701 throws an exception.
+- Then Java tries to close the resource and adds a suppressed to it.
+- Now we have a problem.
+- The finally block runs after all this.
+- Since line 9 also throws an exception, the previous exception from line 7 is lost, with the code printing the following:
+
+
+```
+Exception in thread "main" java.lang.RuntimeException: and we couldn't find them
+	at chapter_5.trywithresources.supress_exception.JammedTurkeyCage_v4.main(JammedTurkeyCage_v4.java:15)
+```
+
+- This has always been and continues to be bad programming practice.
+- We don't want to lose exceptions!
+- Although out of scope for the exam, the reason for this has to do with backward compatibility.
+- Automatic resources management was added in Java 7, and this behaviour existed before this feature was added.
+
+
+## Declaring Assertions
 
