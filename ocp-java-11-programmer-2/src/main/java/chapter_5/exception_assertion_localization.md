@@ -856,9 +856,58 @@ java -ea Rectangle
   java -ea:com.demos.TestColors my.programs.Main
 ```
 
-
-
 > TIP 
 > Keep an eye out for questions that contain an assert statement where assertions are not enabled.
+
+
+## Disabling Assertions
+
+- Sometimes you want to enable assertions for the entire application but disable it for select packages or classes.
+- Java offers the -disableassertions or -da flag for just such an occasion.
+- The following command enables assertions for the com.demos package but disables assertions for the TestColors class:
+
+```
+java -ea:com.demos... -da:com.demos.TestColors my.programs.Main
+```
+
+For the exam, make sure you understand how to use the -ea and -da flags in conjunction with each other.
+
+## Applying Assertions
+
+- Table 5.3 list some of the common uses of assertions.
+- You won't be asked to identify the type of assertion on the exam.
+- This is just to give you some ideas of how they can be used.
+
+---
+**TABLE 5.3 Assertions applications**
+
+| Usage                   | Description                                                                                                                      |
+|-------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| Internal invariants     | Assert that a valude is within a certain constraint, such as assert x < 0.                                                       |
+| Class invariants        | Assert the validity of an object's state. Class invariants are typically private methods within the class that return a boolean. |
+| Control flow invariants | Assert that a line of code you assume is unreachable is never reached.                                                           |
+| Pre-conditions          | Assert that certain conditions are met before a method is invoked.                                                               |
+| Post-conditions         | Assert that certain conditions are met after a method executes successfully                                                      |
+
+
+## Writing Assertions Correctly
+
+- One of the most important rules you should remember from this section is:
+- assertions should never alter outcomes.
+- This is especially true because asssertions can, should, and probably will be turned off in a production environment.
+
+
+- For example, the following assertion is not a good design because it alters the value of a variable:
+
+```
+int x = 10;
+assert ++x > 10; // Not a good design!
+```
+
+- Assertions are used for debugging purposes, allowing you to verify that something that you think is true during the 
+  coding phase is actually true at runtime.
+
+
+## Working with Dates and Times
 
 
