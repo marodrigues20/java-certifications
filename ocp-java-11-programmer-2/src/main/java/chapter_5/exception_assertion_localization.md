@@ -889,6 +889,7 @@ For the exam, make sure you understand how to use the -ea and -da flags in conju
 | Pre-conditions          | Assert that certain conditions are met before a method is invoked.                                                               |
 | Post-conditions         | Assert that certain conditions are met after a method executes successfully                                                      |
 
+---
 
 ## Writing Assertions Correctly
 
