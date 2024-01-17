@@ -200,8 +200,8 @@ public class CannotSwimException extends Exception {
 }
 ```
 
-Note: Remember that the default no-argument constructor is provided automatically if you don't write any constructor of
-      your own.
+> Note: Remember that the default no-argument constructor is provided automatically if you don't write any constructor of
+>       your own.
 
 
 - In these examples, our constructors and parent constructors took the same parameters, but these is certainly not 
@@ -325,11 +325,11 @@ interface AutoCloseable{
 
 
 
-- Note:
-  - In Chapter 8 and Chapter 9, you will encounter resources that implement Closeable, rather than AutoCloseable.
-  - Since Closeable extends AutoCloseable, they are both supported in try-with-resources statements.
-  - The only difference between the two is that Closeable's close() method declares IOException, while AutoCloseable's 
-    close() method declares Exception.
+>Note:
+>  - In Chapter 8 and Chapter 9, you will encounter resources that implement Closeable, rather than AutoCloseable.
+>  - Since Closeable extends AutoCloseable, they are both supported in try-with-resources statements.
+>  - The only difference between the two is that Closeable's close() method declares IOException, while AutoCloseable's 
+>    close() method declares Exception.
 
 
 - Let's define our own custom resources class for use in a try-with-resources statement.
@@ -674,11 +674,11 @@ Exception in thread "main" java.lang.RuntimeException: Turkeys ran off
 
 - Java remembers the suppressed exceptions that go with a primary exception even if we don't handle them in the code.
 
-- NOTE
-  - if more than two resources throw an exception, the first one to be thrown becomes the primary exception, with the 
-    rest being grouped as suppressed exceptions.
-  - And since resources are closed in reverse order in which they are declared, the primary exception would be on the 
-    last declared resource that throws an exception.
+>NOTE
+>  - if more than two resources throw an exception, the first one to be thrown becomes the primary exception, with the 
+>    rest being grouped as suppressed exceptions.
+>  - And since resources are closed in reverse order in which they are declared, the primary exception would be on the 
+>    last declared resource that throws an exception.
 
 
 - Keep in mind that suppressed exceptions apply only to exceptions thrown in the try clause.
