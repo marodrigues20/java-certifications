@@ -795,3 +795,70 @@ public class Syntax {
 
 - Let's try an example. Consider the following:
 
+```java
+package chapter_5.assertions;
+
+public class Party {
+
+    public static void main(String[] args) {
+        int numGuests = -5;
+        assert numGuests > 0;
+        System.out.println(numGuests);
+    }
+}
+```
+
+- How to enable assertions by executing it using the single-file source code command, as shown here:
+
+```
+java -ea Party.java
+```
+
+
+- Uh-oh, we made a type in our Party class.
+- We intended for there to be five guests and not negative five guests.
+- The assertion on line 805 detects this problem.
+- Java throws the AssertionError at this point.
+- Line 806 never runs since an error was thrown.
+
+```
+Exception in thread "main" java.lang.AssertionError
+	at chapter_5.assertions.Party.main(Party.java:7)
+```
+
+## Enabling Assertions
+
+- By default, assert statement are ignored by the JVM at runtime.
+- To enable assertions, use the -enableassertions flag on the command line.
+
+```
+java -enableassertions Rectangle
+```
+
+- You can also use the shortcut -ea flag.
+
+```
+java -ea Rectangle
+```
+
+- Using the -enableassertions or -ea flag without any arguments enables assertions in all classes (except system classes).
+- You can also enable assertions for a specific class or package.
+- For example, the following command enables assertions only for classes in the com.demos package and any subpackages:
+
+```
+  java -ea:com.demos... my.programs.Main
+```
+
+- The ellipsis (...) means any class in the specified package or subpackages.
+- You can also enable assertions for a specific class.
+
+```
+  java -ea:com.demos.TestColors my.programs.Main
+```
+
+
+
+> TIP 
+> Keep an eye out for questions that contain an assert statement where assertions are not enabled.
+
+
