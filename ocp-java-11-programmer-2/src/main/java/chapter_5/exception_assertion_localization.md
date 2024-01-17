@@ -726,3 +726,72 @@ Exception in thread "main" java.lang.RuntimeException: and we couldn't find them
 
 ## Declaring Assertions
 
+- An assertion is a boolean expression that you place at a point in your code where you expect something to be true.
+- An assert statement contains this statement along with an optional message.
+- An assertion allows for detecting defects in the code.
+- You can turn on assertions for testing and debugging while leaving them off when your program is in production.
+- It is true when everything is working properly.
+- If the program has a defect, it might not actually be true.
+
+## Real World Scenario - Assertions vs. Unit Tests
+
+- Most developers are more familiar with unit test framework, such as JUnit, than with assertions.
+- While there are some similarities, assertions are commonly used to verify the internal state of a program, while unit 
+  tests are most frequently used to verify behaviour.
+
+
+## Validating Data with assert Statement
+
+- The syntax for an assert statement has two forms, shown in Figure 5.4
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_5/images/Figure_5_4.png?raw=true)
+
+- When assertions are enabled and the boolean expression evaluates to false, then an AssertionError will be thrown at 
+  runtime.
+- Since programs arent' supposed to catch an Error, this means that assertions failure are fatal and end program!
+- Assertions may include optional parentheses and a message.
+- For example, each of the following is valid:
+
+```java
+package chapter_5.assertions;
+
+public class Syntax {
+
+    public static void main(String[] args) {
+
+        int age = 1;
+        int height = 2;
+        double lenght = 100.00;
+        String name = "Cecelia";
+
+        assert 1 == age;
+
+        assert(2 == height);
+
+        assert 100.0 == lenght : "Problem with length";
+
+        assert ("Cecelia".equals(name)) : "Failed to verify user data";
+        
+    }
+}
+```
+
+- When provided, the error message will be sent to the AssertionError constructor.
+- It is commonly a String, although it can be any value.
+
+
+- The three possible outcomes of an assert statement are as follows:
+  - If assertions are disabled, Java skips the assertion and goes on in the code.
+  - If assertions are enabled and the boolean expression is true, then our assertion has been validated and nothing
+    happens. The program continues to execute in its normal manner.
+  - If assertions are enabled and the boolean expression is false, then our assertion is invalid and an AssertionError 
+    is thrown.
+
+
+- Presuming assertions are enabled, an assertions is a shorter way of writing the following:
+```
+  if (! boolean_expression) throw new AssertionError(error_message);
+```
+
+- Let's try an example. Consider the following:
+
