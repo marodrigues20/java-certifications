@@ -911,4 +911,77 @@ assert ++x > 10; // Not a good design!
 
 ## Working with Dates and Times
 
+- The older Java 8 certification exams required you to know a lot about the Date and Time API.
+- This included knowing many of the various date/time classes and their various methods. How to specify amounts of time
+  with the Period and Duration classes, and even how to resolve values across zones with daylight saving.
+- For the Java 11 exam, none of those topics is in scope.
+- For the Java 11 exam, you still need to know how to format dates.
 
+
+## Understanding Date and Time Types
+
+- Java includes numerous classes to model the examples in the previous paragraph.
+- These types are listed in Table 5.4
+
+---
+
+**TABLE 5.4 Date and time types**
+
+| Class                     | Description                               | Example                   |
+|---------------------------|-------------------------------------------|---------------------------|
+| java.time.LocalDate       | Date with day, month, year                | Birth date                |
+| java.time.LocalTime       | Time of day                               | Midnight                  |
+| java.time.LocalDateTime   | Day and time with no time zone            | 10 a.m next Monday        |
+| java.time.ZonedDateTime   | Date and time with a specific time zone   | 9 a.m. EST on 2/20/2021   |
+---
+
+- Each of these types contain a static method called now() that allows you to get the current value.
+
+```java
+package chapter_5.datetime;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
+
+public class Table_5_4_Example {
+
+    public static void main(String[] args) {
+        System.out.println(LocalDate.now());
+        System.out.println(LocalTime.now());
+        System.out.println(LocalDateTime.now());
+        System.out.println(ZonedDateTime.now());
+    }
+}
+```
+
+- Your output is going to depend on the date/time when you run it and where you live, although it should resemble the 
+  the following:
+
+```
+2024-01-18
+12:27:35.532435
+2024-01-18T12:27:35.532478
+2024-01-18T12:27:35.532840Z[Europe/London]
+```
+
+- The first line contains only a date
+- The second line contains only a time 
+- The third line contains both a date and a time. Java uses T to separate the date and time when converting LocalDateTime
+  to a String
+- The last line adds the time zone offset and time zone.
+
+
+## Using the of() Method
+
+- We can create some date and time values using the of() methods in each class.
+
+```
+LocalDate date1 = LocalDate.of(2020, Month.OCTOBER, 20);
+LocalDate date2 = LocalDate.of(2020, 10, 20);
+```
+
+- Both pass in the year, month, and date.
+- Although it is a good to use the Month constants (to make the code easier to read),
+  you can pass the int number o the month directly.
