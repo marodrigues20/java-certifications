@@ -1026,3 +1026,231 @@ var dt2 = LocalDateTime.of(date, time);
 
 ## Formatting Dates and Times
 
+- The date and time classes support many methods to get data out of them.
+
+```java
+package chapter_5.formating_dates_times;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+
+public class DateTimeFormatterExample {
+
+    public static void main(String[] args) {
+
+        LocalDate date = LocalDate.of(2020, Month.OCTOBER, 20);
+        System.out.println(date.getDayOfWeek());  //TUESDAY
+        System.out.println(date.getMonth());      //OCTOBER
+        System.out.println(date.getYear());       //2020
+        System.out.println(date.getDayOfYear());  //294
+    }
+}
+```
+
+
+- Java provides a class called DateTimeFormatter to display standards formats.
+
+```java
+package chapter_5.formating_dates_times;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+
+public class DateTimeFormatterExample {
+
+    public static void main(String[] args) {
+
+        LocalDate date = LocalDate.of(2020, Month.OCTOBER, 20);
+        LocalTime time = LocalTime.of(11, 12, 34);
+        LocalDateTime dt = LocalDateTime.of(date, time);
+
+        System.out.println(date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        System.out.println(time.format(DateTimeFormatter.ISO_LOCAL_TIME));
+        System.out.println(dt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
+    }
+}
+```
+
+- The code snippet prints the following:
+
+```
+2020-10-20
+11:12:34
+2020-10-20T11:12:34
+```
+
+- The DateTimeFormatter will throw an exception if it encounters an incompatible type.
+- For example, each of the following will produce an exception at runtime since it attempts to format a date with a time
+  value, and vice versa:
+
+```
+System.out.println(date.format(DateTimeFormatter.ISO_LOCAL_TIME));
+System.out.println(time.format(DateTimeFormatter.ISO_LOCAL_DATE));
+```
+
+```
+Exception in thread "main" java.time.temporal.UnsupportedTemporalTypeException: Unsupported field: Year
+	at java.base/java.time.LocalTime.get0(LocalTime.java:710)
+	at java.base/java.time.LocalTime.getLong(LocalTime.java:688)
+	...
+```
+
+
+- if you don't want to use of the predefined formats, DateTimeFormatter supports a custom format using a date format
+  String.
+
+```
+var f = DateTimeFormatter.ofPattern("MMMM dd, yyyy 'at' hh:mm");
+System.out.println(dt.format(f)); // October 20, 2020 at 11:12
+```
+
+- M is used for Month, while y is used for year.
+- Using m instead of M means it will return the minute of the hour, not the month of the year.
+- Using M by itself outputs the minimum number of characters for a month, such as 1 for January, while using MM always 
+  outputs two digits, such as 01.
+- Furthermore, using MMM prints the three-letter abbreviation, such as Jul for July.
+- MMMM prints full month name.
+
+
+---
+*** The Date and SimpleDateFormat Classes ***
+
+The exam may include questions with the older date/time classes.
+For example, the previous code snippet could be written using the java.util.Date and java.text.SimpleDateFormat classes.
+
+```
+  DateFormat s = new SimpleDateFormat("MMMM dd, yyyy 'at' hh:mm");
+  System.out.println(s.format(new Date()));  // October 20, 2020 at 06:15
+```
+
+- For the exam, the rules for defining a custom DateTimeFormatter and SimpleDateFormat symbols are the same.
+---
+
+
+---
+TABLE 5.5 Common date/time symbols
+
+| Symbol | Meaning           | Examples                   |
+|--------|-------------------|----------------------------|
+| y      | Year              | 20, 2020                   |
+| M      | Month             | 1, 01, Jan, January        |
+| d      | Day               | 5, 05                      |
+| h      | Hour              | 9, 09                      |
+| m      | Minute            | 45                         |
+| s      | Second            | 52                         |
+| a      | a.m./p.m.         | AM, PM                     |
+| z      | Time Zone Name    | Eastern Standard Time, EST |
+| Z      | Time Zone Offset  | -0400                      |
+---
+
+- Let's try some examples. What do you think the following prints?
+
+```java
+package chapter_5.formating_dates_times;
+
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+
+public class DateTimeFormatter_v2 {
+
+    public static void main(String[] args) {
+
+        var dt = LocalDateTime.of(2020, Month.OCTOBER, 20, 6, 15, 30);
+
+        var formatter1 = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss");
+        System.out.println(dt.format(formatter1));
+
+        var formatter2 = DateTimeFormatter.ofPattern("MM_yyyy_-_dd");
+        System.out.println(dt.format(formatter2));
+
+        var formatter3 = DateTimeFormatter.ofPattern("h:mm z");
+        System.out.println(dt.format(formatter3));
+    }
+}
+```
+
+```
+10/20/2020 06:15:30
+10_2020_-_20
+Exception in thread "main" java.time.DateTimeException: Unable to extract ZoneId from temporal 2020-10-20T06:15:30
+```
+
+- The third example throws an exception at runtime because the underlying LocalDateTime does not have a timezone 
+  specified. If ZonedDateTime was used instead, then the code would have completed successfully and printed something
+  like 06:15 EDT.
+
+- As you saw in the previous example, you need to make sure the format String  is compatible with the underlying
+  date/time type.
+
+---
+TABLE 5.6 shows which symbols you can use with each of the date/time objects.
+
+| Symbol | LocalDate | LocalTime | LocalDateTime | ZonedDateTime |
+|--------|-----------|-----------|---------------|---------------|
+| y      | X         | -         | X             | X             |
+| M      | X         | -         | X             | X             |
+| d      | X         | -         | X             | X             |
+| h      | -         | X         | X             | X             |
+| m      | -         | X         | X             | X             |
+| s      | -         | X         | X             | X             |
+| a      | -         | X         | X             | X             |
+| z      | -         | -         | -             | X             |
+| Z      | -         | -         | -             | X             |
+
+---
+
+- Make sure you know which symbols are compatible with which date/time types.
+- For example, trying to format a month for a LocalTime or an hour for a LocalDate will result in a runtime exception.
+
+
+## Selecting a format() Method
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
