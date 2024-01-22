@@ -1347,7 +1347,51 @@ DateTimeFormatter.ofPattern("'Time is: hh:mm: ");  // Exception thrown
 
 ## Picking a Locale
 
+- The Locale class is in the java.util package.
+- The first useful Locale to find is the user's current locale.
+- Try running the following code on your computer:
 
+```java
+package chapter_5.locale;
+
+import java.util.Locale;
+
+public class Locale_v1 {
+
+    public static void main(String[] args) {
+
+        Locale locale = Locale.getDefault();
+        System.out.println(locale); //en_GB
+    }
+}
+```
+
+- When we run it, it prints en_US.
+- It might be different for you.
+- This default output tells us that our computers are using English and are sitting in the United States.
+
+
+- Notice the format.
+- First comes the lowercase language code.
+- The language is always required.
+- Then comes an underscore followed by the uppercase country code.
+- The country is optional. 
+- Figure 5.5 shows the two formats for Locale objects that you are expected to remember
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_5/images/Figure_5_5.png?raw=true)
+
+
+- As practice, make sure that you understand why each of these Locale identifiers is invalid:
+
+---
+US     // Cannot have country without language
+enUS   // Missing underscore
+US_en  // The country and language are reversed
+EN     // Language must be lowercase
+---
+
+- The corrected version are en and en_US.
 
 
 
