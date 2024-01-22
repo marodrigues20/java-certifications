@@ -1384,12 +1384,12 @@ public class Locale_v1 {
 
 - As practice, make sure that you understand why each of these Locale identifiers is invalid:
 
-
->US     // Cannot have country without language
->enUS   // Missing underscore
->US_en  // The country and language are reversed
->EN     // Language must be lowercase
-
+```
+US     // Cannot have country without language
+enUS   // Missing underscore
+US_en  // The country and language are reversed
+EN     // Language must be lowercase
+```
 
 - The corrected version are en and en_US.
 
