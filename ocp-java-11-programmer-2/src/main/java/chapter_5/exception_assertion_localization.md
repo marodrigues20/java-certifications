@@ -1242,14 +1242,110 @@ public class DateTimeFormatter_v3 {
 
 ## Adding Custom Text Value
 
+- What if you want your format to include custom text values?
+- If you just type it as a part of the format String, the formatter will interpret each character as a date/time symbol.
+- In the best case, it will display weird data based on extra symbols you enter.
+- In the worst case, it will throw an exception because the characters contain invalid symbols. 
+- Neither is desirable!
+
+### How to solve it in the best way
+
+- You can escape the text by surrounding it with a pair of single quotes (').
+- Escaping text instructs the formatter to ignore the values inside the single quotes and just insert them as part of 
+  the final value.
+- We saw this earlier with the 'at' inserted into the formatter.
+
+```java
+package chapter_5.formating_dates_times;
+
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+
+public class CustomTexting {
+
+    public static void main(String[] args) {
+
+        var dt = LocalDateTime.of(2020, Month.OCTOBER, 20, 6, 15, 30);
+        var f = DateTimeFormatter.ofPattern("MMMM dd, yyyy 'at' hh:mm");
+        System.out.println(dt.format(f)); // October 20, 2020 at 06:15
+    }
+}
+```
+
+- But what if you need to display a single quote in the output too?
+- Welcome to the fun of escaping characters!
+- Java supports this by putting two single quotes next to each other.
+
+```java
+package chapter_5.formating_dates_times;
+
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+
+public class CustomTexting {
+
+    public static void main(String[] args) {
+
+        var dt = LocalDateTime.of(2020, Month.OCTOBER, 20, 6, 15, 30);
+        
+        var g1 = DateTimeFormatter.ofPattern("MMMM dd', Party''s at' hh:mm");
+        System.out.println(dt.format(g1)); // October 20, Party's at 06:15
+
+        var g2 = DateTimeFormatter.ofPattern("'System format, hh:mm: 'hh:mm");
+        System.out.println(dt.format(g2)); // System format, hh:mm: 06:15
+
+        var g3 = DateTimeFormatter.ofPattern("'NEW! 'yyyy', yay!'");
+        System.out.println(dt.format(g3)); // NEW! 2020, yay!
+    }
+}
+
+```
+
+- Without escaping the text values with single quotes, an exception will be thrown at runtime if the text cannot be 
+  interpreted as a date/time symbol.
+
+```
+DateTimeFormatter.ofPattern("The time is hh:mm"); // Exception thrown
+```
+
+- This line throws an exception since T is an unknown symbol. 
+- The exam might also present you with an incomplete escape sequence.
+
+```
+DateTimeFormatter.ofPattern("'Time is: hh:mm: ");  // Exception thrown
+```
 
 
+## Supporting Internationalization and Location
 
 
+- Many applications need to work in different countries and with different languages.
+- For example, consider the sentence "The zoo is holding a special event 4/1/15 to look at animal behaviours.
+- "When is th event? In the United States, it is on April 1. However, a British reader might also wonder why we didn't 
+  write "behaviours."
+- If we are making a website or program that will be used in multiples countries, we want to use the correct language 
+  and formatting.
+
+- ***Internalionalization*** is the process of design your program so it can be adapted.
+- This involves placing strings in a properties file and ensuring the proper data formatters are used.
+- ***Localization*** means actually supporting multiple locales or geographic regions.
+- You can think of a locale as being like a language and country pairing.
+- Localization includes translating strings to different languages.
+- It also includes outputting date and numbers in the correct format for that locale
 
 
+> Note
+> Initially, your program does not need to support multiple locales.
+> The key is to future-proof your application by using these techniques.
+> This way, when your product becomes successful, you can add support for new languages or regions without rewriting 
+> everything.
 
 
+- In this section, we will look at how to define a locale and use it to format dates, numbers, and strings.
+
+## Picking a Locale
 
 
 
