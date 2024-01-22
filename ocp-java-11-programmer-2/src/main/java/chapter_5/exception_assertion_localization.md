@@ -1509,9 +1509,117 @@ public class LocaleSelected_v4 {
 
 ## Localizing Numbers
 
+- It might surprise you that formatting or parsing currency and number values can change depending on your locale.
+- For example, in the United States, the dollar sign is prepended before the value along with a decimal point vor values
+  less than one dollar, such as $2.15. In Germany, though, the euro symbol is appended to the value along with a comma 
+  for values less than one euro, such as 2,15 €.
+
+
+- Luckily, the java.text package includes classes to save the day.
+- The following sections cover how to format numbers, currency, and dates based on the locale.
+
+- The first step to formatting or parsing data is the same: obtain an instance of a NumberFormat.
+- Table 5.7 shows the available factory methods.
+
+
+---
+### TABLE 5.7 Factory methods to get a NumberFormat ###
+
+| Description                              | Using default Locale and a specified Locale                                  |
+|------------------------------------------|------------------------------------------------------------------------------|
+| A general-purpose formatter              | NumberFormat.getInstance(); NumberFormat.getInstance(locale)                 |
+| Same as getInstance                      | NumberFormat.getNumberInstance(); NumberFormat.getNumberInstance(locale)     |
+| For formatting monetary amounts          | NumberFormat.getCurrencyInstance(); NumberFormat.getCurrencyInstance(locale) |
+| For formatting percentages               | NumberFormat.getPercentInstance();  NumberFormat.getPercentInstance(locale)  |
+| Rounds decimal values before displaying  | NumberFormat.getIntegerInstance(); NumberFormat.getIntegerInstance(locale)   |
+
+
+- Once you have the NumberFormat instance, you can call format() to turn a number into a String, or you can use parse()
+  to turn a String into a number.
+---
 
 
 
+> Tip
+> The format classes are not thread-safe.
+> Do not store them in instance variables or static variables.
+> You'll learn more about thread safety in Chapter 7, "Concurrency"
+
+
+## Formatting Numbers
+
+- When we format data, we convert it from a structured object or primitive value into a String.
+- The NumberFormat.format() method formats the given number based on the locale with the NumberFormat objects.
+
+- Let's go back to our zoo for a minute
+- For marketing literature, we want to share the average monthly number of visitors to the San Diego Zoo.
+- The following shows priting out the same number in three different locales:
+
+```java
+package chapter_5.locale;
+
+import java.text.NumberFormat;
+import java.util.Locale;
+
+public class FormattingNumbers_v1 {
+
+    public static void main(String[] args) {
+
+        int attendeesPerYear = 3_200_000;
+        int attendeesPerMonth = attendeesPerYear / 12;
+
+        var us = NumberFormat.getInstance(Locale.US);
+        System.out.println(us.format(attendeesPerMonth)); // 266,666
+
+        var gr = NumberFormat.getInstance(Locale.GERMANY);
+        System.out.println(gr.format(attendeesPerMonth)); // 266.666
+
+        var ca = NumberFormat.getInstance(Locale.CANADA_FRENCH);
+        System.out.println(ca.format(attendeesPerMonth));  // 266 666
+    }
+}
+
+```
+
+- The output looks like this:
+
+```
+266,666
+266.666
+266 666
+```
+
+- This shows how our U.S, German, and French Canadian guests can all see the same information in the number format they
+  accustomed to using.
+- In practice, we would just call NumberFormat.getInstance() and rely on the user's default locale to format the output.
+- Formatting currency works the same way.
+
+```java
+package chapter_5.locale;
+
+import java.text.NumberFormat;
+
+public class FormattingCurrency_v1 {
+
+    public static void main(String[] args) {
+
+        double price = 48;
+        var myLocale = NumberFormat.getCurrencyInstance();
+        System.out.println(myLocale.format(price));
+    }
+}
+```
+
+- When run with the default locale of en_US for the United States, it outputs $48.00.
+- On the other hand, when run with the default locale of en_GB for Great Britain, it outputs £48.00.
+
+> Note
+> In the real world, use int or BigDecimal for money and not double.
+> Doing math on amounts with double is dangerous because the values are stored as floating-point numbers.
+> Your boss won't appreciate it if you lose pennies or fractions of pennies during transactions!
+
+
+## Parsing Numbers
 
 
 
