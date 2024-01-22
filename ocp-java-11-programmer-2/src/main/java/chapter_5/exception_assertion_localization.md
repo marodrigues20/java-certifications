@@ -1394,13 +1394,120 @@ EN     // Language must be lowercase
 - The corrected version are en and en_US.
 
 
+> Note
+> You do not need to memorize language or country codes.
+> The exam will let you know about any that are being used.
+> You do need to recognize valid and invalid formats.
+> Pay attention to uppercase/lowercase and the underscore.
+> For example, if you see a locale expressed as es_CO, then you should know that the language is es and the country is CO,
+> even if you didn't know they represent Spanish and Colombia, respectively.
 
 
+- As a developer, you often need to write code that selects a locale other than the default one.
+- There are three common ways of doing this. 
+- The first is to use the built-in constants in the Locale class, available for some common locales.
 
 
+```java
+package chapter_5.locale;
+
+import java.util.Locale;
+
+public class LocaleSelected_v1 {
+
+    public static void main(String[] args) {
+        System.out.println(Locale.GERMAN); // de
+        System.out.println(Locale.GERMAN); // de_DE
+    }
+}
+```
+
+- The first example selects the German language, which is spoken in many countries, including Austria(de_AT) 
+  and Liechtenstein (de_LI).
+- The second example selects both German the language and Germany the country.
+- While these examples may look similar, they are not the same.
+- Only one includes a country code.
+
+- The second way of selecting a Locale is to use the constructors to create a new object.
+- You can pass just a language, or both a language and country:
+
+```java
+package chapter_5.locale;
+
+import java.util.Locale;
+
+public class LocaleSelected_v2 {
+
+    public static void main(String[] args) {
+        System.out.println(new Locale("fr"));               // fr
+        System.out.println(new Locale("hi", "IN")); // hi_IN
+    }
+}
+```
+
+- The first is the language French, and the second is Hindi in India.
+
+- Java will let you create a Locale with an invalid language or country, such as xx_XX. 
+- However, it will not match the Locale that you want to use, and your program will not behave as expected.
 
 
+- There's a third way to create a Locale that is more flexible.
+- The builder design pattern lets you set all of the properties that you care about and then build it at the end.
+- This means that you can specify the properties in any order.
+- The following two Locale values both represent en_US:
 
+```java
+package chapter_5.locale;
+
+import java.util.Locale;
+
+public class LocaleSelected_v3 {
+
+    public static void main(String[] args) {
+        
+        Locale l1 = new Locale.Builder()
+                .setLanguage("en")
+                .setRegion("US")
+                .build();
+
+        Locale l2 = new Locale.Builder()
+                .setRegion("US")
+                .setLanguage("en")
+                .build();
+    }
+}
+```
+
+- When testing a program, you might need to use a Locale other than the default of your computer.
+
+
+````java
+package chapter_5.locale;
+
+import java.util.Locale;
+
+public class LocaleSelected_v4 {
+
+    public static void main(String[] args) {
+        System.out.println(Locale.getDefault());   //en_GB
+        Locale locale = new Locale("fr");
+        Locale.setDefault(locale);               // change the default   
+        System.out.println(Locale.getDefault()); // fr
+    }
+}
+````
+
+- The Locale changes for only that one Java Program.
+- It does not change any settings on your computer.
+- It does not even change future executions of the same program.
+
+
+> Note
+> The exam may use setDefault() because it can't make assumptions about where you are located.
+> In practice, we rarely write code to change a user's default locale.
+
+
+## Localizing Numbers
 
 
 
