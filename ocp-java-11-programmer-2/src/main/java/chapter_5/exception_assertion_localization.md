@@ -1920,19 +1920,123 @@ Locale frenchCanada = new Locale("fr", "CA");
 
 - For now, we need English and French properties files for our Zoo resource bundle.
 
+```
+Zoo_en.properties
+hello=Hello
+open=The zoo is open
+
+Zoo_fr.properties
+hello=Bonjour
+open=Le zoo est ouvert
+```
+
+- The filenames match the name of our resources bundle, Zoo.
+- They are then followed by an underscore (_), target locale, and .properties file extension.
+- We can write our very first program that uses a resource bundle to print this information.
+
+```java
+package chapter_5.locale;
+
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+public class ResourceBundle_v1 {
+
+    private static void printWelcomeMessage(Locale locale) {
+        var rb = ResourceBundle.getBundle("Zoo", locale);
+        System.out.println(rb.getString("hello") + ", " + rb.getString("open"));
+        rb.keySet().stream()
+              .map(k -> k + ":" + rb.getString(k))
+              .forEach(System.out::println);
+    }
+
+    public static void main(String[] args) {
+        var us = new Locale("en", "US");
+        var france = new Locale("fr", "FR");
+        printWelcomeMessage(us);
+        printWelcomeMessage(france);
+    }
+}
+```
+
+- The ResourceBundle class provides a keySet() method to get a set of all keys.
+- This example goes through all of the keys.
+- It maps each key to a String with both the key and the value before priting everything.
+
+```
+hello: Hello
+open: The zoo is open
+```
+
+> Real World Scenario
+> In your own applications, though, the resource bundles can be stored in a variety of places
+> While they can be stored inside the JAR that uses them, it not recommended.
+> This approaches forces you to rebuild the application JAR any time some text changes.
+> One of the benefits of using resource bundles is to decouple the application code from the locale-specific text data.
+> Another approach is to have all of the properties files in a separate properties JAR or folder and load them in the 
+> classpath at runtime. In this manner, a new language can be added without changing the application JAR.
 
 
+## Picking a Resource Bundle
+
+- There are two methods for obtain a resource bundle that you should be familiar with the exam.
+  
+```
+ResourceBundle.getBundle("name");
+ResourceBundle.getBundle("name", locale);
+```
+
+- The first one uses the default locale. You are likely to use this one in programs that you write.
+- Either the exam tells you what to assume as the default locale or it uses the second approach.
+- Java handles the logic of picking the best available resource bundle for a given key.
+- It tries to find the most specific value. Table 5.11 shows what Java goes through when asked for resources bundle Zoo
+  with the locale new Locale("fr","FR") when the default locale is U.S English
 
 
+---
+### TABLE 5.11 Picking a resource bundle for French/France with default locale English/US ###
+
+| Step | Looks for file                                    | Reason                                        |
+|------|---------------------------------------------------|-----------------------------------------------|
+| 1    | Zoo_fr_FR.properties                              | The requested locale                          |
+| 2    | Zoo_fr.properties                                 | The language we requested with no country     |
+| 3    | Zoo_en_US.properties                              | The default locale                            |
+| 4    | Zoo_en.properties                                 | The default locale's language with no country |
+| 5    | Zoo.properties                                    | No locale at all - the default bundle         |
+| 6    | If still no found, throw MissingResourceException | No locale or default bundle available         |
+---
+
+- As another way of remembering the order of Table 5.11, learn these steps:
+  1. Look for the resource bundle for the requested locale, followed by the one for the default locale.
+  2. For each locale, check language/country, followed by just the language.
+  3. Use the default resource bundle if no matching locale can be found.
 
 
+> When Java is searching for a matching resource bundle, it will first check for a resource bundle file with the matching
+> class name.
 
 
+- What is the maximum number of files that Java would need to consider to find appropriate resource bundle with the 
+- following code?
+
+```
+Locale.setDefault(new Locale("hi"));
+ResourceBundle rb = ResourceBundle.getBundle("Zoo", new Locale("en"));
+```
+
+- The answer is three. They are listed here:
+  1. Zoo_en.properties
+  2. Zoo_hi.properties
+  3. Zoo.properties
+
+- The requested locale is en, so we start with that. 
+- Since the en locale does not contain a country, we move on to the default locale, hi.
+- Again, there's no country, so we end with the default bundle.
 
 
+## Selecting Resource Bundle Values
 
-
-
+- 
 
 
 
