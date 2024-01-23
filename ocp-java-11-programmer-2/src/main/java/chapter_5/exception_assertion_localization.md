@@ -1753,4 +1753,117 @@ public class CustomNumberFormat_v1 {
 
 - Like numbers, date formats can vary by locale.
 
+---
+### TABLE 5.9 Factory methods to get a DateTimeFormatter ###d
+
+| Description                    | Using default Locale                                                                                              |
+|--------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| For formatting dates           | DateTimeFormatter.ofLocalizedDate(dateStyle)                                                                      |
+| For formatting times           | DateTimeFormatter.ofLocalizedTime(timeStyle)                                                                      |
+| For formatting dates and times | DateTimeFormatter.ofLocalizedDateTime(dateStyle, timeStyle); DateTimeFormatter.ofLocalizedDateTime(dateTimeStyle) |
+---
+
+
+- Each method in the table takes a FormatStyle parameter, with possible values SHORT, MEDIUM, LONG, and FULL.
+- For the exam, you are not required to know the format of each of these styles.
+
+- What if you need a formatter for a specific locale?
+- Easy enough - just append withLocale(locale) to the method call.
+
+- Let's put it all together.
+- Take a look at the following code snippet, which relies on a static import for the java.time.format.FormatStyle.SHORT 
+  value:
+
+
+```java
+package chapter_5.locale;
+
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
+
+public class LocalizingDates_v1 {
+
+    public static void print(DateTimeFormatter dtf,
+                             LocalDateTime dateTime, Locale locale) {
+        System.out.println(dtf.format(dateTime) + ", "
+            + dtf.withLocale(locale).format(dateTime));
+    }
+
+    public static void main(String[] args) {
+        Locale.setDefault(new Locale("en", "US"));
+        var italy = new Locale("it", "IT");
+        var dt = LocalDateTime.of(2020, Month.OCTOBER, 20, 15, 12, 34);
+
+        // 10/20/20, 20/10/20
+        print(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT), dt, italy);
+
+        // 3:12 PM, 15:12
+        print(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT), dt, italy);
+
+        // 10/20/20, 3:12 PM, 20/10/20, 15:12
+        print(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT), dt , italy);
+    }
+}
+```
+
+
+- First, we established en_US as the default locale, with it_IT as the requested locale.
+- We then output each value using the two locales.
+
+
+## Specifying a Locale Category
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
