@@ -1621,13 +1621,84 @@ public class FormattingCurrency_v1 {
 
 ## Parsing Numbers
 
+- When we parse data, we convert it from a String to a structured object or primitive value.
+- The NumberFormat.parse() method accomplishes this and takes the locale into consideration.
+
+- For example, if the locale is the English/United States (en_US) and the number contains commas, the commas are treated
+  as formatting symbols.
+- If the locale relates to a country or language that uses commas as a decimal separator, the comma is treated as a 
+  decimal point.
 
 
+> Note
+> The parse() method, found in various types, declares a checked exception ParseException that must be handled or 
+> declares a checked exception ParseException that must be handled or declared in the method in which they are called.
 
 
+- Let's look at an example.
+- The following code parses a discounted ticket prince with different locales. The parse() method throws a checked 
+  ParseException, so make sure to handle or declare it in your own code.
+
+```java
+package chapter_5.locale;
+
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
+
+public class ParsingNumbers_v1 {
+
+    public static void main(String[] args) throws ParseException {
+
+        String s = "40.45";
+
+        var en = NumberFormat.getInstance(Locale.US);
+
+        System.out.println(en.parse(s)); // 40.45
+
+        var fr = NumberFormat.getInstance(Locale.FRANCE);
+        System.out.println(fr.parse(s));  // 40
+    }
+}
+```
+
+- In the United States, a dot (.) is part of a number, and the number is parsed how you might expect.
+- France does not use a decimal point to separate numbers.
+- Java parses it as a formatting character, and it stops looking at the rest of the number.
+- The lesson is to make sure that you parse using the right Locale!
+
+- The parse() method is also used for parsing currency.
+- For example, we can read in the zoo's monthly income from ticket sales.
 
 
+```java
+package chapter_5.locale;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
+
+public class ParsingNumbers_v2 {
+
+    public static void main(String[] args) throws ParseException {
+
+        String income = "$92,807.99";
+        var cf = NumberFormat.getCurrencyInstance(Locale.US);
+        double value = (Double) cf.parse(income);
+        System.out.println(value);  //92807.99
+    }
+}
+```
+
+- The currency string "$92,807.99" contains a dollar sign and a comma.
+- The parse method strips out the characters and converts the value to a number.
+- The return value of parse is a Number object.
+- Number is the parent class of all the java.lang wrapper classes, so the return value can be cast to its appropriate 
+  data type.
+- The Number is cast to a Double and then automatically unboxed into a double.
+
+
+## Writing a Custom Number Formatter
 
 
 
