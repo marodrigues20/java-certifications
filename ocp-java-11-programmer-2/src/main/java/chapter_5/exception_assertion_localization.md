@@ -1700,7 +1700,57 @@ public class ParsingNumbers_v2 {
 
 ## Writing a Custom Number Formatter
 
+- Like you saw earlier when working with dates, you can also create your own number format strings using the 
+  DecimalFormat class, which extends NumberFormat.
+- When creating a DecimalFormat object, you use a constructor rather than a factory method.
+- You pass the pattern that you would like to use.
+- The patterns can get complex, but you need to know only about two formatting characters, shown in Table 5.8.
 
 
+---
+### TABLE 5.8 DecimalFormat symbols ###
+
+| Symbol | Meaning                                             | Examples |
+|--------|-----------------------------------------------------|----------|
+| #      | Omit the position if no digit exists for it.        | $2.2     |
+| 0      | Put a 0 in the position if no digit exists for it.  | $00.20   |
+---
+
+- These examples should help illuminate how these symbols work:
+
+
+```java
+package chapter_5.locale;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
+public class CustomNumberFormat_v1 {
+
+    public static void main(String[] args) {
+
+        double d = 1234567.467;
+        NumberFormat f1 = new DecimalFormat("###,###,###.0");
+        System.out.println(f1.format(d));  // 1,234,567.5
+
+        NumberFormat f2 = new DecimalFormat("000,000,000.00000");
+        System.out.println(f2.format(d));  // 001,234,567.46700
+
+        NumberFormat f3 = new DecimalFormat("$#,###,###.##");
+        System.out.println(f3.format(d));  //$1,234,567.47
+    }
+}
+```
+
+- Line 1734 displays the digits in the number, rounding to the nearest 10th after decimal.
+- The extra positions to the left are left off because we used #.
+- Line 1737 adds leading and trailing zeros to make the output the desired length.
+- Line 20 shows prefixing a nonformatting characters ($ sing) along with rounding because fewer digits are printed than 
+  available.
+
+## Localizing Dates
+
+
+- Like numbers, date formats can vary by locale.
 
 
