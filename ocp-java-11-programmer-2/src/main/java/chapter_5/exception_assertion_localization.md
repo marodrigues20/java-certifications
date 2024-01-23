@@ -1868,18 +1868,57 @@ public class LocaleCategory_v1 {
 }
 ```
 
+- First, it prints the language of the spain and money variables using the locale en_US.
+- Then, it prints it using the DISPLAY category of es_ES, while the FORMAT category remains en_US.
+- Finally, it prints the data using both category set to es_ES.
+
 
 ## Loading Properties with Resources
 
+- A resource bundle contains the locale-specific objects to be used by a program.
+- It is like a map with keys and values.
+- The resource bundle is commonly stored in a properties file.
+- A properties file is a text in a specific format with key/value pairs.
+
+
+> Note
+> For the exam, you only need to know about resources bundles that are created from properties files.
+> That said, you can also create a resource bundle from a class by extending ResourceBundle.
+> One advantage of this approach is that it allows you to specify values using a method or in formats other than
+> String, such as other numeric primitives, objects, or lists.
+
+
+- We immediately realize that we are going to need to internationalize our program.
+- Resource bundles will be quite helpful.
+- They will let us easily translate our application to multiple locales or even support multiple locales at once.
+- It will also be easy to add more locales later if we get zoos in even more countries interested.
+- We thought about which locales we need to support, and we came up with four.
+
+
+```
+Locale us = new Locale("en", "US");
+Locale france = new Locale("fr", "FR");
+Locale englishCanada = new Locale("en", "CA");
+Locale frenchCanada = new Locale("fr", "CA");
+```
+
+- In the next sections, we will create a resource bundle using properties files.
+- A properties file is a text file that contains a list of key/value pairs.
+- It is conceptually similar to a Map<String,String>, with each line representing a different key/value.
+- The key and value are separated by an equal sign (=) or colon (:).
+- To keep things simple, we use an equal sign throughout this chapter. 
+- We will also look at how Java determines which resource bundle to use.
 
 
 
+## Creating a Resource Bundle
 
+- We're going to update our application to support the four locales listed previously.
+- Luckily, Java doesn't require us to create four different resource boundles.
+- If we don't have a country-specific resource bundle, Java will use a language-specific one.
+- It's a bit more involved than this, but let's start with a simple example.
 
-
-
-
-
+- For now, we need English and French properties files for our Zoo resource bundle.
 
 
 
