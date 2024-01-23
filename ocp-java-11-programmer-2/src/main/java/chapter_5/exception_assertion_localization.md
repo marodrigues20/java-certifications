@@ -1816,7 +1816,60 @@ public class LocalizingDates_v1 {
 
 ## Specifying a Locale Category
 
+- When you call Locale.setDefault() with a locale, several and formatting options are internally selected.
+- If you required finer-grained control of the default locale, Java actually subdivides the underlying formatting options
+  into distinct categories, with the Locale.Category enum
 
+
+---
+### TABLE 5.10 Locale.Category values ###
+
+| Value    | Description                                                |
+|----------|------------------------------------------------------------|
+| DISPLAY  | Category used for displaying data about the locale         |
+| FORMAT   | Category used for formatting dates, numbers, or currencies |
+---
+
+- When you call Locale.setDefault() with a locale, both the DISPLAY and FORMAT are set together.
+- Let's take a look at an example:
+
+```java
+package chapter_5.locale;
+
+import java.text.NumberFormat;
+import java.util.Locale;
+
+public class LocaleCategory_v1 {
+
+    private static void printCurrency(Locale locale, double money) {
+        System.out.println(
+                NumberFormat.getCurrencyInstance().format(money)
+                + ", " + locale.getDisplayLanguage());
+    }
+
+
+    public static void main(String[] args) {
+
+        var spain = new Locale("es", "ES");
+        var money = 1.23;
+
+        // Print with default locale
+        Locale.setDefault(new Locale("en", "US"));
+        printCurrency(spain, money); // $1.23, Spanish
+
+        // Print with default locale and selected locale display
+        Locale.setDefault(Locale.Category.DISPLAY, spain);
+        printCurrency(spain, money); // $1.23, español
+
+        // Print with default locale and selected locale format
+        Locale.setDefault(Locale.Category.FORMAT, spain);
+        printCurrency(spain, money); // 1,23 €, español
+    }
+}
+```
+
+
+## Loading Properties with Resources
 
 
 
