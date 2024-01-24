@@ -2142,6 +2142,36 @@ Hello. Vancouver Zoo is open Canada visitors
 
 ## Formatting Messages
 
+- In real programs, it is common to substitute variables in the middle of a resource bundle String.
+- The convention is to use a number inside braces such as {0}, {1}, etc.
+- The number indicates the order in which the parameters will be passed.
+- Although resource bundles don't support this directly, the MessageFormat class does.
+
+- For example, suppose that we had this property defined:
+
+```
+helloByName=Hello, {0} and {1}
+```
+
+- In Java, we can read in the value normally. After that, we can run it through the MessageFormat class to substitute
+  the parameters.
+- The second parameter to format() is a vararg, allowing you to specify any number of input values.
+
+- Given a resource bundle rb:
+
+```
+String format = rb.getString("helloByName");
+System.out.print(MessageFormat.format(format, "Tammy", "Henry"));
+```
+
+- that would then print the following:
+
+```
+  Hello, Tammy and Henry
+```
+
+
+## Using the Properties Class
 
 
 
