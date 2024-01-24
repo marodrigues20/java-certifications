@@ -2036,7 +2036,122 @@ ResourceBundle rb = ResourceBundle.getBundle("Zoo", new Locale("en"));
 
 ## Selecting Resource Bundle Values
 
-- 
+- The steps that we've discussed so far are for finding the matching resource bundle to use as a base.
+- Java isn't required to get all of the keys from the same resource bundle.
+- It can get them from any parent of the matching resource bundle.
+- A parent resource bundle in the hierarchy just removes components of the name until it gets to the top.
+- Table 5.12 Selecting shows how to do this.
+
+---
+### TABLE 5.12 Selecting resource bundle properties ###
+
+<table>
+    <thead>
+        <tr>
+            <th>Matching resource bundle</th>
+            <th>Properties files keys can come from</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan=3>Zoo_fr_FR</td>
+            <td>Zoo_fr_FR.properties</td>
+        </tr>
+        <tr>
+            <td>Zoo_fr.properties</td>
+        </tr>
+        <tr>
+            <td>Zoo.properties</td>
+        </tr>
+    </tbody>
+</table>
+---
+
+
+- Once a resource bundle has been selected, only properties along a single hierarchy will be used.
+- Contrast this behaviour with Table 5.11, in which the default en_US resource bundle is used if no other resource
+  bundle are available.
+
+
+- What does this means exactly?
+- Assume the requested locale is fr_FR and the default is en_US.
+- The JVM will provide data from an en_US only if there is no matching fr_FR or fr resource bundles.
+- If it finds a fr_FR or fr resource bundle, then only those bundles along with the default bundle, will be used.
+
+- Let's pull all of this together and print some information about our zoos.
+- We have a number of properties files this time.
+
+
+```
+Zoo.properties
+name=Vancouver Zoo
+
+Zoo_en.properties
+hello=Hello
+open=is open
+
+Zoo_en_US.properties
+name=The Zoo
+
+Zoo_en_CA.properties
+visitors=Canada visitors
+```
+
+- Suppose that we have a visitor from Quebec (which has a default locale of French Canada) who has asked the program to
+  provide information in English. What do you think this output?
+
+```
+11: Locale.setDefault(new Locale("en", "US"));
+12: Locale locale = new Locale("en", "CA");
+13: ResourceBundle rb = ResourceBundle.getBundle("Zoo", locale);
+14: System.out.print(rb.getString("hello"));
+15: System.out.print(". ");
+16: System.out.print(rb.getString("name"));
+17: System.out.println(" ");
+18: System.out.print(rb.getString("open"));
+19: System.out.print(" ");
+20: System.out.print(rb.getString("visitors"));
+```
+
+- The program prints the following
+
+```
+Hello. Vancouver Zoo is open Canada visitors
+```
+
+
+- The default locale is en_US, and the requested  is en_CA.
+- First, java goes through the available resource bundles to find a match. It finds one right away with 
+  Zoo_en_CA.properties.
+- This means the default locale of en_US is irrelevant.
+
+- Line 14 doesn't find a match for the key hello in Zoo_en_CA.properties, so it goes up the hierarchy to 
+  Zoo_en.properties.
+- Line 16 doesn't find a match for name in either of the first two properties files, so it has to go all the way 
+  to the top of the hierarchy to Zoo.properties.
+- Line 18 has the same experience as line 14, using Zoo_en.properties.
+- Finally, line 20 has an easier job of it and finds a matching key in Zoo_en_CA.properties.
+
+
+- What if a property is not found in any resource bundle?
+- Then, an exception is thrown.
+- For example, attempting to call rb.getString("close") in the previous program results in a MissingResourceException 
+  at runtime.
+
+
+
+## Formatting Messages
+
+
+
+
+
+
+
+
+
+
+
 
 
 
