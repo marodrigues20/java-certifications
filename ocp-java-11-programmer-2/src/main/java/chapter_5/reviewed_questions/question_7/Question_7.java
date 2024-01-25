@@ -15,7 +15,7 @@ import java.util.stream.DoubleStream;
  * and at least one after three digits before the decimal (including a comma) and at least one after the decimal if one
  * is available. For this reason, option D is the correct answer. In case you are curious, option A display at most only
  * one value to the right of the decimal, printing <5.2> <8.5><1234>. Option B is closed to the correct answer but always
- * display four digitis to the left of the decimal, printing <0,005.21> <0,008.49><1,234.0>.
+ * display four digits to the left of the decimal, printing <0,005.21> <0,008.49><1,234.0>.
  * Finally, option C is missing the zeros padded to the left of the decimal and optional two values to the right of the
  * decimal, printing <5.2> <8.5> <1,234.0>
  *
@@ -27,6 +27,6 @@ public class Question_7 {
         var message = DoubleStream.of(5.21, 8.49, 1234)
                 .mapToObj(v -> new DecimalFormat(pattern).format(v))
                 .collect(Collectors.joining("> <"));
-        System.out.println("<"+message+">");
+        System.out.println("<"+message+">"); //<005.21> <008.49> <1,234.0>
     }
 }
