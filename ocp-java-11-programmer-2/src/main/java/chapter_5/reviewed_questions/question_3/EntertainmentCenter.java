@@ -31,7 +31,7 @@ public class EntertainmentCenter {
     }
 
     public static void main(String[] args) {
-        var w = new MediaStreamer();
+        /*var w = new MediaStreamer();
         try{
             TV d = new TV(); w;
         }
@@ -41,6 +41,6 @@ public class EntertainmentCenter {
             System.out.println("E");
         } finally{
             System.out.println("F");
-        }
+        }*/
     }
 }
