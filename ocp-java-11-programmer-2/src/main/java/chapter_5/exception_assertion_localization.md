@@ -2173,6 +2173,69 @@ System.out.print(MessageFormat.format(format, "Tammy", "Henry"));
 
 ## Using the Properties Class
 
+- When working with the ResourceBundle class, you may also come across the Properties class.
+
+```java
+package chapter_5.propertiesclass;
+
+import java.util.Properties;
+
+public class ZooOptions {
+
+    public static void main(String[] args) {
+
+        var props = new Properties();
+        props.setProperty("name", "Our zoo");
+        props.setProperty("open", "10am");
+    }
+}
+```
+
+- The Properties class is commonly used in handling values that may not exist.
+
+```
+System.out.println(props.getProperty("camel")); // null
+System.out.println(props.getProperty("camel", "Bob")); // Bob
+```
+
+- The Property class also includes a get() method, but only getProperty() allows for a default value.
+
+```
+props.get("open");                               // 10am 
+props.get("open", "The zoo will be open soon");  // DOES NOT COMPILE
+```
+
+---
+### Using the Property Methods ###
+
+- A Properties object isn't just similar to a Map;
+- It actually inherits Map<Object,Object>. Despite this, you should use the getProperty() and setProperty() methods when
+  working with a Properties object, rather then the get()/put() methods.
+- Besides supporting default values, it also ensures you don't add to the Properties objects that cannot be read.
+
+```java
+package chapter_5.propertiesclass;
+
+import java.util.Properties;
+
+public class ZooOptions_v2 {
+
+    public static void main(String[] args) {
+
+        var props = new Properties();
+        props.put("tigerAge", "4");
+        props.put("lionAge", 5);
+        System.out.println(props.getProperty("tigerAge"));
+        System.out.println(props.getProperty("lionAge"));
+
+    }
+}
+```
+- Since a Properties object works only with String values, trying to read a numeric value returns null.
+
+---
+
+
 
 
 
