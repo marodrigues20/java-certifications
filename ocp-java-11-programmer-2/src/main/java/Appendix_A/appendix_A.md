@@ -210,3 +210,74 @@ var pileOfPapersToFile = new PileOfPapersToFileInFilingCabinet();
 
 ## Introducing Modules
 
+- The Java Platform Module System (JPMS) was introduced in Java 9 to group code at a higher level and tries to solve 
+  the problems that Java has been plagued with since the beginning. The main propose of a module is to provide groups
+  of related packages to offer a particular set of functionality to developers. It's like a JAR file except a developer
+  choose which packages are accessible outside the module. Let's look at what modules are and what problems they are 
+  designed to solve.
+- The Java Platform Module System includes the following:
+  - A format for module JAR files
+  - Partitioning of the JDK into modules
+  - Additional command-line options for Java tools
+
+
+## Exploring a Module
+
+- A module is a group of one packages plus a special file called module-info.java. Figure A.1 lists just a few of the
+  modules a zoo might need. We decided to focus on the animal interactions in our example. The full zoo could easily
+  have a dozen modules. In Figure A.1, notice that there are arrows between many of the modules. These represent 
+  dependencies where one module relies on code in another. The staff needs to feed the animals to keep their jobs.
+- The line from zoo.staff to zoo.animal.feeding shows the former depends on the latter.
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_1.png?raw=true)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
