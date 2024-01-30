@@ -233,11 +233,92 @@ var pileOfPapersToFile = new PileOfPapersToFileInFilingCabinet();
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_1.png?raw=true)
 
 
+- Now let's drill down one of these modules. Figure A.2 shows what is inside the zoo.animal.talks module.
+- There are three packages with two classes each. (It's a small zoo.) There is also a strange file called 
+  module-info.java. This file is required to be inside all modules.
+- We will explain this in more detail later.
+
+## Benefits of Module
+
+- Module look like another layer of things you need to know in order to program.
+- While using modules is optional, it is important to understand the problems they are designed to solve
+
+## Better Access Control
+
+- There are four levels of access in a Java class file: private, package-private, protected, and public access.
+- These levels of access control allow you to restrict access class or package. You could even allow access to 
+  subclasses without exposing them to the world.
+- However, what if we wrote some complex logic that we wanted to restrict to just some packages? For example, we would 
+  like the packages in the zoo.animal.talks module to just be available to the packages in the zoo.staff module without
+  making them available to any other code. Our traditional access modifiers cannot handle this scenario.
+- Modules solve this problem by acting as a fifth level of access control. They can expose packages within the modular
+  JAR to specific other packages. This stronger form of encapsulation really does create internal packages.
 
 
+## Clearer Dependency Management
+
+- It is common for libraries to depend on other libraries.
+- For example, the JUnit 4 testing library depends on the Hamcrest library for matching logic.
+- Developers would have to find this out by reading the documentation or files in the project itself.
+- If you forgot to include Hamcrest in your classpath, your code would run fine until you used a Hamcrest class. Then
+  it would blow up at runtime with a message about not finding a required class. (We did mention JAR hell, right?)
+- In a fully modular environment, each of the open-source projects would specify their dependencies in the 
+  module-info.java file. When launching the program, Java would complain that Hamcrest isn't in the module path, and 
+  you'd know right away.
 
 
+## Custom Java Builds
 
+- The Java Development Kit (JDK) is larger than 150 MB. Even the Java Runtime Environment (JRE) was pretty big when it
+  was available as a separate download. In the past, Java attempted to solve this with a compact profile. The three
+  compact profiles provided a subset of the built-in Java classes so there would be a smaller package for mobile and 
+  embedded devices.
+- However, the compact profiles lacked flexibility. Many packages were included that developers were unlikely to use,
+  such as Java Native Interface (JNI), which is for working with OS-specific programs. At the same time, using other
+  packages like Image I/O required the full JRE.
+- The Java Platform Module System allows developers to specify what modules they actually need. This makes it possible 
+  to create a smaller runtime image that is customized to what the application needs and nothing more. Users can run
+  that image without having Java installed at all.
+- A tool called jlink is used to create this runtime image.
+- In addition to the smaller-scale package, this approach improves security. If you don't use AWT and a security 
+  vulnerability is reported for AWT, applications that packaged a runtime image without AWT aren't affected.
+
+
+## Improved Performance
+
+- Since Java now knows which modules are required, it only needs to look at those at class loading time.
+- This improves startup time for big programs and requires less memory to run.
+
+
+## Unique Package Enforcement
+
+- Another manifestation of JAR hell is when the same package is in two JARs.
+- The Java Platform Module System prevents this scenario. A package is allowed to be supplied by only one module.
+- No more unpleasant surprises about a package at runtime.
+
+
+---
+### Modules for Existing Code ###
+
+While not all open source projects have switched over, more than 4,000 have. There's a list of all Java modules on 
+GitHub at https://github.com/sormuras/modules/blob/master/README.md
+---
+
+## Creating and Running a Modular Program
+
+- In this section, we will create, build, and run the zoo.animal.feeding module. 
+- We choose this one to start with because all the other modules depend on it. 
+- Figure A.3 shows the desing of this module. In addition to the module-info.java file, it has one package with one 
+  class inside.
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_3.png?raw=true)
+
+
+- IN the next sections, we will create, compile, run, and package the zoo.animal.feeding module.
+
+
+## Creating the Files
 
 
 
