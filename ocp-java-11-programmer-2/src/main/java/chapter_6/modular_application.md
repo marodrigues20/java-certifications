@@ -8,3 +8,7 @@
   - Describe the components of Services including directives
   - Design a service type, load services using ServiceLoader, check for dependencies of the services including consumer 
     provider modules.
+
+
+- If you took the 1ZO-815 exam, you learned the basics of modules. If not, read Appendix A, "The Upgrade Exam", before
+  reading this chapter.
