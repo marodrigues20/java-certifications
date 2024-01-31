@@ -376,7 +376,7 @@ Note: https://github.com/boyarsky/sybex-1Z0-815-chapter-11
 
 
 ```shell
-javac --module-path mods -d feeding feeding/zoo/animal/feeding/*.java feeding/module-info
+javac --module-path mods -d feeding feeding/zoo/animal/feeding/*.java feeding/module-info.java
 ```
 
 - As a review, the -d option specifies the directory to place the class files in.
