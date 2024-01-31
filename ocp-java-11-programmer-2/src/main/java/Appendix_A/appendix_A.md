@@ -371,8 +371,20 @@ Note: https://github.com/boyarsky/sybex-1Z0-815-chapter-11
 
 ## Compiling Our First Module
 
+- Before we can run modular code, we need to compile it. Other than the ***module-path*** options, this code  look 
+  familiar:
 
 
+```shell
+javac --module-path mods -d feeding feeding/zoo/animal/feeding/*.java feeding/module-info
+```
+
+- As a review, the -d option specifies the directory to place the class files in.
+- The end of the command is a list of the .java files to compile.
+- You can list the files individually or use wildcard for all .java files in a subdirectory.
+- The new part is the module-path. This option indicates the location of any custom module files.
+- In this example, ***module-path*** could have been omitted since there are no dependencies.
+- You can think of ***module-path*** as replacing the ***classpath*** option when you are working on a modular program.
 
 
 
