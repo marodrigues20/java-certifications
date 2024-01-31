@@ -320,13 +320,55 @@ GitHub at https://github.com/sormuras/modules/blob/master/README.md
 
 ## Creating the Files
 
+- First we have a really simple class that prints one line in a main() method.
+
+```java
+package Appendix_A.modules;
+
+public class Task {
+    public static void main(String... args) {
+        System.out.println("All fed!");
+    }
+}
+```
+
+- Next comes the module-info.java file. This is the simplest possible one.
+
+```
+module zoo.animal.feeding {
+}
+```
+
+- There are a few keys differences between a module-info.java file and a regular class.
+  - The module-info file must be in the root directory of your module. Regular Java classes should be in packages
+  - The module-info file must use the keyword module instead of class, interface, or enum.
+  - The module name follows the naming rules for packages names.
+    It often includes periods (.) in its name. Regular class and package names are not allowed to have dashes (-).
+    Module names follow the same rule.
 
 
+---
+### Can a module-info.java File Be Empty?
+Yes.
+---
+
+- Figure A.4 shows the expected directory structure.
 
 
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_4.png?raw=true)
 
 
+- In particular, feeding is the module directory, and the module-info file is directly under it.
+- Just as with a regular JAR file, we also have the ***zoo.animal.feeding*** package with one subfolder per portion of the name.
+- The Task class is in the appropriate subfolder for its package.
+- Also, note that we created a directory called ***mods***  at the same level as the module.
+- We will use it for storing the module artificats a little later in the appendix.
+- This directory can be named anything, but ***mods*** is a common name.
+- If you are following along with the online code example, note that the ***mods*** directory is not included, because 
+  it is empty.
 
+
+## Compiling Our First Module
 
 
 
