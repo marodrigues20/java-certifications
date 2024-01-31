@@ -367,6 +367,7 @@ Yes.
 - If you are following along with the online code example, note that the ***mods*** directory is not included, because 
   it is empty.
 
+Note: https://github.com/boyarsky/sybex-1Z0-815-chapter-11
 
 ## Compiling Our First Module
 
