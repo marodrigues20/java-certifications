@@ -434,6 +434,33 @@ javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/*.java
 
 
 
+```shell
+java --module-path feeding --module zoo.animal.feeding/zoo.animal.feeding.Task
+```
+
+- Since you already saw that --module-path uses the short form of -p, we bet you won't be surprised to learn there is a 
+  short form of --module as well.
+- The short option is -m. That means the following command equivalent:
+
+```shell
+java -p feeding -m zoo.animal.feeding/zoo.animal.feeding.Task
+```
+
+- In this examples, we used feeding as the module path because that's where we compiled the code.
+- This will change once we package the module and run that.
+
+
+---
+### TABLE A.2 Options you need to know for using modules with java
+
+| User for      | Abbreviation | Long form            |
+|---------------|--------------|----------------------|
+| Module name   | -m <name>    | --module <name>      |
+| Module path   | -p <path>    | --module-path <path> |
+
+---
+
+## Packing Our First Module
 
 
 
