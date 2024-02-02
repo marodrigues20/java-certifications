@@ -414,9 +414,10 @@ javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/*.java
 - Table A.1 lists the options you need to know well when compiling modules
   - There are many options you can pass to the javac command, but these are the ones you can expect to be tested on.
 
-| User for      | Abbreviation | Long form              |
-|---------------|--------------|------------------------|
-| Module path   | -p <path>    | --module-path <path>   |
+| User for                  | Abbreviation | Long form            |
+|---------------------------|--------------|----------------------|
+| Directory for class files | -d <dir>     | n/a                  |
+| Module path               | -p <path>    | --module-path <path> |
 
 
 ## Running Our First Module
