@@ -388,9 +388,44 @@ javac --module-path mods -d feeding feeding/zoo/animal/feeding/*.java feeding/mo
 
 
 
+---
+### What happend to the Classpath? ###
+
+- In the past, you would reference JAR file using the classpath option. It had three possibles forms: -cp, --class-path,
+  and -classpath
+- You can still use these options in Java 11. 
+- In fact, it is common to do so when writing non-modular programs
+---
 
 
+- The abbreviation for --module-path is -p
+- The following four commands show the -p option:
 
+```shell
+javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/*.java
+
+javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/module-info.java
+
+javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/module-info.java
+
+javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/*.java
+```
+
+- Table A.1 lists the options you need to know well when compiling modules
+  - There are many options you can pass to the javac command, but these are the ones you can expect to be tested on.
+
+| User for      | Abbreviation | Long form              |
+|---------------|--------------|------------------------|
+| Module path   | -p <path>    | --module-path <path>   |
+
+
+## Running Our First Module
+
+- Before we package our module, we should make sure it works by running it.
+- Suppose there is a module named *book.module*. Inside that module is a package named *com.sybex*, which has a class
+  named OCP with a main() method.
+- *Figure A.5* shows the syntax for running a module. Pay special attention to the *book.module/com.sybex.OCP* part.
+- It is important to remember that you specify the module name followed by a slash (/) followed by the fully qualified name.
 
 
 
