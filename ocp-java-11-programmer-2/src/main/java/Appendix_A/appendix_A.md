@@ -537,6 +537,40 @@ jar -cvf mods/zoo.animal.feeding.jar -C feeding/ .
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_8.png?raw=true)
 
 
+- The module contains two basic packages and classes in addition to the *module-info.java*
+
+```java
+package zoo.animal.care.details;
+
+import zoo.animal.feeding.*;
+
+public class HippoBirthday {
+    private Task task;
+}
+```
+```java
+package zoo.animal.care.medical;
+
+public class Diet {
+}
+```
+```
+1:  module zoo.animal.care {
+2:    exports zoo.animal.care.medical;
+3:    requires zoo.animal.feeding;
+4:  }
+```
+
+- Line 1 specifies the name of the module.
+- Line 2 lists the package we are exporting so it can be used by other modules.
+- So far, this is similar to the *zoo.animal.feeding* module.
+- On line 3, we see a new keyword. The *requires* statement specifies that a module is needed.
+- The *zoo.animal.care* module depends on the *zoo.animal.feeding* module.
 
 
+- Figure A.9 shows the directory structure of this module. Note that *module-info.java* is in the root of the module.
+- The two packages are underneath it.
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_9.png?raw=true)
 
