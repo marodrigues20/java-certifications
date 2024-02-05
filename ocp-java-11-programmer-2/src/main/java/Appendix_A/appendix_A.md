@@ -500,11 +500,41 @@ java -p mods -m zoo.animal.feeding/zoo.animal.feeding.Task
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_7.png?raw=true)
 
 
+## Updating the Feeding Module
+
+- Since we will be having our other modules call code in the zoo.animal.feeding package, we need to declare this intent
+  in the module-info file.
+- The exports keyword is used to indicate that a module intents for those packages to be used by Java code outside the
+  module. 
+- As you might expect, without an exports keyword, the module is only available to be run from the command line
+  on its own. 
+- In the following example, we export one package:
+
+```java
+module zoo.animal.feeding{
+    exports zoo.animal.feeding;
+}
+```
+
+- Recompiling and repackaging the module will update the *module-info* inside our *zoo.animals.feeding.jar* file.
+- These are the same *javac* and *jar* commands you run previously.
+
+```shell
+javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/module-info.java
+
+jar -cvf mods/zoo.animal.feeding.jar -C feeding/ .
+```
+
+## Creating a Care Module
+
+- Next, let's create the zoo.animal.care module.
+- This time, we are going to have two packages. 
+- The *zoo.animal.care.medical* package will have the classes and methods that are intended for use by other modules.
+- The *zoo.animal.care.details* package is only going to be used by this module. It will not be exported from the module.
+- Think of it as healthcare privacy for the animals.
 
 
-
-
-
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_8.png?raw=true)
 
 
 
