@@ -717,6 +717,20 @@ jar -cvf mods/zoo.animal.talks.jar -C talks/ .
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_12.png?raw=true)
 
 
+```java
+module zoo.staff {
+
+    requires zoo.animal.feeding;
+    requires zoo.animal.care;
+    requires zoo.animal.talks;
+}
+```
+
+- There are three arrows in Figure A.13 pointing from *zoo.staff* to other modules.
+- These represents the three modules that are required. 
+- Since no packages are to be exposed from zoo.staff, there are no *exports* statements.
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_13.png?raw=true)
 
 
 
