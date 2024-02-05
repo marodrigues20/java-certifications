@@ -586,3 +586,53 @@ javac -p mods -d care care/zoo/animal/care/details/*.java care/zoo/animal/care/m
 - We compile both packages and the module-info file.
 - In the real world, you'll use a build too rather than doing this by hand.
 - For the exam, you just list all the packages and/or files you want to compile.
+
+---
+### Order May Matter! ###
+
+
+Note that order matter when compiling a module. Suppose we list the module-info file first when trying to compile.
+
+```shell
+javac -p mods -d care are/module-info.java \ 
+         care/zoo/animal/care/details/*.java \  
+         care/zoo/animal/care/medical/*.java 
+```
+
+- The compiler complains that it doesn't know anything about the package *zoo.animal.care.medical*.
+
+```
+care/module-info.java:3: error package is empty
+  or does not exist: zoo.animal.care.medical
+exports zoo.animal.care.medical;
+```
+
+- A package must have at least one class in it to be exported. Since we haven't yet compiled *zoo.animal.care.medical.Diet*,
+- the compiler acts as if it doesn't exist.
+- If you get this error message, you can reorder the *javac* statement.
+- Alternatively, you can compile the packages in a separate *javac* command, before compiling the module-info file.
+---
+
+
+- Now that we have compiled code, it's time to create the module JAR.
+
+```shell
+jar -cvf mods/zoo.animal.care.jar -C care/ .
+```
+
+
+## Creating the Talks Module
+
+- So far, we've used only one *exports* and *requires* statement in a module.
+- Now you'll learn how to handle exporting multiple packages or requiring multiple modules.
+- In Figure A.10, observe that the *zoo.animal.care* 
+- This means that there must be two requires statements in *module-info.java* file.
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_10.png?raw=true)
+
+- Figure A.11 shows the contents of this module. We are going to export all three packages in this module.
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_11.png?raw=true)
+
+- First let's look at the *module-info.java* file for *zoo.animal.talks*.
