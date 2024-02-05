@@ -574,3 +574,15 @@ public class Diet {
 
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_9.png?raw=true)
 
+
+- You might have noticed that the packages begin with the same prefix as the module name.
+- This is intentional. You can think of it as if the module name "claims" the matching package and all subpackages.
+- To review, we now compile and package the module.
+
+```shell
+javac -p mods -d care care/zoo/animal/care/details/*.java care/zoo/animal/care/medical/*.java care/module-info.java
+```
+
+- We compile both packages and the module-info file.
+- In the real world, you'll use a build too rather than doing this by hand.
+- For the exam, you just list all the packages and/or files you want to compile.
