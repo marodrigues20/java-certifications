@@ -492,6 +492,10 @@ java -p mods -m zoo.animal.feeding/zoo.animal.feeding.Task
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_6.png?raw=true)
 
 
+## Updating Our Example for Multiple Modules
+
+- Now that our *zoo.animal.feeding* module is solid, we can start thinking about our other modules.
+- As you can see in ***Figure A.7***, all three of the other modules in our system depend on the zoo.animal.feeding module.
 
 
 
