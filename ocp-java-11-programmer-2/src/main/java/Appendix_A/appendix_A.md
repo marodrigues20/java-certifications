@@ -462,11 +462,34 @@ java -p feeding -m zoo.animal.feeding/zoo.animal.feeding.Task
 
 ## Packing Our First Module
 
+- Our next step is to package it. Be sure to create a *mods* directory before running this command.
+
+```shell
+jar -cvf mods/zoo.animal.feeding.jar -C feeding/ .
+```
+
+- There's nothing module-specific here.
+- We are packing everything under the *feeding* directory and storing in a JAR file named *zoo.animal.feeding.jar* under
+  the mods folder.
+- This represents how the module JAR will look to other code that wants to use it.
 
 
+> Note
+> It is possible to version your module using the --module-version option.
+> This isn't on the exam but is good to do when you are ready to share your module with others.
 
 
+- Now let's run the program again, 
+- but this time using the *mods* directory instead of the loose classes.
 
+```shell
+java -p mods -m zoo.animal.feeding/zoo.animal.feeding.Task
+```
+
+- You might notice that this command looks identical to the one in the previous section except for the directory.
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_6.png?raw=true)
 
 
 
