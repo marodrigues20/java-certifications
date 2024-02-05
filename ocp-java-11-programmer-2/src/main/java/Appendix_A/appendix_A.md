@@ -636,3 +636,91 @@ jar -cvf mods/zoo.animal.care.jar -C care/ .
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_11.png?raw=true)
 
 - First let's look at the *module-info.java* file for *zoo.animal.talks*.
+
+```
+1: module zoo.animal.talks {
+2:  exports zoo.animal.talks.content;
+3:  exports zoo.animal.talks.media;
+4:  exports zoo.animal.talks.schedule;
+5:
+6:  requires zoo.animal.feeding;
+7:  requires zoo.animal.care;
+8: }
+```
+
+
+- Line 1 shows the module name.
+- Line 2-4 allow other modules to reference all three packages.
+- Line 6-7 specify the two modules that this modules depends on.
+
+
+```java
+package zoo.animal.talks.content;
+
+public class ElephantScript {
+}
+```
+
+```java
+package zoo.animal.talks.content;
+
+public class SeaLionScript {
+}
+```
+
+```java
+package zoo.animal.talks.media;
+
+public class Announcement {
+    public static void main(String[] args) {
+        System.out.println("We will be having talks");
+    }
+}
+```
+
+```java
+package zoo.animal.talks.media;
+
+public class Signage {
+}
+```
+
+```java
+package zoo.animal.talks.schedule;
+
+public class Weekday {
+}
+```
+
+```java
+package zoo.animal.talks.schedule;
+
+public class Weekend {
+}
+```
+
+- The following are the commands to compile and build the module:
+
+```shell
+javac -p mods -d talks talks/zoo/animal/talks/content/*.java talks/zoo/animal/talks/media/*.java talks/zoo/animal/talks/schedule/*.java talks/module-info.java   
+              
+jar -cvf mods/zoo.animal.talks.jar -C talks/ .
+```
+
+## Creating the Staff Module
+
+- Our final module is zoo.staff. 
+- Figure A.12 shows there is only one package inside.
+- We will not be exposing this package outside the module.
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_12.png?raw=true)
+
+
+
+
+
+
+
+
+
