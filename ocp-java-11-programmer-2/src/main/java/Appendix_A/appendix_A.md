@@ -759,7 +759,38 @@ jar -cvf mods/zoo.staff.jar -C staff/ .
 
 ## exports
 
+- We've already seen how *exports packageName* exports a package to other modules.
+- It's also possible to export a package to a specific module.
+- Suppose that only staff members should have access to the talks.
+- We could update the module declaration as follows:
+
+```java
+module zoo.animal.talks {
+    exports zoo.animal.talks.content to zoo.staff;
+    exports zoo.animal.talks.media;
+    exports zoo.animal.talks.schedule;
+
+    requires zoo.animal.feeding;
+    requires zoo.animal.care;
+}
+```
+
+- From the zoo.staff module, nothing has changed. However, no other modules would be allowed to access that package.
+
+- The *exports* keyword essentially gives us more levels of access control. Table A.3 lists the full access control 
+  options.
+
+---
+### TABLE A.3 Access control with modules
+
+| Level                    | Withing module code                            | Outside module                            |
+|--------------------------|------------------------------------------------|-------------------------------------------|
+| private                  | Available only within class                    | No access                                 |
+| default (package-private | Available only within package                  | No access                                 |
+| protected                | Available only within package or to subclasses | Accessible to subclasses only if exported |
+| public                   | Available to all classes                       | Accessible only if package is exported    |
+---
 
 
-
+## requires transitive
 
