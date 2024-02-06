@@ -859,4 +859,11 @@ module zoo.staff {
 
 ## Effects of requires transitive
 
+- Given our newly updated *module-info* files and using ***Figure A.14***, what is the effect of applying the 
+  *transitive* modifier to the *requires* statement in our *zoo.animal.care* module? Applying the *transitive* modifiers
+  has the following effects.
+  - Module *zoo.animal.talks* can optionally declare it requires the *zoo.animal.feeding* module, but it is not required
+  - Module *zoo.animal.care* cannot be compiled or executed without access to the *zoo.animal.feeding* module.
+  - Module *zoo.animal.talks* cannot be compiled or executed without access to the *zoo.animal.feeding* module.
+
 
