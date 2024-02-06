@@ -733,6 +733,31 @@ module zoo.staff {
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_13.png?raw=true)
 
 
+- In this module we have a single class in file *Jobs.java*.
+
+```java
+package zoo.staff;
+
+public class Jobs {
+}
+```
+
+- The following are the commands to compile and build the module:
+
+```shell
+javac -p mods -d staff staff/zoo/staff/*.java staff/module-info.java
+
+jar -cvf mods/zoo.staff.jar -C staff/ .
+```
+
+## Diving into the module-info File
+
+- Now that we've successfully created modules, we can talk more about the *module-info* file.
+- We will look at *exports, requires, provides, uses*, and *opens*.
+- These keywords can appear in any order in the *module-info* file.
+
+
+## exports
 
 
 
