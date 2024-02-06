@@ -794,3 +794,69 @@ module zoo.animal.talks {
 
 ## requires transitive
 
+- As you saw earlier, *requires moduleName* specifies that the current module depends on *moduleName*.
+- There's also a *requires transitive moduleName*, which means that any module that *requires* this module will also 
+  depend on *moduleName*.
+- Figure A.14 shows the modules with dashed lines for the redundant relationships and solid lines for relationships
+  specified in the *module-info*. This shows how the module relationship would look if we were to only use transitive 
+  dependencies.
+- For example, *zoo.animals.talks* depends on *zoo.animals.care*, which depends on *zoo.animals.feeding* no longer 
+  appears in Figure A.14
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Figure_A_14.png?raw=true)
+
+- Now let's look at the four *module-info* files.
+- The first module remains unchanged.
+- We are exporting one package to any package that use the module.
+
+```java
+module zoo.animal.feeding {
+ exports zoo.animal.feeding;
+}
+```
+
+- The *zoo.animal.care* module is the first opportunity to improve things. Rather than forcing all remaining modules to 
+  explicitly specify *zoo.animal.feeding*, the code uses *requires transitive*.
+
+
+```java
+module zoo.animal.care {
+  exports zoo.animal.care.medical;
+  requires transitive zoo.animal.feeding;
+}
+```
+
+- In the *zoo.animal.talks* module, we make a similar change and don't force other modules to specify *zoo.animal.care*.
+- We also no longer need to specify *zoo.animal.feeding*, so that line is commented out.
+
+
+```java
+module zoo.animal.talks {
+    exports zoo.animal.talks.content to zoo.staff;
+    exports zoo.animal.talks.media;
+    exports zoo.animal.talks.schedule;
+
+    // no longer needed requires zoo.animal.feeding;
+    // no longer needed requires zoo.animal.care;
+    requires transitive zoo.animal.care;
+}
+```
+
+- Finally, in the *zoo.staff* module, we can get rid of two *requires* statements.
+
+```java
+module zoo.staff {
+  // no longer needed requires zoo.animal.feeding;
+  // no longer needed requires zoo.animal.care;
+    requires zoo.animal.talks;
+}
+```
+
+- The more modules you have, the more benefits of *requires transitive* compound.
+- It is also more convenient for the caller. If you were trying to work with this zoo, you could just require *zoo.staff* 
+  and have the remaining dependencies automatically inferred.
+
+## Effects of requires transitive
+
+
