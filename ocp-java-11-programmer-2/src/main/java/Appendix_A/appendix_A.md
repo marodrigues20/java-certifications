@@ -867,3 +867,11 @@ module zoo.staff {
   - Module *zoo.animal.talks* cannot be compiled or executed without access to the *zoo.animal.feeding* module.
 
 
+- These rules hold even if the *zoo.animal.care* and *zoo.animal.talks* modules do not explicitly reference any packages 
+  in the *zoo.animal.feeding* module. On the other hand, without the *transitive* modifier in our *module-info* file of 
+  *zoo.animal.care*, the other modules would have to explicitly use *requires* in order to reference any packages in the 
+  *zoo.animal.feeding* module.
+
+
+## Duplicate requires Statement
+
