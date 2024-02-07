@@ -1020,10 +1020,119 @@ zoo.staff file:///Users/marioalexandrerodrigues/Documents/repos.nosync/java-cert
 
 ## Showing Module Resolution
 
+- In case listing the module didn't give you enough output, you can also use the *--show-module-resolution* option
+- You can think of it as a way of debugging modules.
+- It spits out a lot of output when the program starts up.
+
+```shell
+java --show-module-resolution -p feeding -m zoo.animal.feeding/zoo.animal.feeding.Task
+```
+
+## The jar Command
+
+- Like the *java* command, the *jar* command can describe a module. Both of these commands are equivalent:
+
+```shell
+jar -f mods/zoo.animal.feeding.jar -d 
+jar --file mods/zoo.animal.feeding.jar --describe-module
+```
+
+- The output is slightly different from when we used the *java* command to describe the module. With *jar*, it outputs
+  the following:
+
+```shell
+zoo.animal.feeding jar:file:///Users/marioalexandrerodrigues/Documents/repos.nosync/java-certifications/sybex-1Z0-815-chapter-11/mods/zoo.animal.feeding.jar!/module-info.class
+exports zoo.animal.feeding
+requires java.base mandated
+```
+
+- The JAR version includes the *module-info* in the filename, which is not a particularly significant different in the 
+  scheme of things.
+
+## The jdeps Command
+
+- The *jdeps* commands gives you information about dependencies withing a module. Unlike describing a module, it looks 
+  at the code in addition to the *module-info* file.
+- This tells you what dependencies are actually used rather than simply declared.
+- Let's start with a simple example and ask for a summary of the dependencies in *zoo.animal.feeding*. Both of these 
+  commands give the same output, as shown here:
+
+```shell
+jdeps -s mods/zoo.animal.feeding.jar
+```
+
+```shell
+jdeps -summary mods/zoo.animal.feeding.jar
+```
+
+- Notice that there is one dash (-) before *-summary* rather than two.
+- Regardless, the output tells you that there is only one package and it depends on the built-in *java.base* module.
+
+```shell
+zoo.animal.feeding -> java.base
+```
+
+- Alternatively, you can call *jdeps* without the summary option and get the long form:
+
+```shell
+jdeps mods/zoo.animal.feeding.jar
+```
+
+```shell
+zoo.animal.feeding
+ [file:///Users/marioalexandrerodrigues/Documents/repos.nosync/java-certifications/sybex-1Z0-815-chapter-11/mods/zoo.animal.feeding.jar]
+   requires mandated java.base (@11.0.2)
+zoo.animal.feeding -> java.base
+   zoo.animal.feeding                                 -> java.io                                            java.base
+   zoo.animal.feeding                                 -> java.lang                                          java.base
+```
 
 
+- This time, we pick a module that depends on *zoo.animal.feeding*.
+- We need to specify the module path so *jdeps* knows where to find information about the dependent module.
+- We didn't need to do that before because all dependent modules were built into the JDK.
 
+- Following convention, these two commands are equivalent:
 
+```shell
+jdeps -s --module-path mods mods/zoo.animal.care.jar
+```
+
+```shell
+jdeps -summary --module-path mods mods/zoo.animal.care.jar
+```
+
+- There is no short form of *--module-path* in the *jdeps* command. The output is only two lines:
+
+```shell
+zoo.animal.care -> java.base
+zoo.animal.care -> zoo.animal.feeding
+```
+
+- We can see that the *zoo.animal.care* module depends on our custom *zoo.animal.feeding* module along with the built-in
+  *java.base*.
+
+- In case you were worried the output was too short, we can run it in full mode.
+
+```shell
+jdeps --module-path mods mods/zoo.animal.care.jar
+```
+
+```shell
+zoo.animal.care
+ [file:///Users/marioalexandrerodrigues/Documents/repos.nosync/java-certifications/sybex-1Z0-815-chapter-11/mods/zoo.animal.care.jar]
+   requires mandated java.base (@11.0.2)
+   requires zoo.animal.feeding
+zoo.animal.care -> java.base
+zoo.animal.care -> zoo.animal.feeding
+   zoo.animal.care.details                            -> java.lang                                          java.base
+   zoo.animal.care.details                            -> zoo.animal.feeding                                 zoo.animal.feeding
+   zoo.animal.care.medical                            -> java.lang                                          java.base
+```
+
+## The jmod Command
+
+- The final
 
 
 
