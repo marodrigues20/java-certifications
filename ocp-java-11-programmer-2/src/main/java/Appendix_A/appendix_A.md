@@ -875,3 +875,79 @@ module zoo.staff {
 
 ## Duplicate requires Statement
 
+```java
+module bad.module{
+    requires zoo.animal.talks;
+    requires transitive zoo.animal.talks;
+}
+```
+
+- Java doesn't allow you to repeat the same module in a requires clause.
+
+## provides, uses, and opens
+
+- For the remaining three keywords (*provides, uses,* and *opens*), we cover just the basics here.
+- They are covered in more detail in Chapter 6.
+
+
+### provides keyword
+  - The *provides* keyword specifies that a class provides an implementation of a service.
+  - For now, you can just think of a service as a fancy interface.
+  - To use it, you supply the API and class name that implements the API.
+
+  ```
+  provides zoo.staff.ZooApi with zoo.staff.ZooImpl
+  ```
+
+### uses keyword
+  - The *uses* keyword specifies that a module is relying on a service.
+  - To code it, you can supply the API you want to call.
+
+  ```
+  uses zoo.staff.ZooApi
+  ```
+
+### open keyword
+  
+  - Java allows callers to inspect and call code at runtime with a technique called *reflection*.
+  - This is a powerful approach that allows calling code that might not be available at compile time.
+  - It can even be used to subvert access control!
+  - Since reflection can be dangerous, the module system requires developers to explicitly allow reflection in the 
+    *module-info* if they want calling modules to be allowed to use it. Here are two examples:
+
+  ```
+  opens zoo.animal.talks.schedule;
+  opens zoo.animal.talks.media to zoo.staff
+  ```
+
+- The first example allows any module using this one to use reflection.
+- The second example gives that privilege only to the *zoo.staff* package.
+
+
+## Discovering Modules
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
