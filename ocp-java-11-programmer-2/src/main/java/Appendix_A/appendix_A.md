@@ -926,6 +926,119 @@ module bad.module{
 
 ## Discovering Modules
 
+- So far, we've been working with modules that we wrote.
+- Since Java 9, the classes built into the JDK were modularized as well.
+- In this section, we will show you how to use commands to learn about modules.
+
+
+## The Java Command
+
+- The *java* command has three module-related options.
+- One describes a module, another lists the available modules, and the third shows the module resolution logic.
+
+
+> Note
+> It is also possible to add modules, exports, and more at the command line.
+> But please don't. It's confusing and hard to maintain.
+> Note that these flags are available on *java*, but not all commands are.
+
+
+## Describing a Module
+
+- Suppose you are given the *zoo.animal.feeding* module JAR file and want to know its module structure.
+- You could *"unjar"* it and open the *module-info* file.
+- This would show you that the module exports one package and doesn't require any modules.
+
+```java
+module zoo.animal.feeding{
+    exports zoo.animal.feeding;
+}
+```
+
+- However, there is an easier way. The *java* command now has an option to describe a module.
+- The following two commands are equivalent:
+
+```shell
+java -p mods -d zoo.animal.feeding
+```
+
+```shell
+java -p mods --describe-module zoo.animal.feeding
+```
+
+> Note
+> To understand the output of the commands check the book by yourself. For the exam we don't need to understand or 
+> memorize the output.
+
+
+## Listing Available Modules
+
+- In addition to describing modules, you can use the *java* command to list the modules that are available.
+- The simplest form list the modules that are part of the JDK.
+
+```shell
+java --list-modules
+```
+
+- When we run it, the output went on for 70 lines looked like this:
+
+```shell
+java.base@11.0.2
+java.compiler@11.0.2
+java.datatransfer@11.0.2
+```
+
+- This is a listing of all modules that comes with Java and their version numbers.
+- You can tell that we were using Java 11.0.2 when testing this example.
+
+- More interestingly, you can use this command with custom code.
+- Let's try again with the directory containing our zoo modules:
+
+```shell
+java -p mods --list-modules
+```
+
+- How many lines do you expect to be in the output this time?
+- There are 74 lines now: the 70 built-in modules plus four in our zoo system. 
+- The custom lines look like this:
+
+```shell
+zoo.animal.care file:///Users/marioalexandrerodrigues/Documents/repos.nosync/java-certifications/sybex-1Z0-815-chapter-11/mods/zoo.animal.care.jar
+zoo.animal.feeding file:///Users/marioalexandrerodrigues/Documents/repos.nosync/java-certifications/sybex-1Z0-815-chapter-11/mods/zoo.animal.feeding.jar
+zoo.animal.talks file:///Users/marioalexandrerodrigues/Documents/repos.nosync/java-certifications/sybex-1Z0-815-chapter-11/mods/zoo.animal.talks.jar
+zoo.staff file:///Users/marioalexandrerodrigues/Documents/repos.nosync/java-certifications/sybex-1Z0-815-chapter-11/mods/zoo.staff.jar
+```
+
+
+- Since these are custom modules, we get a location on the file system.
+- If the project had a module version number, it would have both the version number and the file system path.
+
+
+> Note
+> Note that *--list-modules* exist as soon as it prints the observable modules. It does not run the program.
+
+
+## Showing Module Resolution
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
