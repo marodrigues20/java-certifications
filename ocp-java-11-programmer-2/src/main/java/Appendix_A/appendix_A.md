@@ -1163,6 +1163,10 @@ zoo.animal.care -> zoo.animal.feeding
 
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Table_A_7.png?raw=true)
 
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Table_A_8.png?raw=true)
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Table_A_9.png?raw=true)
+
 
 
 
