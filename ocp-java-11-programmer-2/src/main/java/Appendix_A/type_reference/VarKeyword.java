@@ -7,6 +7,9 @@ public class VarKeyword {
     public void whatTypeAmI(){
         var name = "Hello";
         var size = 7;
+
+
+
     }
 
     public void reassignment(){

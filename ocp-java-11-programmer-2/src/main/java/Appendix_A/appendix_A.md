@@ -1132,13 +1132,36 @@ zoo.animal.care -> zoo.animal.feeding
 
 ## The jmod Command
 
-- The final
+- You might think a JMOD file is a Java module file. Not quite.
+- Oracle recommends using JAR files for most modules.
+- JMOD files are recommended only when you have native libraries or something that can't go inside a JAR file.
+- This is unlikely to affect you in the real world.
+- The most important thing to remember is that *jmod* is only for working with the JMOD files.
 
 
+---
+### TABLE A.4 Modes using jmod ###
+
+| Operation | Description                                            |
+|-----------|--------------------------------------------------------|
+| create    | Creates a JMOD file                                    |
+| extract   | Extracts all files from the JMOD. Works like unzipping |
+| describe  | Prints the module details, such as *required*          |
+| list      | Lists all files in the JMOD file                       |
+| hash      | Shows a long string that goes with the file            |
+---
 
 
+## Reviewing Command-Line Options
+
+- This section has a number of table that cover what you need to know about running command-line options.
 
 
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Table_A_5.png?raw=true)
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Table_A_6.png?raw=true)
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/images/Table_A_7.png?raw=true)
 
 
 
