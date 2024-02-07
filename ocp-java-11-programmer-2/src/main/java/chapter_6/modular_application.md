@@ -12,3 +12,10 @@
 
 - If you took the 1ZO-815 exam, you learned the basics of modules. If not, read Appendix A, "The Upgrade Exam", before
   reading this chapter.
+- This chapter covers strategies for migrating an application to use modules, running a partially modularized application,
+  and dealing with dependencies.
+- We then move on to discuss services and services locators.
+- Feel free to use the files we've already set up in the GitHub repo linked to from https://www.selikoff.net/ocp11-2/
+
+
+## Reviewing Module Directive
