@@ -2,13 +2,13 @@
 
 2) Which of the following statements about var are true? (Choose all that apply.)
 
-A. A var can be used as a constructor parameter.
-B. The type of var is known at compile time
-C. A var cannot be used as an instance variable
-D. A var can be used in a multiple variable assignment statement.
-E. The value of var cannot change at runtime.
-F. The type of var cannot change at runtime.
-G. The word var is a reserved word in Java.
+A. A var can be used as a constructor parameter.  <br>
+B. The type of var is known at compile time  <br>
+C. A var cannot be used as an instance variable  <br>
+D. A var can be used in a multiple variable assignment statement.  <br>
+E. The value of var cannot change at runtime.  <br>
+F. The type of var cannot change at runtime.  <br>
+G. The word var is a reserved word in Java.  <br>
 
 
 Correct Answers: B; C; F
@@ -16,11 +16,11 @@ Correct Answers: B; C; F
 
 4) Which of the following is an advantage of the Java Platform Module System?
 
-A. A central repository of all modules
-B. Encapsulating packages
-C. Encapsulating objects
-D. No defined types
-E. Platform independence
+A. A central repository of all modules  <br>
+B. Encapsulating packages  <br>
+C. Encapsulating objects  <br>
+D. No defined types  <br>
+E. Platform independence  <br>
 
 Correct Answer: B
 
@@ -36,10 +36,10 @@ zoo.staff
 
 
 
-A. The directory structure shown is a valid module.
-B. The directory structure would be a valid module if module.java were added directly underneath zoo.staff.
-C. The directory structure would be a valid module if module.java were added directly underneath zoo.
-D. The directory structure would be a valid module if module-info.java were added directly underneath zoo.staff.
+A. The directory structure shown is a valid module.  <br>
+B. The directory structure would be a valid module if module.java were added directly underneath zoo.staff.  <br>
+C. The directory structure would be a valid module if module.java were added directly underneath zoo.  <br>
+D. The directory structure would be a valid module if module-info.java were added directly underneath zoo.staff.  <br>
 
 Correct Answer: D
 
@@ -55,13 +55,13 @@ module animal {
 }
 ```
 
-A. export
-B. exports
-C. require
-D. requires
-E. require transitive
-F. requires transitive
-G. None of the above
+A. export  <br>
+B. exports  <br>
+C. require  <br>
+D. requires  <br>
+E. require transitive  <br>
+F. requires transitive  <br>
+G. None of the above  <br>
 
 
 Correct Answer: B
@@ -100,13 +100,13 @@ Since the command is incorrect, option G is correct.
 8. Which of the following statements are true in a *module-info.java* file?
    (Choose all that apply.)
 
-A. The *opens* keyword allows the use of reflection.
-B. The *opens* keyword declares an API is called.
-C. The *use* keyword allows the use of reflection.
-D. The *use* keyword declares an API is called.
-E. The *uses* keyword allows the use of reflection.
-F. The *uses* keyword declares an API is called.
-G. The file can be empty (zero bytes).
+A. The *opens* keyword allows the use of reflection.  <br>
+B. The *opens* keyword declares an API is called.  <br>
+C. The *use* keyword allows the use of reflection.  <br>
+D. The *use* keyword declares an API is called.   <br>
+E. The *uses* keyword allows the use of reflection.  <br>
+F. The *uses* keyword declares an API is called.  <br>
+G. The file can be empty (zero bytes).  <br>
 
 
 Correct Answer: A, F, G.
@@ -123,12 +123,12 @@ empty. This is just something you have to memorize.
 module com.food.supplier {}
 ```
 
-A. All packages inside the module are automatically exported.
-B. No packages inside the module are automatically exported.
-C. A main method inside the module can be run.
-D. A main method inside the module cannot be run since the class is not exposed.
-E. The *module-info.java* file contains a compiler error.
-F. The *module-info.java* filename is incorrect.
+A. All packages inside the module are automatically exported.  <br>
+B. No packages inside the module are automatically exported.   <br>
+C. A main method inside the module can be run.  <br>
+D. A main method inside the module cannot be run since the class is not exposed.  <br>
+E. The *module-info.java* file contains a compiler error.  <br>
+F. The *module-info.java* filename is incorrect.  <br>
 
 
 Correct Answer: B, C
@@ -156,14 +156,14 @@ module puppy {
 }
 ```
 
-A. *require* on line S
-B. *require* on line T
-C. *requires* on line S
-D. *requires* on line T
-E. *require transitive* on line S
-F. *require transitive* on line T
-G. *requires transitive* on line S
-H. *requires transitive* on line T
+A. *require* on line S <br>
+B. *require* on line T <br>
+C. *requires* on line S <br>
+D. *requires* on line T <br>
+E. *require transitive* on line S <br>
+F. *require transitive* on line T <br>
+G. *requires transitive* on line S <br>
+H. *requires transitive* on line T <br>
 
 
 Correct Answer: 
