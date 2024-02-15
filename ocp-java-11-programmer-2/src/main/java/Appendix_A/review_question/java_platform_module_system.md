@@ -1,0 +1,197 @@
+# Review Questions
+
+2) Which of the following statements about var are true? (Choose all that apply.)
+
+A. A var can be used as a constructor parameter.
+B. The type of var is known at compile time
+C. A var cannot be used as an instance variable
+D. A var can be used in a multiple variable assignment statement.
+E. The value of var cannot change at runtime.
+F. The type of var cannot change at runtime.
+G. The word var is a reserved word in Java.
+
+
+Correct Answers: B; C; F
+
+
+4) Which of the following is an advantage of the Java Platform Module System?
+
+A. A central repository of all modules
+B. Encapsulating packages
+C. Encapsulating objects
+D. No defined types
+E. Platform independence
+
+Correct Answer: B
+
+5) Which statement is true of the following module?
+
+zoo.staff
+| --- zoo
+    |--- staff
+        |--- Vet.java
+
+
+A. The directory structure shown is a valid module.
+B. The directory structure would be a valid module if module.java were added directly underneath zoo.staff.
+C. The directory structure would be a valid module if module.java were added directly underneath zoo.
+D. The directory structure would be a valid module if module-info.java were added directly underneath zoo.staff.
+
+Correct Answer: D
+
+Modules are required to have a module-info.java file at the root directory of the module. 
+
+
+6. Suppose module *puppy* depends on module *dog*, and module *dog* depends on module *animal*.
+Fill in the blank so that code in module *dog* can access the *animal.behaviour* package in module *animal*.
+
+```
+module animal {
+  _________________ animal.behavior
+}
+```
+
+A. export
+B. exports
+C. require
+D. requires
+E. require transitive
+F. requires transitive
+G. None of the above
+
+
+Correct Answer: B
+
+Options A, C, and E are incorrect because they refer to keywords that don't exist.
+The *exports* keyword is used when allowing a package to be called by code outside of the module,
+making option B the correct answer. Notice that options D and F are incorrect because *requires* uses module names
+and not package names.
+
+
+7. Fill in the blanks so this command to run the program is correct:
+
+```
+java
+_________ zoo.animal.talks/zoo/animal/talks/Peacocks
+_________ modules
+```
+
+A. -d and -m
+B. -d and -p
+C. -m and -d
+D. -m and -p
+E. -p and -d
+F. -p and -m
+G. None of the above
+
+Correct Answer: G
+
+The *-m* or *--module* option is used to specify the module and class name. The *-p* or *-module-path* option is used to 
+specify the location of the modules. Option D would be correct if the rest of the command were correct.
+However, running a program requires specifying the package name with periods(.) instead of slashes.
+Since the command is incorrect, option G is correct.
+
+
+
+8. Which of the following statements are true in a *module-info.java* file?
+   (Choose all that apply.)
+
+A. The *opens* keyword allows the use of reflection.
+B. The *opens* keyword declares an API is called.
+C. The *use* keyword allows the use of reflection.
+D. The *use* keyword declares an API is called.
+E. The *uses* keyword allows the use of reflection.
+F. The *uses* keyword declares an API is called.
+G. The file can be empty (zero bytes).
+
+
+Correct Answer: A, F, G.
+
+Options C and D are incorrect because there is no *use* keyword. Options A and F are correct because *opens* is for 
+reflection and *uses* declares an API that consumes a service. Option G is also correct as the file can be completely 
+empty. This is just something you have to memorize.
+
+
+9. What is true of a module containing a file named *module-info.java* with the following contents?
+   (Choose all that apply.)
+
+```
+module com.food.supplier {}
+```
+
+A. All packages inside the module are automatically exported.
+B. No packages inside the module are automatically exported.
+C. A main method inside the module can be run.
+D. A main method inside the module cannot be run since the class is not exposed.
+E. The *module-info.java* file contains a compiler error.
+F. The *module-info.java* filename is incorrect.
+
+
+Correct Answer: B, C
+
+Packages inside a module are not exported by default, making option B correct and option A incorrect.
+Exporting is necessary for other code to use the packages; it is not necessary to call the main method at the
+command line, making option C correct and option D incorrect. The *module-info.class* file has the correct name and 
+compiles, making options E and F incorrect.
+
+
+10. Suppose module *puppy* depends on module *dog* and module *dog* depends on module *animal*. Which two lines allow
+module *puppy* to access the *animal.behavior* package in module *animal*? (Choose two.)
+
+```
+module animal {
+    exports animal.behaviour;
+}
+
+module dog {
+    _________ animal;   // line S
+}
+
+module puppy {
+    _________ dog;   // line T
+}
+```
+
+A. *require* on line S
+B. *require* on line T
+C. *requires* on line S
+D. *requires* on line T
+E. *require transitive* on line S
+F. *require transitive* on line T
+G. *requires transitive* on line S
+H. *requires transitive* on line T
+
+
+Correct Answer: 
+
+
+11. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
