@@ -26,10 +26,14 @@ Correct Answer: B
 
 5) Which statement is true of the following module?
 
+
+```
 zoo.staff
 | --- zoo
     |--- staff
         |--- Vet.java
+```
+
 
 
 A. The directory structure shown is a valid module.
