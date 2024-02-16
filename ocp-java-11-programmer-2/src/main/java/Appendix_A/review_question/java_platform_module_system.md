@@ -211,8 +211,23 @@ identifiers. Dashes (-) are not allowed, ruling out option D. This leaves option
 
 
 
+13. Which would best fill in the blank to complete the following code?
+
+```
+
+module _____________ {
+   exports com.unicorn.horn;
+   exports com.unicorn.magic
+}
+```
 
 
+A. com
+B. com.unicorn
+C. com.unicorn.horn
+D. com.unicorn.magic
+E. The code does not compile
+F. The code compiles, but none of these would be a good choice.
 
 
 
