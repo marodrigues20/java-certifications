@@ -201,7 +201,9 @@ E. java -p x -m x.x <br>
 F. java -p x.x -m x.x  <br>
 G. None of the above <br>
 
-Correct Answer: A; B
+Correct Answer: A; B 
+
+<br>
 
 The -p specifies the module path. This is just a directory, so all of the options have a legal module path.
 The -m specifies the module, which has two parts separated by a slash. Options E and F are incorrect since there is no 
@@ -222,12 +224,14 @@ module _____________ {
 ```
 
 
-A. com
-B. com.unicorn
-C. com.unicorn.horn
-D. com.unicorn.magic
-E. The code does not compile
-F. The code compiles, but none of these would be a good choice.
+A. com  <br>
+B. com.unicorn  <br>
+C. com.unicorn.horn  <br>
+D. com.unicorn.magic  <br>
+E. The code does not compile  <br>
+F. The code compiles, but none of these would be a good choice.  <br>
+
+
 
 
 
