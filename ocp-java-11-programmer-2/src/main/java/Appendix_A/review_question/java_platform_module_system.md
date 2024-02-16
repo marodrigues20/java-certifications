@@ -166,15 +166,42 @@ G. *requires transitive* on line S <br>
 H. *requires transitive* on line T <br>
 
 
+Correct Answer: D; G
+
+Options A, B, E, and F are incorrect because they refer to keywords that don't exist.
+The *requires transitive* keyword is used when specifying a module to be used by the requesting module and any other
+modules that use the requesting module. Therefore, *dog* needs to specify the transitive relationship, and option G
+is correct. The module *puppy* just needs to *require* dog, and it gets the transitive dependencies, making option D
+correct.
+
+
+
+11. Which commands take a *--module-path* parameter? (Choose all that apply.)
+
+A. javac
+B. java
+C. jar
+D. jdeps
+E. jmod
+F. None of the above
+
+Correct Answer: A; B; D
+
+Options A and B are correct because the *-p(--module-path)* option can be passed when compiling or running a program.
+Option D is also correct because *jdeps* can use the *--module-path* option when listing dependency information.
+
+
+12. Which of the following are legal commands to run a modular program? (Choose all that apply.)
+
+A. java -p x -m x/x
+B. java -p x-x -m x/x
+C. java -p x -m x-x/x
+D. java -p x -m x/x-x
+E. java -p x -m x.x
+F. java -p x.x -m x.x
+G. None of the above
+
 Correct Answer: 
-
-
-11. 
-
-
-
-
-
 
 
 
