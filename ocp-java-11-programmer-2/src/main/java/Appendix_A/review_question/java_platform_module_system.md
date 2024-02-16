@@ -178,12 +178,12 @@ correct.
 
 11. Which commands take a *--module-path* parameter? (Choose all that apply.)
 
-A. javac
-B. java
-C. jar
-D. jdeps
-E. jmod
-F. None of the above
+A. javac <br>
+B. java <br>
+C. jar <br>
+D. jdeps <br>
+E. jmod <br>
+F. None of the above <br>
 
 Correct Answer: A; B; D
 
@@ -193,13 +193,13 @@ Option D is also correct because *jdeps* can use the *--module-path* option when
 
 12. Which of the following are legal commands to run a modular program? (Choose all that apply.)
 
-A. java -p x -m x/x
-B. java -p x-x -m x/x
-C. java -p x -m x-x/x
-D. java -p x -m x/x-x
-E. java -p x -m x.x
-F. java -p x.x -m x.x
-G. None of the above
+A. java -p x -m x/x <br>
+B. java -p x-x -m x/x <br>
+C. java -p x -m x-x/x <br>
+D. java -p x -m x/x-x <br>
+E. java -p x -m x.x <br>
+F. java -p x.x -m x.x  <br>
+G. None of the above <br>
 
 Correct Answer: 
 
