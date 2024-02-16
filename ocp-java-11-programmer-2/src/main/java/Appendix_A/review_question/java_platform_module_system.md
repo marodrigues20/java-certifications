@@ -233,6 +233,64 @@ F. The code compiles, but none of these would be a good choice.  <br>
 
 
 
+14. Which are valid modes for the *jmod* command? (Choose all that apply.)
+
+A. add <br>
+B. create <br>
+C. delete <br>
+D. describe <br>
+E. extract <br>
+F. list <br>
+G. show <br>
+
+
+15. Suppose you have the commands javac, java, and jar. How many of them support a --show-module-resolution option?
+
+A. Zero  <br>
+B. One  <br>
+C. Two  <br>
+D. Three  <br>
+
+
+16. Which are tru statements about the following module? (Choose all that apply.)
+
+```
+class dragon {
+   exports com.dragon.fire;
+   exports com.dragon.scales to castle;
+}
+```
+
+A. All modules can reference the com.dragon.fire package.  <br>
+B. All modules can reference the com.dragon.scales package. <br>
+C. Only the castle module can reference the com.dragon.fire package. <br>
+D. Only the castle module can reference the com.dragon.scales package. <br>
+E. None of the above <br>
+
+
+17. Which would you expect to see when describing any module?
+
+A. requires java.base mandated  <br>
+B. requires java.core mandated  <br>
+C. requires java.lang mandated  <br>
+E. requires mandated java.core  <br>
+F. requires mandated java.lang  <br>
+G. None of the above <br>
+
+
+18. Which are valid calls to list a summary of the dependencies? (Choose all that apply.)
+
+A. jdeps flea.jar  <br>
+B. jdeps -s flea.jar  <br>
+C. jdeps -summary flea.jar <br>
+D. jdeps --summary flea.jar <br>
+E. None of the above <br>
+
+
+
+
+
+
 
 
 
