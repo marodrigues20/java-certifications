@@ -201,7 +201,18 @@ E. java -p x -m x.x <br>
 F. java -p x.x -m x.x  <br>
 G. None of the above <br>
 
-Correct Answer: 
+Correct Answer: A; B
+
+The -p specifies the module path. This is just a directory, so all of the options have a legal module path.
+The -m specifies the module, which has two parts separated by a slash. Options E and F are incorrect since there is no 
+slash. The first part is the module name. It is separated by periods (.) rather than dashes (-), making option C incorrect.
+The second part is the package and class name, again separated by periods. The package and class names must be legal Java
+identifiers. Dashes (-) are not allowed, ruling out option D. This leaves options A and B as the correct answers.
+
+
+
+
+
 
 
 
