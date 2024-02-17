@@ -298,55 +298,55 @@ E. None of the above <br>
 6: }
 ```
 
-A. Line 1
-B. Line 2
-C. Line 3
-D. Line 4
-E. Line 5
-F. The code does not contain any compiler errors.
+A. Line 1 <br>
+B. Line 2 <br>
+C. Line 3 <br>
+D. Line 4 <br>
+E. Line 5 <br>
+F. The code does not contain any compiler errors. <br>
 
 
 20. Which of the following would be a legal module name? (Choose all that apply.)
 
-A. com.book
-B. com-book
-C. com.book$
-D. com-book$
-E. 4com.book
-F. 4com-book
+A. com.book <br>
+B. com-book <br>
+C. com.book$ <br>
+D. com-book$ <br>
+E. 4com.book <br>
+F. 4com-book <br>
 
 
 21. What can be created using the Java Platform Module System that coudl not be created without it?
     (Choose all that apply.)
 
-A. JAR file
-B. JMOD file
-C. Smaller runtime images for distribution
-D. Operating system-specific bytecode
-E. TAR file
-F. None of the above
+A. JAR file <br>
+B. JMOD file <br>
+C. Smaller runtime images for distribution <br>
+D. Operating system-specific bytecode <br>
+E. TAR file <br>
+F. None of the above <br>
 
 
 22. Which of the following options does not have a one-character shortcut?
     (Choose all that apply.)
 
-A.describe-module
-B. list-modules
-C. module
-D. module-path
-E. show-module-resolution
-F. summary
+A. describe-module <br>
+B. list-modules <br>
+C. module <br>
+D. module-path <br>
+E. show-module-resolution <br>
+F. summary <br>
 
 23. Which of the following are legal commands to runa modular program where *n* is the module name and *c* is the class
     name? (Choose all that apply.)
 
-A. java -module-path x -m n.c
-B. java --module-path x -p n.c
-C. java --module-path x -m n/c
-D. java --module-path x -p n/c
-E. java --module-path x -m n c
-F. java --module-path x -p n c
-G. None of the above
+A. java -module-path x -m n.c <br>
+B. java --module-path x -p n.c <br>
+C. java --module-path x -m n/c <br>
+D. java --module-path x -p n/c <br>
+E. java --module-path x -m n c <br>
+F. java --module-path x -p n c <br>
+G. None of the above <br>
 
 
 
