@@ -287,6 +287,69 @@ D. jdeps --summary flea.jar <br>
 E. None of the above <br>
 
 
+19. Which is the first line contain a compiler error?
+
+```
+1: module snake {
+2:    exports com.snake.tail;
+3:    exports com.snake.fangs to bird;
+4:    requires skin;
+5:    requires transitive skin;
+6: }
+```
+
+A. Line 1
+B. Line 2
+C. Line 3
+D. Line 4
+E. Line 5
+F. The code does not contain any compiler errors.
+
+
+20. Which of the following would be a legal module name? (Choose all that apply.)
+
+A. com.book
+B. com-book
+C. com.book$
+D. com-book$
+E. 4com.book
+F. 4com-book
+
+
+21. What can be created using the Java Platform Module System that coudl not be created without it?
+    (Choose all that apply.)
+
+A. JAR file
+B. JMOD file
+C. Smaller runtime images for distribution
+D. Operating system-specific bytecode
+E. TAR file
+F. None of the above
+
+
+22. Which of the following options does not have a one-character shortcut?
+    (Choose all that apply.)
+
+A.describe-module
+B. list-modules
+C. module
+D. module-path
+E. show-module-resolution
+F. summary
+
+23. Which of the following are legal commands to runa modular program where *n* is the module name and *c* is the class
+    name? (Choose all that apply.)
+
+A. java -module-path x -m n.c
+B. java --module-path x -p n.c
+C. java --module-path x -m n/c
+D. java --module-path x -p n/c
+E. java --module-path x -m n c
+F. java --module-path x -p n c
+G. None of the above
+
+
+
 
 
 
