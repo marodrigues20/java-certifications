@@ -260,7 +260,7 @@ E. extract <br>
 F. list <br>
 G. show <br>
 
-Answer: B; D; E; F
+Correct Answer: B; D; E; F
 
 This is another question you just have to memorize.
 The *jmod* command has five modes you need to be able to list: *create, extract, describe, list, and hash*
@@ -269,18 +269,21 @@ The *hash* operation is not an answer choice. The other four are making options 
 
 -----------------
 
-15. Suppose you have the commands javac, java, and jar. How many of them support a --show-module-resolution option?
+15. Suppose you have the commands *javac, java*, and *jar*. How many of them support a *--show-module-resolution* option?
 
 A. Zero  <br>
 B. One  <br>
 C. Two  <br>
 D. Three  <br>
 
+Correct Answer: B
 
+The *java* command uses this option to print information when the program loads. You might think *jar* does the same 
+thing  since it runs a program too. Alas, this parameter does not exist on *jar*
 
 -----------------
 
-16. Which are tru statements about the following module? (Choose all that apply.)
+16. Which are true statements about the following module? (Choose all that apply.)
 
 ```
 class dragon {
@@ -294,6 +297,13 @@ B. All modules can reference the com.dragon.scales package. <br>
 C. Only the castle module can reference the com.dragon.fire package. <br>
 D. Only the castle module can reference the com.dragon.scales package. <br>
 E. None of the above <br>
+
+
+Correct Answer: E
+
+There is a trick here.
+A module definition uses the keyword *module* rather than *class*. Since the code does not compile, option E is correct.
+If the code did compile, options A and D would be correct.
 
 -----------------
 
