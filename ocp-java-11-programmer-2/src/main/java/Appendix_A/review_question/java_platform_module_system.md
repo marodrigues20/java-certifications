@@ -384,7 +384,7 @@ are not allowed either, ruling out options B and D. That leaves options A and C 
 
 -----------------
 
-21. What can be created using the Java Platform Module System that coudl not be created without it?
+21. What can be created using the Java Platform Module System that could not be created without it?
     (Choose all that apply.)
 
 A. JAR file <br>
@@ -393,6 +393,15 @@ C. Smaller runtime images for distribution <br>
 D. Operating system-specific bytecode <br>
 E. TAR file <br>
 F. None of the above <br>
+
+
+Correct Answer: B; C;
+
+Opton A is incorrect because JAR files have always been available regardless of the JPMS.
+Option D is incorrect because bytecode runs on the JVM and is not operating system-specific by definition.
+While it is possible to run the tar command, this has nothing to do with Java, making option E incorrect.
+Option B is one of the correct answers as the *jmod* command creates a JMOD file. Option C is the correct answer because
+smaller runtime images are one of the benefits of the JPMS.
 
 -----------------
 
