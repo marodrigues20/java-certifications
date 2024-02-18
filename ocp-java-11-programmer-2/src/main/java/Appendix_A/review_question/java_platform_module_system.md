@@ -426,7 +426,7 @@ Option B and E are the correct answers because they do not have equivalents.
 
 -----------------
 
-23. Which of the following are legal commands to runa modular program where *n* is the module name and *c* is the class
+23. Which of the following are legal commands to run a modular program where *n* is the module name and *c* is the class
     name? (Choose all that apply.)
 
 A. java -module-path x -m n.c <br>
@@ -438,5 +438,10 @@ F. java --module-path x -p n c <br>
 G. None of the above <br>
 
 
+Correct Answer: C
 
+The *-p* option is a shorter form of *--module-path*. Since the same option cannot be specified twice, option B, D, and 
+F are incorrect.
+The *--module* option is an alternate form of *-m*. The module name and class name are separated with a slash, making 
+option C the answer.
 -----------------
