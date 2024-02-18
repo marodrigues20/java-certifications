@@ -260,6 +260,12 @@ E. extract <br>
 F. list <br>
 G. show <br>
 
+Answer: B; D; E; F
+
+This is another question you just have to memorize.
+The *jmod* command has five modes you need to be able to list: *create, extract, describe, list, and hash*
+The *hash* operation is not an answer choice. The other four are making options B, D, E and F correct.
+
 
 -----------------
 
