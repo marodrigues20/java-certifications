@@ -24,3 +24,22 @@
   [Appendix A](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/Appendix_A/appendix_A.md) 
   before continuing in this chapter.
 
+---
+### TABLE 6.1 Common module directives
+
+| Derivative                        | Description                                                                                    |
+|-----------------------------------|------------------------------------------------------------------------------------------------|
+| exports <package>                 | Allows all modules to access the package                                                       |
+| exports <package> to <module>     | Allows a specific module to access the package                                                 |
+| requires <module>                 | Indicates module is dependent on another module                                                |
+| requires transitive <module>      | Indicates the module and that all modules that use this module are dependent on another module |
+| uses <interface>                  | Indicates that a module uses a service                                                         |
+| provides <interface> with <class> | Indicates that a module provides an implementation of a service                                |
+
+---
+
+> If you don't have any experience with *uses* or *provides*, don't worry - They will be covered in this chapter.
+
+
+## Comparing Types of Modules
+
