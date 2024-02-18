@@ -13,6 +13,7 @@ G. The word var is a reserved word in Java.  <br>
 
 Correct Answers: B; C; F
 
+-----------------
 
 4) Which of the following is an advantage of the Java Platform Module System?
 
@@ -23,6 +24,8 @@ D. No defined types  <br>
 E. Platform independence  <br>
 
 Correct Answer: B
+
+-----------------
 
 5) Which statement is true of the following module?
 
@@ -45,6 +48,7 @@ Correct Answer: D
 
 Modules are required to have a module-info.java file at the root directory of the module. 
 
+-----------------
 
 6. Suppose module *puppy* depends on module *dog*, and module *dog* depends on module *animal*.
 Fill in the blank so that code in module *dog* can access the *animal.behaviour* package in module *animal*.
@@ -71,6 +75,7 @@ The *exports* keyword is used when allowing a package to be called by code outsi
 making option B the correct answer. Notice that options D and F are incorrect because *requires* uses module names
 and not package names.
 
+-----------------
 
 7. Fill in the blanks so this command to run the program is correct:
 
@@ -96,6 +101,7 @@ However, running a program requires specifying the package name with periods(.) 
 Since the command is incorrect, option G is correct.
 
 
+-----------------
 
 8. Which of the following statements are true in a *module-info.java* file?
    (Choose all that apply.)
@@ -115,6 +121,7 @@ Options C and D are incorrect because there is no *use* keyword. Options A and F
 reflection and *uses* declares an API that consumes a service. Option G is also correct as the file can be completely 
 empty. This is just something you have to memorize.
 
+-----------------
 
 9. What is true of a module containing a file named *module-info.java* with the following contents?
    (Choose all that apply.)
@@ -138,6 +145,7 @@ Exporting is necessary for other code to use the packages; it is not necessary t
 command line, making option C correct and option D incorrect. The *module-info.class* file has the correct name and 
 compiles, making options E and F incorrect.
 
+-----------------
 
 10. Suppose module *puppy* depends on module *dog* and module *dog* depends on module *animal*. Which two lines allow
 module *puppy* to access the *animal.behavior* package in module *animal*? (Choose two.)
@@ -174,7 +182,7 @@ modules that use the requesting module. Therefore, *dog* needs to specify the tr
 is correct. The module *puppy* just needs to *require* dog, and it gets the transitive dependencies, making option D
 correct.
 
-
+-----------------
 
 11. Which commands take a *--module-path* parameter? (Choose all that apply.)
 
@@ -190,6 +198,7 @@ Correct Answer: A; B; D
 Options A and B are correct because the *-p(--module-path)* option can be passed when compiling or running a program.
 Option D is also correct because *jdeps* can use the *--module-path* option when listing dependency information.
 
+-----------------
 
 12. Which of the following are legal commands to run a modular program? (Choose all that apply.)
 
@@ -211,7 +220,7 @@ slash. The first part is the module name. It is separated by periods (.) rather 
 The second part is the package and class name, again separated by periods. The package and class names must be legal Java
 identifiers. Dashes (-) are not allowed, ruling out option D. This leaves options A and B as the correct answers.
 
-
+-----------------
 
 13. Which would best fill in the blank to complete the following code?
 
@@ -252,6 +261,8 @@ F. list <br>
 G. show <br>
 
 
+-----------------
+
 15. Suppose you have the commands javac, java, and jar. How many of them support a --show-module-resolution option?
 
 A. Zero  <br>
@@ -259,6 +270,9 @@ B. One  <br>
 C. Two  <br>
 D. Three  <br>
 
+
+
+-----------------
 
 16. Which are tru statements about the following module? (Choose all that apply.)
 
@@ -275,6 +289,7 @@ C. Only the castle module can reference the com.dragon.fire package. <br>
 D. Only the castle module can reference the com.dragon.scales package. <br>
 E. None of the above <br>
 
+-----------------
 
 17. Which would you expect to see when describing any module?
 
@@ -285,6 +300,7 @@ E. requires mandated java.core  <br>
 F. requires mandated java.lang  <br>
 G. None of the above <br>
 
+-----------------
 
 18. Which are valid calls to list a summary of the dependencies? (Choose all that apply.)
 
@@ -294,6 +310,7 @@ C. jdeps -summary flea.jar <br>
 D. jdeps --summary flea.jar <br>
 E. None of the above <br>
 
+-----------------
 
 19. Which is the first line contain a compiler error?
 
@@ -313,6 +330,7 @@ D. Line 4 <br>
 E. Line 5 <br>
 F. The code does not contain any compiler errors. <br>
 
+-----------------
 
 20. Which of the following would be a legal module name? (Choose all that apply.)
 
@@ -323,6 +341,7 @@ D. com-book$ <br>
 E. 4com.book <br>
 F. 4com-book <br>
 
+-----------------
 
 21. What can be created using the Java Platform Module System that coudl not be created without it?
     (Choose all that apply.)
@@ -334,6 +353,7 @@ D. Operating system-specific bytecode <br>
 E. TAR file <br>
 F. None of the above <br>
 
+-----------------
 
 22. Which of the following options does not have a one-character shortcut?
     (Choose all that apply.)
@@ -344,6 +364,8 @@ C. module <br>
 D. module-path <br>
 E. show-module-resolution <br>
 F. summary <br>
+
+-----------------
 
 23. Which of the following are legal commands to runa modular program where *n* is the module name and *c* is the class
     name? (Choose all that apply.)
@@ -356,32 +378,4 @@ E. java --module-path x -m n c <br>
 F. java --module-path x -p n c <br>
 G. None of the above <br>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-----------------
