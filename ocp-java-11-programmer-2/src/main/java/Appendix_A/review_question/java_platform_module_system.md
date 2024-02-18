@@ -333,6 +333,12 @@ C. jdeps -summary flea.jar <br>
 D. jdeps --summary flea.jar <br>
 E. None of the above <br>
 
+Correct Answer: B; C
+
+Option A will run, but it will print details rather than a summary. Options B and C are both valid options for the 
+*jdeps* command. Remember that *summary* uses a single dash (-).
+
+
 -----------------
 
 19. Which is the first line contain a compiler error?
@@ -353,6 +359,12 @@ D. Line 4 <br>
 E. Line 5 <br>
 F. The code does not contain any compiler errors. <br>
 
+Correct Answer: E
+
+The module name is valid as are the *exports* statements.
+Line 4 and 5  are tricky because each is valid independently. However, the same module name is not allowed to be used in
+two *requires* statements. The second one fails to compile on line 5, making option E the answer.
+
 -----------------
 
 20. Which of the following would be a legal module name? (Choose all that apply.)
@@ -363,6 +375,12 @@ C. com.book$ <br>
 D. com-book$ <br>
 E. 4com.book <br>
 F. 4com-book <br>
+
+Correct Answer: A; C;
+
+Module names look a lot like package names. Each segment is separated by a period (.) and uses characters valid in Java
+identifiers. Since identifiers are not allowed to begin with numbers, options E and F are incorrect. Dashes (-)
+are not allowed either, ruling out options B and D. That leaves options A and C as the correct answer.
 
 -----------------
 
