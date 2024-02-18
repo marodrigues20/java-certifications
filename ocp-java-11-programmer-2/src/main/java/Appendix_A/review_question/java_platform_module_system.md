@@ -238,6 +238,9 @@ Either would exclude the other package name.
 Options A and B both meet the criteria of being a higher-level package. However, option A would claim many other 
 packages including *com.sybex*. This is not a good choice, making option B the correct answer.
 
+-----------------
+
+
 14. Which are valid modes for the *jmod* command? (Choose all that apply.)
 
 A. add <br>
