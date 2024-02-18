@@ -316,6 +316,13 @@ E. requires mandated java.core  <br>
 F. requires mandated java.lang  <br>
 G. None of the above <br>
 
+Correct Answer: A
+
+When running *java* with -d option. all the required modules are listed.
+Additionally, the *java.base* module is listed since it is included automatically.
+The line ends with *mandated*, making option A correct. The *java.lang* is a trick since that is a package that is 
+imported by default in a class rather than module.
+
 -----------------
 
 18. Which are valid calls to list a summary of the dependencies? (Choose all that apply.)
