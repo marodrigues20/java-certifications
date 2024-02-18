@@ -231,7 +231,12 @@ D. com.unicorn.magic  <br>
 E. The code does not compile  <br>
 F. The code compiles, but none of these would be a good choice.  <br>
 
+Correct Answer: B
 
+A module claims the package underneath it. Therefore, options C and D are not good module names.
+Either would exclude the other package name. 
+Options A and B both meet the criteria of being a higher-level package. However, option A would claim many other 
+packages including *com.sybex*. This is not a good choice, making option B the correct answer.
 
 14. Which are valid modes for the *jmod* command? (Choose all that apply.)
 
