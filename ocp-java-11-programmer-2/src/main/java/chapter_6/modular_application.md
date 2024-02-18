@@ -19,3 +19,8 @@
 
 
 ## Reviewing Module Directive
+
+- If anything in Table 6.1 is unclear or unfamiliar, please stop and read 
+  [Appendix A](https://github.com/marodrigues20/java-certifications/tree/main/ocp-java-11-programmer-2/src/main/java/Appendix_A) 
+  before continuing in this chapter.
+
