@@ -415,6 +415,15 @@ D. module-path <br>
 E. show-module-resolution <br>
 F. summary <br>
 
+
+Correct Answer: B; E
+
+Options A is incorrect because *describe-module* has the *d* equivalent.
+Option C is incorrect because *module* has the *m* equivalent.
+Option D is incorrect because *module-path* has the *p* equivalent.
+Option F is incorrect because *summary* has the *s* equivalent.
+Option B and E are the correct answers because they do not have equivalents.
+
 -----------------
 
 23. Which of the following are legal commands to runa modular program where *n* is the module name and *c* is the class
@@ -427,5 +436,7 @@ D. java --module-path x -p n/c <br>
 E. java --module-path x -m n c <br>
 F. java --module-path x -p n c <br>
 G. None of the above <br>
+
+
 
 -----------------
