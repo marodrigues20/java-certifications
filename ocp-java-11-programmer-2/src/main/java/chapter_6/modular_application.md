@@ -43,3 +43,43 @@
 
 ## Comparing Types of Modules
 
+- The modules you learned about for the 1ZO-815 exam (or in Appendix A) are called *named modules* 
+- There are two other types of modules: automatic modules and unnamed module.
+- In this section, we describe these types of modules
+- On the exam, you will need to be able to compare them.
+
+
+
+## Named Modules
+
+- A *named module* is one containing a *module-info* file.
+- To review, this file appears in the root of the JAR alongside one or more packages. Unless otherwise specified, a 
+  module is a named module. Named modules appear on the module path rather than the classpath.
+- For now, just know it is not considered a named module because it is not on the module path.
+
+### Remember
+
+- A named module has the name inside  the *module-info* file and is on the module path.
+- Figure 6.1 shows the contents of a JAR file for a named module. It contains two packages in addition to the 
+  *module-info.class*
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_6_1.png?raw=true)
+
+## Automatic Modules
+
+- An *automatic module* appears on the module path but does not contain a *module-info* file. It is simply a regular
+  JAR file that is placed on the module path and gets treated as a module.
+- As a way of remembering this, Java automatically determines the module name. Figures 6.2 shows an automatic module with
+  two packages.
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_6_2.png?raw=true)
+
+
+---
+### Real World Scenario ###
+
+- About the Manifest
+
+
+---
