@@ -81,5 +81,12 @@
 
 - About the Manifest
 
+- A JAR file is a zip file with a special directory named *META-INFO*. This directory contains one or more files.
+- The *MANIFEST.MF* file is always present. 
+- The figure shows how the manifest fits into the directory structure of a JAR file.
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_Real_World_Scenario_1.png?raw=true)
+
+
 
 ---
