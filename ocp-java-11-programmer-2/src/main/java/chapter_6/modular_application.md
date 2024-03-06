@@ -99,3 +99,102 @@
   Created-By: 11.0.2 (Oracle Comporate)
   ```
 ---
+
+- The code referencing an automatic module treats it as if there is a *module-info* file present.
+- It automatically exports all packages. It also determines the module name.
+
+## How Java determine the module name?
+
+- When Java 9 was released, authors of Java libraries were encouraged to declare the name they intended to use for the 
+  module in the feature. All they had to do was set a property called *Automatic-Module-Name* in the *MANIFEST.MF* file.
+- If the JAR file does not specify an automatic module name, Java will still allow you to use it in the module path.
+  In this case, Java will determine the module name for you. We'd say that this happens automatically.
+- Java determines the automatic module name by basing it off the filename of the JAR file.
+- Let's go over the rules by starting with an example:
+  - Supposing we have a JAR file named *holiday-calendar-1.0.0.jar.
+    - Java will remove:
+      - .jar extension
+      - version
+      - Java convert dashes(-) or any special characters in the name of dots(.)
+      - Any adjacent dots or leading/trailing dots are removed.
+    - As a result: *holiday.calendar*
+
+
+- Table 6.2 shows how to apply these rules to two examples where there is no automatic module name specified in the 
+  manifest.
+
+
+| #   | Description                                                        | Example 1                     | Example 2     |
+|-----|--------------------------------------------------------------------|-------------------------------|---------------|
+| 1   | Beginning JAR name                                                 | commons2-x-1.0.0-SNAPSHOT.jar | mod_$-1.0.jar |
+| 2   | Remove file extension                                              | commons2-x-1.0.0-SNAPSHOT     | mod_$-1.0     |
+| 3   | Remove version information                                         | commons2-x                    | mod_$         |
+| 4   | Replace special characters                                         | commons2.x                    | mod..         |
+| 5   | Replace sequence of dots                                           | commons2.x                    | mod.          |
+| 6   | Remove leading/trailing dots(results in the automatic module name) | commons2.x                    | mod           |
+
+
+- While the algorithm for creating automatic module names does its best, it can't always come up with a good name.
+- For example, 1.2.0-calendar-1.2.2-good-1.jar isn't conductive. Luckily such names are rare and out of scope for the exam.
+
+
+## Unnamed Modules
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
