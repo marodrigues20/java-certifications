@@ -149,13 +149,109 @@
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_6_3.png?raw=true)
 
 
+- An unnamed module does not usually contain a *module-info* file. If it happens to contain one, that file will be 
+  ignored since it is on the classpath.
+- Unnamed module do not export any package to named or automatic modules.
+- The unnamed module can read from any JARs on the classpath or module path.
+- You can think of an unnamed module as code that works the way Java worked before modules.
+
+
+## Comparing Module Types
+
+- You can expect to get questions on the exam comparing the three types of modules.
+- Please study Table 6.3 thoroughly an be prepared to answer questions about these items in any combination.
+- A key point to remember is that code on the classpath can access the module path. By contrast, code on the module
+  path is unable to read from the classpath.
 
 
 
+---
+### TABLE 6.3 Properties of module types ###
+
+| Property                                                      | Named                           | Automatic    | Unnamed            |
+|---------------------------------------------------------------|---------------------------------|--------------|--------------------|
+| A____ module contains a *module-info* file?                   | Yes                             | No           | Ignored if present |
+| A____ module exports which packages to other modules?         | Those in the *module-info* file | All packages | No packages        |
+| A____ module is readable by other modules on the module path? | Yes                             | Yes          | No                 |
+| A____ module is readable by other jARs on the classpath?      | Yes                             | Yes          | Yes                |
+---
 
 
+## Analyzing JDK Dependencies
+
+- In this part of the chapter, we look at modules that are supplied by the JDK. We also look at the *jdeps* command
+  for identifying such module dependencies.
+
+### Identifying Built-in Modules
+
+- Prior to Java 9, developers could use any package in the JDK by merely importing it into the application.
+- This meant the whole JDK had to be available at runtime because a program could potentially need anything.
+- With modules, your application specifies which parts of the JDK it uses. This allows the application to run on a full
+  JDK or a subset.
+- You might be wondering what happens if you try to run an application that references a package that isn't available
+  in the subset. No worries! The *requires* directive in the *module-info* file specifies which modules need to be 
+  present at both compile time and runtime. This means they are guaranteed to be available for the application to run.
+- The most important module to know is *java.base*. It contains most of the packages you have learning about for the
+  exam.In fact, it is so important that you don't even have to use the *requires* directive; it is available to all 
+  modular applications. Your *module-info.java* file will still compile if you explicitly require *java.base*. However,
+  it is redundant, so it's better to omit it.
 
 
+---
+### Table 6.4 lists some common modules and what they contain. ###
+
+
+| Module name  | What it contains                               | Coverage in book                       |
+|--------------|------------------------------------------------|----------------------------------------|
+| java.base    | Collections, Math, IO, NIO2, Concurrency, etc. | Most of this book                      |
+| java.desktop | Abstract Windows Toolkit (AWS) and Swing       | Not on the exam beyond the module name |
+| java.logging | Logging                                        | Not on the exam beyond the module name | 
+| java.sql     | JDBC                                           | Chapter 10, "JDBC"                     |
+| java.xml     | Extensible Markup Language (XML)               | Not on the exam beyond the module name |
+
+- You need to know the names of modules supplied by JDK.
+- You don't need to know the names by hear, you do need to be able to pick them out of a lineup.
+
+---
+
+---
+### TABLE 6.5 Java modules prefixed with java ###
+
+| java.base           | java.naming        | java.smartcardio    |
+|---------------------|--------------------|---------------------|
+| java.compiler       | java.net.http      | java.sql            |
+| java.datatransfer   | java.prefs         | java.sql.rowset     |
+| java.desktop        | java.rmi           | java.transaction.xa |
+| java.instrument     | java.scripting     | java.xml            |
+| java.logging        | java.se            | java.xml.crypto     |
+| java.management     | java.security.jgss | -                   | 
+| java.management.rmi | java.security.sasl | -                   |
+
+---
+
+---
+### TABLE 6.6 Java modules prefixed with jdk ###
+
+| jdk.accessiblity    | jdk.jconsole         | jdk.naming.dns        |
+|---------------------|----------------------|-----------------------|
+| jdk.attach          | jdk.jdeps            | jdk.naming.rmi        |
+| jdk.charsets        | jdk.jdi              | jdk.net               |
+| jdk.compilers       | jdk.jdwp.agent       | jdk.pack              |
+| jdk.crypto.cryptoki | jdk.jfr              | jdk.rmic              |
+| jdk.crypto.ec       | jdk.jlink            | jdk.scripting.nashorn |
+| jdk.dynalink        | jdk.shell            | jdk.sctp              |
+| jdk.editpad         | jdk.jsobject         | jdk.security.auth     |
+| jdk.hotspot.agent   | jdk.jstatd           | jdk.security.jgss     |
+| jdk.httpserver      | jdk.localdata        | jdk.xml.dom           |
+| jdk.jartool         | jdk.management       |  jdk.zipfs            |
+| jdk.javadoc         | jdk.management.agent | -                     |
+| jdk.jcmd            | jdk.management.jfr   | -                     |
+---
+
+
+## Using jdeps
+
+- 
 
 
 
