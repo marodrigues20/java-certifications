@@ -140,9 +140,13 @@
 
 ## Unnamed Modules
 
+- An *unnamed module* appears on the classpath. Like an automatic module, it is a regular jAR.
+- Unlike an automatic module, it is on the classpath rather than the module path.
+- This means an unnamed module is treated like old code and second-class citizen to modules.
+- Figure 6.3 shows an unnamed module with one package.
 
 
-
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_Real_World_Scenario_1.png?raw=true)
 
 
 
