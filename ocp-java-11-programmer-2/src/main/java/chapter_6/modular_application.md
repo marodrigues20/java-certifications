@@ -88,5 +88,14 @@
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_Real_World_Scenario_1.png?raw=true)
 
 
+- The manifest contains extra information about the JAR file. For example, it often contains the version of Java used to 
+  build the JAR file.
+- For command-line programs, the class with the main() method is commonly specified.
+- Each line in the manifest is a key/value pair separated by a colon. You can think of the manifest as a map of property
+  names and values.
 
+  ```
+  Manifest-Version: 1.0"
+  Created-By: 11.0.2 (Oracle Comporate)
+  ```
 ---
