@@ -146,7 +146,7 @@
 - Figure 6.3 shows an unnamed module with one package.
 
 
-![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_Real_World_Scenario_1.png?raw=true)
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_6_3.png?raw=true)
 
 
 
