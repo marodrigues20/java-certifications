@@ -283,14 +283,124 @@ public class Animatronic {
 
 ```
 
-- This example is silly. It uses a number of unrelated classes.
-- The Bronx Zoo really did have electronic moving dinosaurs for a while, so at least the idea of having dinosaurs in a
-  zoo isn't beyond the realm of possibility.
+- We can compile this file.
+- You might have noticed there is no *module-info.java* file.
+- That is because we are not creating a module. 
+- We are looking into what dependencies we will need when we do modularize this JAR.
+
+```shell
+javac zoo/dinos/*.java
+```
+- This is the out put
+
+```shell
+zoo/dinos/Animatronic.java:6: warning: Unsafe is internal proprietary API and may be removed in a future release
+import sun.misc.Unsafe;
+               ^
+zoo/dinos/Animatronic.java:19: warning: Unsafe is internal proprietary API and may be removed in a future release
+        Unsafe unsafe = Unsafe.getUnsafe();
+        ^
+zoo/dinos/Animatronic.java:19: warning: Unsafe is internal proprietary API and may be removed in a future release
+        Unsafe unsafe = Unsafe.getUnsafe();
+                        ^
+3 warnings
+```
+
+- Compiling works, but it gives you some warnings about *Unsafe* being an internal API.
+- Don't worry about those for now - We'll discuss that shortly.
+
+```shell
+jar -cvf zoo.dino.jar .
+```
+
+```shell
+added manifest
+adding: images/(in = 0) (out= 0)(stored 0%)
+adding: images/Figure_6_1.png(in = 119890) (out= 102319)(deflated 14%)
+adding: images/Figure_6_2.png(in = 98668) (out= 80609)(deflated 18%)
+adding: images/Figure_6_3.png(in = 76643) (out= 59278)(deflated 22%)
+adding: images/Figure_Real_World_Scenario_1.png(in = 92974) (out= 76520)(deflated 17%)
+adding: modular_application.md(in = 15704) (out= 5056)(deflated 67%)
+adding: zoo/(in = 0) (out= 0)(stored 0%)
+adding: zoo/dinos/(in = 0) (out= 0)(stored 0%)
+adding: zoo/dinos/Animatronic.class(in = 637) (out= 389)(deflated 38%)
+adding: zoo/dinos/Animatronic.java(in = 413) (out= 209)(deflated 49%)
+```
+
+- We can run the *jdeps* command against this JAR to learn about its dependencies.
+- First, let's run the command without any options. On the first two lines, the command prints the modules that we would 
+  need to add with a *requires* directive to migrate to the module system. 
+- It also prints a table showing what packages are used and what modules they correspond to.
+
+```shell
+jdeps zoo.dino.jar
+```
+- Output
+
+```shell
+zoo.dino.jar -> java.base
+zoo.dino.jar -> jdk.unsupported
+   chapter_6.zoo.dinos                                -> java.lang                                          java.base
+   chapter_6.zoo.dinos                                -> java.time                                          java.base
+   chapter_6.zoo.dinos                                -> java.util                                          java.base
+   chapter_6.zoo.dinos                                -> sun.misc                                           JDK internal API (jdk.unsupported)
+```
+
+- If we run in summary mode, we only see just the first part where *jdeps* lists the modules.
+
+```shell
+jdeps -s zoo.dino.jar
+```
+- Output
+```shell
+zoo.dino.jar -> java.base
+zoo.dino.jar -> jdk.unsupported
+```
+
+- For a real project, the dependency list could dozens or even hundreds of packages.
+- It's useful to see the summary of just the modules.
+- This approach also makes it easier to see whether *jdk.unsupported* in the list.
+
+> Note:
+> You might have noticed the *jdk.unsupported* is not in the list of modules you saw in
+> Table 6.6. It's special because it contains internal libraries that developers in previous versions of Java were
+> discouraged from using, although many people ignored this warning. You should not reference it as it may disappear
+> in future version of Java.
 
 
+- The *jdeps* command has an option to provide details about these unsupported APIs.
+- The output looks something like this:
+
+```shell
+jdeps --jdk-internals zoo.dino.jar
+```
+
+- Output 
+
+```shell
+zoo.dino.jar -> jdk.unsupported
+   chapter_6.zoo.dinos.Animatronic                    -> sun.misc.Unsafe                                    JDK internal API (jdk.unsupported)
+
+Warning: JDK internal APIs are unsupported and private to JDK implementation that are
+subject to be removed or changed incompatibly and could break your application.
+Please modify your code to eliminate dependence on any JDK internal APIs.
+For the most recent update on JDK internal API replacements, please check:
+https://wiki.openjdk.java.net/display/JDK8/Java+Dependency+Analysis+Tool
+
+JDK Internal API                         Suggested Replacement
+----------------                         ---------------------
+sun.misc.Unsafe                          See http://openjdk.java.net/jeps/260
+```
+
+- Note that -jdkinternals is equivalent to --jdk-internals.
+
+---
+### Real World Scenario ###
+
+- About sun.misc.Unsafe
 
 
-
+---
 
 
 
