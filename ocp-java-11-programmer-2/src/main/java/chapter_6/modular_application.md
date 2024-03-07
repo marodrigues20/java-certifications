@@ -394,13 +394,35 @@ sun.misc.Unsafe                          See http://openjdk.java.net/jeps/260
 
 - Note that -jdkinternals is equivalent to --jdk-internals.
 
+## Migrating an Application
+
+- All applications developed for Java 8 and earlier were not designed to use Java Platform Module System because it did 
+  not exist yet.
+- Ideally, there were at least designed with projects instead of as a big ball of mud.
+- This section will give you an overview of strategies for migrating an existing application to use modules.
+- We will cover ordering modules, bottom-up migration, top-down migration, and how to split up an existing project.
+
+
 ---
 ### Real World Scenario ###
 
-- About sun.misc.Unsafe
+- Migrating Your Applications at Work
 
-
+- The exam exists in a pretend universe where there are no open-source dependencies and applications are very small.
+- These scenarios make learning and discussing migration far easier.
+- In the real world, applications have libraries that haven't been updated in 10 or more years, complex dependency
+  graphs, and all sorts of surprises.
+<br>
+- Note that you can use all the features of Java 11 without converting your application to modules (except the features
+  in this module chapter, of course!. Please make sure you have a reason for migrating and don't think it is required.)
+- If you need to be prepared to migrate real applications to use modules, consider reading *The Java Module System by 
+  Nicolai Parlog (Manning PUblications, 2019).
 ---
+
+
+### Determining the Order
+
+- 
 
 
 
