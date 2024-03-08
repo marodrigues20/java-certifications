@@ -414,7 +414,7 @@ sun.misc.Unsafe                          See http://openjdk.java.net/jeps/260
   graphs, and all sorts of surprises.
 <br>
 - Note that you can use all the features of Java 11 without converting your application to modules (except the features
-  in this module chapter, of course!. Please make sure you have a reason for migrating and don't think it is required.)
+  in this module chapter, of course!. Please make sure you have a reason for migrating and don't think it is required).
 - If you need to be prepared to migrate real applications to use modules, consider reading *The Java Module System by 
   Nicolai Parlog (Manning PUblications, 2019).
 ---
@@ -422,16 +422,56 @@ sun.misc.Unsafe                          See http://openjdk.java.net/jeps/260
 
 ### Determining the Order
 
-- 
+- Before we can migrate our application to use modules, we need to know the packages and libraries in the existing 
+  application are structured. Suppose we have a simple application with three JAR files, as shown in Figure 6.4. The
+  dependencies between projects form a graph. Both of the representation in Figure 6.4 are equivalent. 
+- The arrows show the dependencies by pointing from the project that will require the dependency to the one that makes 
+  it available.
+- In the language of modules, the arrow will go from *requires* to the *exports*
 
 
 
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_6_4.png?raw=true)
 
 
+- The right side of the diagram makes it easier to identify the top and bottom that top-down and bottom-up migration
+  refer to. Projects that do not have any dependencies are at the bottom. Projects that do have dependencies are at the 
+  top.
+- In this example, there is only one order from top to bottom that honors all the dependencies. Figure 6.5 shows that 
+  the order is not always unique. Since two of the project do not have an arrow between them, either order is allowed
+  when deciding migration order.
 
 
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_6_5.png?raw=true)
 
 
+## Exploring a Bottom-up Migration Strategy
+
+- The easiest approach to migration is a bottom-up migration. 
+- This approach works best when you have the power to convert any JAR files that aren't already modules.
+- For a bottom-up migration, you follow these steps:
+  1. Pick the lowest-level project that has not yet been migrated. (Remember the way we ordered them by dependencies in 
+     the previous section?)
+  2. Add a *module-info.java* file to that project. Be sure to add any *exports* to expose any package used by 
+     higher-level JAR files. Also, add a *requires* directive for any modules it depends on.
+  3. Move this newly migrated named module from the classpath to the module path.
+  4. Ensure any project that have not yet been migrated stay as unnamed modules on the classpath.
+  5. Repeat with the next-lowest-level project until you are done.
+
+
+- You can see this procedure applied to migrate three projects in Figure 6.6.
+- Notice that each project is converted to a module it turn.
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_6_6.png?raw=true)
+
+- During migration, you have a mix of named modules and unnamed modules.
+- The named modules are the lower-level ones that have been migrated.
+- They are on the module path and not allowed to access any unnamed modules.
+- The unnamed modules are on the classpath. They can access JAR files on both the classpath and the module path.
+
+
+## Exploring a Top-Down Migration Strategy
 
 
 
