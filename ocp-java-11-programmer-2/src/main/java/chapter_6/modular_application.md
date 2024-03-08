@@ -520,6 +520,9 @@ sun.misc.Unsafe                          See http://openjdk.java.net/jeps/260
 - There are fewer modules because some packages share a module.
 
 
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_6_8.png?raw=true)
+
+
 
 
 
