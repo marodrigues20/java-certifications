@@ -541,6 +541,161 @@ sun.misc.Unsafe                          See http://openjdk.java.net/jeps/260
 
 ## Failing to Compile with a Cyclic Dependency
 
+- Java will now allow you to compile modules that have circular dependencies between each other.
+- We will look at an example leading to that compiler error.
+- First, let's create a module named *zoo.butterfly* that has a single class in addition to the *module-info.java* file.
+- If yo need a reminder where the files go in the directory, see Appendix A or the online code example.
+
+
+- Check code here: https://github.com/boyarsky/sybex-1Z0-816-chapter-6/tree/master/cyclic-dependencies
+```java
+package zoo.butterfly;
+
+public class Butterfly {
+}
+```
+
+```java
+module zoo.butterfly {
+    exports zoo.butterfly;
+
+}
+```
+
+- We can compile butterfly module and create a JAR file in the *mods* directory named *zoo.butterfly.jar*.
+- Remember to create a *mods* directory if one doesn't exist in your folder structure.
+
+```shell
+
+javac -d butterflyModule
+  butterflyModule/zoo/butterfly/Butterfly.java
+  butterflyModule/module-info.java
+```
+
+```shell
+jar -cvf mods/zoo.butterfly.jar -C butterflyModule/ .
+```
+
+- Now we create a new module, *zoo.caterpillar*, that depends on the existing *zoo.butterfly* module.
+- This time, we will create a module with two classes in addition to the *module-info.java* file.
+
+```java
+package zoo.caterpillar;
+
+public class Caterpillar {
+
+}
+```
+
+```java
+package zoo.caterpillar;
+
+import zoo.butterfly.Butterfly;
+
+public interface CaterpillarLifecycle {
+
+    Butterfly emergeCocoon();
+}
+```
+
+```java
+module zoo.caterpillar {
+
+    requires zoo.butterfly;
+}
+```
+
+- Again, we will compile and create a JAR file. This time it is named *zoo.caterpillar.jar*.
+
+
+```shell
+javac -p mods -d caterpillarModule
+  caterpillarModule/zoo/caterpillar/*.java
+  caterpillarModule/module-info.java
+```
+
+```shell
+jar -cvf mods/zoo.caterpillar.jar -C caterpillarModule/ .
+```
+
+- At this point, we want to add a method for a butterfly to make caterpillar eggs.
+- We decide to put it in the *Butterfly* module instead of the *CaterpillarLifecycle* class to demonstrate a 
+  cyclic dependency.
+- We know this requires adding a dependency, so we do that first. Updating the *module-info.java* file in the 
+  *zoo.butterfly* module looks like this:
+
+```java
+module zoo.butterfly {
+    exports zoo.butterfly;
+    // uncomment to introduce circular dependency
+    requires zoo.caterpillar;
+}
+```
+
+- We then compile it with the module path *mods* so *zoo.caterpillar* is visible:
+
+````shell
+
+javac -p mods -d butterflyModule
+  butterflyModule/zoo/butterfly/Butterfly.java
+  butterflyModule/module-info.java
+````
+
+- The compiler complains about our cyclic dependency.
+
+```shell
+    butterflyModule/module-info.java:3: error:     
+      cyclic dependence involving zoo.caterpillar       
+        requires zoo.caterpillar;
+```
+
+- This is one the advantages of the module system.
+- It prevents you from writing code that has cyclic dependency.
+- Such code won't even compile!
+
+> Tip
+> Java will still allow you to have a cyclic dependency between packages within a module.
+> It enforces that you do not have a cyclic dependency between modules
+
+
+## Creating a Service
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
