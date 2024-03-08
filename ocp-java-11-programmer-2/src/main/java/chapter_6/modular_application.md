@@ -510,7 +510,7 @@ sun.misc.Unsafe                          See http://openjdk.java.net/jeps/260
 
 ## Splitting a Big Project into Modules
 
-- For the exam, you need to understand the basic process of splitting up a big project into modules.
+***For the exam, you need to understand the basic process of splitting up a big project into modules.***
 
 
 - Suppose you start with an application that has a number of packages. 
