@@ -511,8 +511,8 @@ sun.misc.Unsafe                          See http://openjdk.java.net/jeps/260
 ## Splitting a Big Project into Modules
 
 - For the exam, you need to understand the basic process of splitting up a big project into modules.
-<br>
-<br>
+
+
 - Suppose you start with an application that has a number of packages. 
 - The first step is to break them up into logical groupings and draw the dependencies between them.
 - Figure 6.8 shows an imaginary system's decomposition.
