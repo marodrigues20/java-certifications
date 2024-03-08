@@ -522,6 +522,24 @@ sun.misc.Unsafe                          See http://openjdk.java.net/jeps/260
 
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_6_8.png?raw=true)
 
+- There's a problem with this decomposition.
+- The Java Platform Module System does not allow for *cyclic dependencies*.
+- A cyclic dependencies, or *circular dependencies*, is when two things directly or indirectly depend on each other.
+
+- If the *zoo.tickets.delivery* module requires the *zoo.tickets.discount* module, the *zoo.tickets.discount* is not 
+  allowed to require the *zoo.tickets.delivery* module.
+- A common technique to solve this issue is to introduce another module.
+- That module contains the code that the other two modules share.
+- Figure 6.9 shows the new modules without any cyclic dependencies.
+- Notice the new module *zoo.tickets.discount*.
+- We created a new package to put in that module. This allows the developers to put the common code in there and break
+  the dependencies. No more cyclic dependencies!
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_6_9.png?raw=true)
+
+
+## Failing to Compile with a Cyclic Dependency
 
 
 
