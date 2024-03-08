@@ -474,7 +474,50 @@ sun.misc.Unsafe                          See http://openjdk.java.net/jeps/260
 ## Exploring a Top-Down Migration Strategy
 
 
+- A top-down migration strategy is most useful when you don't have control of every jAR file used by your application.
+- For example, suppose another team owns one project. They are just too busy to migrate.
+- For a top-down migration, you follow these steps:
+  1. Place all projects on the module path.
+  2. Pick the highest-level project that has not yet been migrated.
+  3. Add a *module-info* file to that project to convert the automatic module into a named module. Again, remember to 
+     add any *exports* or *requires* directives. You can use the automatic module name of other modules when writing
+     the *requires* directive since most of the projects on the module path do not have names yet.
+  4. Repeat with the next-lowest-level project until you are done.
 
+- You can see this procedure applied in order to migrate three projects in Figure 6.7. 
+- Notice that each project is converted to a module in turn. 
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_6_7.png?raw=true)
+
+
+- With a top-down migration, you are conceding that all of the lower-level dependencies are not ready but want to make 
+  the application itself a module.
+- During migration, you have a mix of named modules and automatic modules. The named are the higher-level ones that have
+  benn migrated. They are on the module path and have access to the automatic modules. The automatic modules are also on
+  the module path.
+
+
+---
+### Comparing migration strategies ###
+
+| Category                             | Bottom-up                       | Top-Down                            |
+|--------------------------------------|---------------------------------|-------------------------------------|
+| A project that depends on all others | Unnamed module on the classpath | Named module on the module path     |
+| A project that has no dependencies   | Named module on the module path | Automatic module on the module path |
+---
+
+
+## Splitting a Big Project into Modules
+
+- For the exam, you need to understand the basic process of splitting up a big project into modules.
+<br>
+<br>
+- Suppose you start with an application that has a number of packages. 
+- The first step is to break them up into logical groupings and draw the dependencies between them.
+- Figure 6.8 shows an imaginary system's decomposition.
+- Notice that there are seven packages on both the left and right side.
+- There are fewer modules because some packages share a module.
 
 
 
