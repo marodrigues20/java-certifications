@@ -834,8 +834,59 @@ jar -cvf mods/zoo.tours.reservations.jar -C serviceLocatorModule/ .
   service provider interface.
 
 ```java
+package zoo.visitor;
+
+import java.util.*;
+import zoo.tours.api.*;
+import zoo.tours.reservations.*;
+
+public class Tourist {
+
+    public static void main(String[] args) {
+        Tour tour = TourFinder.findSingleTour();
+        System.out.println("Single tour: " + tour);
+
+        List<Tour> tours = TourFinder.findAllTours();
+        System.out.println("# tours: " + tours.size());
+    }
+}
+```
+
+- Our module definition doesn't need to know anything about the implementation since the 
+  *zoo.tours.reservations* module is handling the lookup.
+
+```java
+module zoo.visitor {
+
+    requires zoo.tours.api;
+    requires zoo.tours.reservations;
+}
+```
+
+- This time, we get to run a program after compiling and packaging.
+
+```shell
+javac -p mods consumerModule \
+  consumerModule/zoo/visitor/*.java  \
+  consumerModule/module-info.java
+```
+
+```shell
+jar -cvf mods/zoo.visitor.jar -C consumerModule/ .
+```
+
+```shell
+java -p mods -m zoo.visitor/zoo.visitor.Tourist
+```
+
+- The program outputs the following:
 
 ```
+Single tour: null
+# tours: 0
+```
+
+- Well, that makes sense. We haven't written a class that implements the interface yet.
 
 
 
