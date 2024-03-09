@@ -889,8 +889,83 @@ Single tour: null
 - Well, that makes sense. We haven't written a class that implements the interface yet.
 
 
+## Adding a Service Provider
+
+- A *service provider* is the implementation of a service provider interface.
+- As we said earlier, at runtime it is possible to have multiple implementation classes or modules.
+- We will stick to one here to simplicity.
+- Our service provider is the *zoo.tours.agency* package because we've outsourced the running of tours to a third party.
 
 
+```java
+package zoo.tours.agency;
+
+import zoo.tours.api.*;
+
+public class TourImpl implements Tour {
+
+    public String name() {
+        return "Behind the Scenes";
+    }
+    public int length() {
+        return 120;
+    }
+    public Souvenir getSouvenir() {
+        Souvenir gift = new Souvenir();
+        gift.setDescription("stuffed animal");
+        return gift;
+    }
+}
+```
+
+- Again, we need a *module-info.java* file to create a module.
+
+```java
+module zoo.tours.agency {
+    requires zoo.tours.api;
+    provides zoo.tours.api.Tour with zoo.tours.agency.TourImpl;
+}
+```
+
+- The module declaration requires the module containing the interface as a dependency.
+- We don't export the package that implements the interface since we don't want callers referring to it directly.
+- Instead, we use the *provides* directive.
+- This allows us to specify that we provide an implementation of the interface with a specific implementation class.
+- The syntax looks like this:
+
+```
+provides interfaceName with className;
+```
+
+>Note
+> We have not exported the package containing the implementation.
+> Instead, we have made the implementation available to a service provider using the interface.
+
+
+- Finally, we compile and package it up.
+
+```shell
+javac -p mods -d serviceProviderModule \
+  serviceProviderModule/zoo/tours/agency/*.java \
+  serviceProviderModule/module-info.java
+```
+
+```shell
+jar -cvf mods/zoo.tours.agency.jar -C serviceProvideModule/ .
+```
+
+- Now comes the cool part. We can run the Java program again.
+
+```shell
+java -p mods -m zoo.visitor/zoo.visitor.Tourist
+```
+
+- This time we see the following output:
+
+```
+Single tour: zoo.tours.agency.TourImpl@1936f0f5
+# tours: 1
+```
 
 
 
