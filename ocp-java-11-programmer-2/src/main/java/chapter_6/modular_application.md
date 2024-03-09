@@ -683,8 +683,75 @@ javac -p mods -d butterflyModule
 > For example, the service provider interface and service locator could be in the same module.
 
 
+## Declaring the Service Provider Interface
+
+- First, the *zoo.tours.api* module defines a Java object called *Souvenir*. 
+- It is considered part of the service because it will be referenced by the interface.
+
+```java
+package zoo.tours.api;
+
+public class Souvenir {
+
+    private String description;
+
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { 
+        this.description = description;
+    }
+
+}
+```
+
+- Next, the module contains a Java *interface* type.
+- This interface is called the *service provider interface* because it specifies what behaviour our service will have.
+- In this case, it is a simple API with three methods.
 
 
+```java
+package zoo.tours.api;
+
+public interface Tour {
+
+    String name();
+    int length();
+    Souvenir getSouvenir();
+
+}
+```
+
+- All three methods use the implicit *public* modifier, as shown in ***Chapter 1***, "Java Fundamentals".
+- Since we are working with modules, we also need to create a *module-info.java* file so our module definition 
+  exports the package containing the interface.
+
+```java
+module zoo.tours.api {
+    exports zoo.tours.api;
+}
+```
+
+- Now that we have both files, we can compile and package this module.
+
+```shell
+javac -d serviceProviderInterfaceModule \
+  serviceProviderInterfaceModule/zoo/tours/api/*.java \
+  serviceProviderInterfaceModule/module-info.java
+```
+
+```shell
+jar -cvf mods/zoo.tours.api.jar -C serviceProviderInterfaceModule/ .
+```
+
+>Note 
+> A service provider "interface" can be an *abstract* class rather than an actual *interface*.
+> Since you will only see it as an *interface* on the exam, we use that term in the book.
+
+- To review, the service includes the service provider interface and supporting classes it references.
+- The service also includes the lookup functionality, which we will define next.
+
+
+## Creating a Service Locator
 
 
 
