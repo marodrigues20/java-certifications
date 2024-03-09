@@ -660,6 +660,27 @@ javac -p mods -d butterflyModule
 
 ## Creating a Service
 
+- A *service* is composed of an interface, any classes the interface references, and a way of looking up implementations
+  of the interface.
+- The implementation are not part of the service.
+
+- Services are not new to Java.
+- In fact, the *ServiceLoader* class was introduced in Java 6. It was used to make applications *extensible*, so you 
+  could add functionality without recompiling the whole application.
+- What is new in the integration with modules.
+
+- We will be using a tour application in the services section.
+- It has four modules shown in Figure 6.10. In this example, the *zoo.tours.api* and *zoo.tours.reservations* models 
+  make up the service since they consist of the interface and lookup functionality.
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/images/Figure_6_10.png?raw=true)
+
+
+> Note
+> You aren't required to have four separate modules.
+> We do so to illustrate the concepts.
+> For example, the service provider interface and service locator could be in the same module.
 
 
 
