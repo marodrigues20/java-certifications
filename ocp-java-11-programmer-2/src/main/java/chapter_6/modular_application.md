@@ -967,6 +967,25 @@ Single tour: zoo.tours.agency.TourImpl@1936f0f5
 # tours: 1
 ```
 
+- Notice how we didn't recompile the *zoo.tours.reservations* or *zoo.visitor* package.
+- The service locator was able to observe that there was now a service provider implementation available and find it 
+  for us.
+- This is useful when you have functionality that changes independently of the rest of the code base.
+- For example, you might have custom reports or logging.
+
+> Note
+> In software development, the concept of separating out different component into stand-alone pieces is referred to 
+> *as loose coupling*. One advantage of loosely coupled code is that it can be easily swapped out or replaced with 
+> minimal (or zero) changes to code that uses it.
+> Relying on a loosely coupled structure allows service modules to be easily extensible at runtime.
+
+
+- Java allows only one service provider for a service provider interface in a module.
+- If you wanted to offer another tour, you would need to create a separate module.
+
+
+## Merging Service Locator and Consumer
+
 
 
 
