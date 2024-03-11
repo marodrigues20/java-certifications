@@ -815,7 +815,7 @@ module zoo.tours.reservations {
 
 ```shell
 javac -p mods -d serviceLocatorModule \
-  serviceLocatorModule/zoo/tours/reservations/*.java  /
+  serviceLocatorModule/zoo/tours/reservations/*.java  \
   serviceLocatorModule/module-info.java
 ```
 
@@ -866,7 +866,7 @@ module zoo.visitor {
 - This time, we get to run a program after compiling and packaging.
 
 ```shell
-javac -p mods consumerModule \
+javac -p mods -d consumerModule \
   consumerModule/zoo/visitor/*.java  \
   consumerModule/module-info.java
 ```
