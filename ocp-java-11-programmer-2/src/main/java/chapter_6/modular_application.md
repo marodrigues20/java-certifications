@@ -951,7 +951,7 @@ javac -p mods -d serviceProviderModule \
 ```
 
 ```shell
-jar -cvf mods/zoo.tours.agency.jar -C serviceProvideModule/ .
+jar -cvf mods/zoo.tours.agency.jar -C serviceProviderModule/ .
 ```
 
 - Now comes the cool part. We can run the Java program again.
