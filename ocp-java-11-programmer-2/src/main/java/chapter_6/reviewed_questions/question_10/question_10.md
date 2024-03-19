@@ -7,4 +7,11 @@ D. unnamed, module path <br>
 E. None of the above <br>
 
 
-Answer: B
+---
+### Explanation ###
+
+- Correct Answer: B
+- A top-down migration strategy first places all JARs on the module path.
+- Then it migrates the top-level module to be a named module, leaving the other modules as automatic modules.
+- Option B is correct as it matches both of those characteristics.
+---
