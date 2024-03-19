@@ -9,3 +9,16 @@ F. An unnamed module can be involved in a cyclic dependency with an automatic mo
 
 
 Answer: A; C; 
+
+---
+### Explanation ###
+
+- Correct Answer: A and E
+
+- A cyclic dependency is when a module graph forms a circle
+- Option A is correct because the Java Platform Module System does not allow cyclic dependencies between modules.
+- No such restriction exists for packages, making option B incorrect.
+- A cyclic dependency can involve two or more modules that require each other, making option E correct, while option C
+  and D are incorrect.
+- Finally, Option F is incorrect because unnamed modules cannot be referenced from from an automatic module.
+---
