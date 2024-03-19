@@ -7,5 +7,14 @@ C. requires cat-RC;
 D. requires dog;
 E. None of the above
 
+---
+### Explanation ###
 
-Answer: D
+- Correct Answer: Answer: E
+
+- Trick question!
+- An unnamed module doesn't use a module-info file.
+- Therefore, option E is correct. 
+- An unnamed module can access an automatic module.
+- The unnamed module would simply treat the automatic module as a regular JAR without involving the *module.info* file.
+---

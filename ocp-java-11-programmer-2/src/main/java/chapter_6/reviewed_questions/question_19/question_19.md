@@ -7,4 +7,17 @@ D. It can run only against a named module.
 E. It can run against a regular JAR.
 
 
-Answer: D
+
+
+
+--- 
+
+### Explanation ###
+
+- Correct Answer: C, E
+
+- The *jdeps* command provides information about the class or package level depending on the options passed,
+  making option C correct. It is frequently used to determine what dependencies you will need when converting to modules.
+- This makes it useful to run against a regular JAR, making option E correct.
+--- 
+
