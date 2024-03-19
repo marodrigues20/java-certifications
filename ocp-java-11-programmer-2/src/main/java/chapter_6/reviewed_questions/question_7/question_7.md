@@ -9,4 +9,16 @@ F. jdk.compiler; <br>
 G. jdk.xerces;
 
 
-Answer: A; B; C
+
+
+---
+### Explanation ###
+
+Correct Answer: A; B; C, F.
+
+- Option D is incorrect because it is a package name rather than a module name.
+- Option E is incorrect because *java.base* is the module name, not *jdk.base*.
+- Option G is wrong because we made it up.
+- Options A, B, C, and F are correct.
+
+---
