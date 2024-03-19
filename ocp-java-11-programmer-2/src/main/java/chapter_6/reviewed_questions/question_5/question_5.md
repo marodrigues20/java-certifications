@@ -7,3 +7,11 @@ D. java.lang <br>
 E. None of the above <br>
 
 Answer: B
+
+---
+### Explanation ###
+
+- Correct Answer: B
+- Option B is correct because *java.base* is provided by default.
+- It contains the *java.lang* package among others.
+---
