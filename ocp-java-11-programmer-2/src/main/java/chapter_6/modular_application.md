@@ -1106,7 +1106,7 @@ module zoo.tours.hybrid {
 - For the last time, let's compile, package, and run.
 
 ```shell
-javc -p mods -d multiPuposeModule \
+javac -p mods -d multiPuposeModule \
   multiPuposeModule/zoo/tours/hybrid/*.java \
   multiPuposeModule/module-info.java
 ```
