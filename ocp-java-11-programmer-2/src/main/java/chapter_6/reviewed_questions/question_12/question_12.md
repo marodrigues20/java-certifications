@@ -6,4 +6,11 @@ C. java.main; <br>
 D. java.util; <br>
 E. None of the above <br>
 
-Answer: B
+---
+### Explanation ###
+
+- Correct Answer: B
+
+- The most commonly used packages are in the java.base module, making option B correct.
+---
+
