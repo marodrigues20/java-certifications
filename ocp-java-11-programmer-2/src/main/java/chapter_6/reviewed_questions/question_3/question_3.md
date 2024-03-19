@@ -9,5 +9,14 @@ E. emily.$.jar end emily <br>
 F. emily.$.jar and emily. <br>
 G. emily.$.jar and emily.. <br>
 
+---
+### Explanation ###
 
-Answer: A; B; F
+- Correct Answer: A; B; E
+
+- Any version information at the end of the JAR filename is removed, making options A and B correct.
+- Underscores (_) are turned into dots (.), making options C and D incorrect.
+- Other special characters like a dollar sign ($) are also turned into dots. However, adjacent dots  are merged, and 
+  leading/trailing dots are removed. Therefore, option E is correct.
+
+---
