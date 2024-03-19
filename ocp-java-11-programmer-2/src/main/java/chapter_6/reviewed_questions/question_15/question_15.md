@@ -11,4 +11,15 @@ G. Consumer, service locator, and service provider interface
 H. None of the above
 
 
-Answer:  H
+
+
+
+---
+### Explanation ###
+
+- Correct Answer:  H
+
+- This question is tricky.
+- The service provider must have a *uses* directive, but that is on the service provider interface.
+- No modules need to specify *requires* on the service provider since that is the implementation.
+---
