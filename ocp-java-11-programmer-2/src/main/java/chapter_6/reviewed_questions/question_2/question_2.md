@@ -10,5 +10,13 @@ F. unnamed, named <br>
 G. None of the above <br>
 
 
-Answer: E; F
+
+---
+Explanation.
+Correct Answer: E; F. 
+Automatic modules are on the module path but do not have a module-info file.
+Named modules are on the module path and do have a module-info. Unnamed modules are on the classpath. Therefore, 
+options E and F are correct.
+---
+
 
