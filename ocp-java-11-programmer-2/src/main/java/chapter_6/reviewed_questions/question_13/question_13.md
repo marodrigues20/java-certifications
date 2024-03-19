@@ -8,4 +8,13 @@ D. The service provider must use the *export* directive. <br>
 E. The service provider must use the *provides* directive. <br>
 F. The service provider must use the *requires* directive. <br>
 
-Answer: A; E; F
+
+---
+### Explanation ###
+
+- Correct Answer: A; E; F
+
+- Option A is correct because the service provider interfaces must specify *exports* for any other modules to reference it.
+- Option F is correct because the service provider needs access to the service provider interface.
+- Option E is also correct because provider needs to declare that it provides the service.
+---
