@@ -6,5 +6,12 @@ B. The consumer must use the uses directive.
 C. The service locator must use the requires directive.
 D. The service locator must use the uses directive.
 
+---
+### Explanation ###
 
-Answer: A; C; D
+- Correct Answer: A; C; D
+
+- Option A and C are correct because both consumer and the service locator depend on the service provider interface.
+- Additionally, option D is correct because the service locator must specify that it uses the service provider interface
+  to look it up.
+---

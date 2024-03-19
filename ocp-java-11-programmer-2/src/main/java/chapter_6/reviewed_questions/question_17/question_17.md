@@ -8,4 +8,14 @@ E. An unnamed module exports all packages to named modules.
 F. An unnamed module exports no packages to named modules.
 
 
-Answer: A; F
+
+
+---
+### Explanation ###
+
+- Correct Answer: A; F
+
+- An automatic module exports all packages, making option A correct.
+- An unnamed module is not available to any modules on the modules path. 
+- Therefore, it doesn't export any packages, and option F is correct.
+---
