@@ -8,4 +8,4 @@ D. It is possible to make it available to exactly one other specific module on t
 E. It is possible to make sure it is not available to any other modules on the classpath.
 
 
-Answer: 
+Answer: A; B; 
