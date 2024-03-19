@@ -5,3 +5,5 @@ B. java.base <br>
 C. java.default <br>
 D. java.lang <br>
 E. None of the above <br>
+
+Answer: B
