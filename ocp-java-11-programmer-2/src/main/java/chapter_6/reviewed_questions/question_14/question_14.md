@@ -12,4 +12,16 @@ E. requires magic.util; in the potion project
 F. requires magic.util; in the wand project
 
 
-Answer: B; E; F
+
+
+---
+### Explanation ###
+
+- Correct Answer: B; E; F
+
+- Since the new project extracts the common code, it must have an *exports* directive for that code, making option B correct.
+- The other two modules to not have to expose anything. They must have a *requires* directive to be able to use the 
+  export code, making options £ and F correct.
+---
+
+
