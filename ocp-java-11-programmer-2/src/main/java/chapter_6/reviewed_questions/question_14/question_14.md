@@ -12,4 +12,4 @@ E. requires magic.util; in the potion project
 F. requires magic.util; in the wand project
 
 
-Answer:
+Answer: B; E; F
