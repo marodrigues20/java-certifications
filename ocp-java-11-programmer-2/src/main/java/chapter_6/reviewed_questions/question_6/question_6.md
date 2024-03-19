@@ -19,4 +19,10 @@ E. provides magic.Magic using dragon.Dragon; <br>
 F. provides magic.Magic with dragon.Dragon; <br>
 
 
-Answer: F
+---
+### Explanation ###
+
+- Correct Answer: F
+- The *provides* directive takes the interface name first and the implementation class name second.
+- The *with* keyword is used. Only option F meets these two criteria, making it the correct answer.
+---
