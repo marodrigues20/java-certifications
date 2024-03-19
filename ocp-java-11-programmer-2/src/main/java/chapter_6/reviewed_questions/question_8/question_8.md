@@ -43,5 +43,15 @@ List<Unicorn> all = ServiceLoader.load(Unicorn.class)
 
 E. None of the above
 
+---
+### Explanation ###
+ 
+- Correct Answer: D
 
-Answer: E
+- There is no getStream() method on a *ServiceLoader*, making options A and C incorrect.
+- Option B does  not compile because the stream() method returns a list of *Provider* interfaces and needs to be converted
+  to the *Unicorn* interfaces we are interested in. Therefore, option D is correct.
+---
+
+
+
