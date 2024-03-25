@@ -30,11 +30,11 @@ you in developing complex, multithreading applications.
 ## Introducing Threads
 
 - A thread is the smallest unit of execution that can be scheduled by the operating system. A process is a group of 
-associated threads that execute in the same, shared environment. It follows, then, that a single-threaded process is 
-one that contains exactly one thread, whereas a multithreading process is one that contains one or more threads.
+  associated threads that execute in the same, shared environment. It follows, then, that a single-threaded process is 
+  one that contains exactly one thread, whereas a multithreading process is one that contains one or more threads.
 
 - By shared process, we mean that the threads in the same process share the same memory space and can communicate directly
-with one another. Refer to Figure 7.1 for an overview of threads and their shared environment within a process.
+  with one another. Refer to Figure 7.1 for an overview of threads and their shared environment within a process.
 
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_7/images/Figure_7_1.png?raw=true)
 
@@ -51,7 +51,7 @@ with one another. Refer to Figure 7.1 for an overview of threads and their share
 
 - A system thread is created by the JVM and runs in the background of the application. 
 - For example, the garbage collection is managed by a system thread that is created by the JVM and runs 
-- in the background. 
+  in the background. 
 - For the most part, the execution of system-defined threads is invisible to the application developer. 
 - When a system-defined thread encounters a problem and cannot recover, such as running out of memory, 
   it generates a Java Error, as opposed to an Exception.
