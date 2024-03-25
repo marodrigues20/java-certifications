@@ -59,13 +59,19 @@ you in developing complex, multithreading applications.
 > Note: Even though it is possible to catch an Error, it is considered a poor practice to do so, since it is rare that 
 > an application can recover from a system-level failure.
 
-- A user-defined thread is one created by the application developers to accomplish a specific task. With the exception
-of parallel streams presented briefly in Chapter 4, "Functional Programming," all applications that we have 
-created up to this point have been multithreaded, but they contained only one user-defined thread, which calls the 
-main() thread. For simplicity, we commonly refer to threads that contain only a single user-defined thread as a single-
-threaded application, since we are often uninterested in the system threads.
+- Alternatively, a ***user-defined*** thread is one created by the application developers to accomplish a specific task. 
+- With the exception of parallel streams presented briefly in Chapter 4, "Functional Programming," all applications 
+  that we have created up to this point have been multithreading, but they contained only one user-defined thread, 
+  which calls the main() thread. For simplicity, we commonly refer to threads that contain only a single user-defined 
+  thread as a single-threaded application, since we are often uninterested in the system threads.
 
-- Daemon thread is one that will not prevent the JVM from exiting when the program finishes.
+> Note: Daemon thread is one that will not prevent the JVM from exiting when the program finishes.
+> A Java application terminates when the only threads that are running  are daemon threads.
+> For example, if garbage collection is the only thread left running, the JVM will automatically shut down.
+> Both system and user-defined thread can be marked as daemon threads.
+
+
+## Understanding Thread Concurrency
 
 - The property of executing multiple threads and processes at the same time is referred to as concurrency. Of course,
 with a single-core CPU system, only one task is actually executing. For example, a thread scheduler may employ a 
