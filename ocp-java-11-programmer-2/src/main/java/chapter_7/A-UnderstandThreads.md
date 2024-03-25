@@ -36,7 +36,7 @@ one that contains exactly one thread, whereas a multithreading process is one th
 - By shared process, we mean that the threads in the same process share the same memory space and can communicate directly
 with one another. Refer to Figure 7.1 for an overview of threads and their shared environment within a process.
 
-![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_6/modular_application.md/images/Figure_7_1.png?raw=true)
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_7/images/Figure_7_1.png?raw=true)
 
 
 - Figure 7.1 shows a single process with three threads. It also shows how they are mapped to an arbitrary number of *n* 
