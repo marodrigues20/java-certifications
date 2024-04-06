@@ -89,7 +89,7 @@ when determining which threads should currently be executing. In Java, thread pr
 
 ---
 ### Real World Scenario ###
-# The importance of Thread Scheduling
+### The importance of Thread Scheduling ###
 
 - Theses scheduling algorithms allowed users to experience the illusion that multiple tasks were being performed at the 
   same time within a single-CPU system. For example, a user could listen to music while writing a paper and receive 
