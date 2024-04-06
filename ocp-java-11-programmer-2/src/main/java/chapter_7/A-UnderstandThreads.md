@@ -1,4 +1,5 @@
 ## Chapter 7 - Concurrency
+### Objectives covered in this chapter
 
 - Concurrency
   - Create worker threads using Runnable, Callable and use an ExecutorService to concurrently execute tasks.
