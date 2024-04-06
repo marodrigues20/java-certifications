@@ -91,11 +91,29 @@ when determining which threads should currently be executing. In Java, thread pr
 ### Real World Scenario ###
 ### The importance of Thread Scheduling ###
 
-- Theses scheduling algorithms allowed users to experience the illusion that multiple tasks were being performed at the 
-  same time within a single-CPU system. For example, a user could listen to music while writing a paper and receive 
-  notification for new messages. 
+- Even though multicore CPUs are quite common these days, single-core CPUs were the standard in personal computing for 
+  many decades. During this time, operating systems developed complex thread-scheduling and context-switching algorithms
+  that allowed users to execute dozens or even hundreds of threads on a single-core CPU system.
+- These scheduling algorithms allowed users to experience the illusion that multiple tasks were being performed at the 
+  same time within a single-CPU system. For example, a user could listen to music while writing a paper and received 
+  notifications for new messages.
 - Since the number of threads requested often far outweighs the numbers of processors available even in multicore system,
   these thread-scheduling algorithms are still employed in operating system today.
 ---
 
 
+## Defining a Task with Runnable
+
+- *java.lang.Runnable* is a functional interface that takes no arguments and returns no data.
+- The following is the definition of the *Runnable* interface:
+
+```java
+@FunctionalInterface
+public interface Runnable {
+    void run();
+}
+```
+
+- The Runnable interface is commonly used to define the task or work a thread will execute, separate from the main
+  application thread. We will be relying on the Runnable interface throughout this chapter, especially when we discuss 
+  applying parallel operations to stream.
