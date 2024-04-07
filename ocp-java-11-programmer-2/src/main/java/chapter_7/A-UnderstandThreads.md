@@ -142,6 +142,8 @@ Runnable emu = () -> { return new Object(); };  // DOES NOT COMPILE
 
 - Even though *Runnable* is a functional interface, many classes implement it directly, as shown in the following code:
 
+i.e: chapter_7.runnable.CalculateAverage.java
+
 ```java
 public class CalculateAverage implements Runnable {
     public void run() {
@@ -152,6 +154,8 @@ public class CalculateAverage implements Runnable {
 
 - It is also useful if you need to pass information to your *Runnable* object to be used by the run() method, such as in
   the following constructor:
+
+i.e: chapter_7.runnable.CalculateAverages.java
 
 ```java
 public class CalculateAverages implements Runnable {
@@ -170,3 +174,49 @@ public class CalculateAverages implements Runnable {
 
 ## Creating a Thread
 
+- The simplest way to execute a thread is by using the *java.lang.Thread" class.
+- Executing a task with Thread is a two-step process.
+- First, you define the *Thread* with the corresponding task to be done.
+- Then, you start the task by using the *Thread.start()* method.
+
+> Note: Remember that order of thread execution is not often guaranteed.
+> The exam commonly presents questions in which multiple tasks are started at the same time, and you must determine the 
+> result.
+
+
+- Defining the task that a Thread instance will execute can be done two ways in Java:
+  - Provide a *Runnable* object or lambda expression to the *Thread* constructor.
+  - Create a class that extends *Thread* and overrides the *run()* method.
+
+- The following are example of these techniques:
+
+i.e: i.e: chapter_7.runnable.PrintData.java
+
+```java
+public class PrintData implements Runnable{
+    @Override 
+    public void run(){
+        for(int i=0; i<3; i++)
+          System.out.println("Printing record: " +i);
+    }
+
+  public static void main(String[] args) {
+    (new Thread(new PrintData())).start();
+  }
+}
+```
+
+i.e: chapter_7.runnable.ReadInventoryThread.java
+
+```java
+public class ReadInventoryThread extends Thread {
+    @Override
+    public void run(){
+      System.out.println("Printing zoo inventory");
+    }
+
+  public static void main(String[] args) {
+    (new ReadInventoryThread()).start();
+  }
+}
+```
