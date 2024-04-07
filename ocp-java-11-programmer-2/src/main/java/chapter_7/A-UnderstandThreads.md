@@ -305,3 +305,89 @@ i.e: chapter_7.thread.ThreadAndRunnableUsingRunMethod.java
 
 ## Polling with Sleep
 
+- Even though multi-threaded programming allows you to execute multiple tasks at the same time, one thread often needs 
+  to wait for the results of another thread to proceed.
+- One solution is to use polling. 
+- Polling is the process of intermittently checking data at some fixed interval.
+
+
+i.e: chapter_7.pooling.CheckResults.java
+
+```java
+public class CheckResults {
+  private static int counter = 0;
+  public static void main(String[] args) {
+    new Thread(() -> {
+      for(int i = 0; i < 500; i++)
+        CheckResults.counter++; }
+    ).start();
+
+    while(CheckResults.counter < 100){
+      System.out.println("Not reached yet");
+    }
+
+    System.out.println("Reached");
+
+  }
+}
+```
+
+- How many times does this program print "Not reached yet"?
+- The answer is, we don't know! It could output zero, ten, or a million times.
+- If our thread scheduler is particularly poor, it could operate infinitely!
+- Using a while() loop to check for data without some kind of delay is considered a bad coding practice as it ties up 
+  CPU resources for no reason.
+- We can improve this result by using the *Thread.sleep()* method to implement polling.
+- The *Thread.sleep()* method requests the current thread of execution rest for a specified number of milliseconds.
+- When used inside the body of the *main()* method, the thread associated with the *main()* method will pause, while the 
+  separate thread will continue to run.
+- Compare the previous implementation with the following one that uses *Thread.sleep();*
+
+
+```java
+  public static void main(String[] args) throws InterruptedException {
+        new Thread(() -> {
+            for (int i = 0; i < 500; i++)
+                CheckResults_v2.counter++;
+        }
+        ).start();
+        while (CheckResults_v2.counter < 100) {
+            System.out.println("Not reached yet");
+            Thread.sleep(1000); // 1 SECOND
+        }
+        System.out.println("Reached");
+    }
+```
+
+- In this example, we delay 1,000 milliseconds at the end of the loop, or 1 second.
+- While this may seem like a small amount, we have now prevented a possibly infinite loop from executing and locking up
+  our program.
+- Notice that we also changed the signature of the *main()* method, since *Thread.sleep()* throws the checked 
+  *InterruptedException*.
+- Alternatively, we could have wrapped each call to the *Thread.sleep()* method in a *try/catch* block.
+<br>
+<br>
+- How many times does the *while()* loop execute in this revised class?
+- Still unknown!
+- While pooling does prevent the CPU from being overwhelmed with a potentially infinite loop, it does not guarantee when 
+  the loop will terminate. For example, the separate thread could be losing CPU time to a higher-priority process, 
+  resulting in multiple executions of the *while()* loop before it finishes.
+<br>
+<br>
+- Another issue to be concerned about is the shared *counter* variable.
+- What if one thread is reading the *counter* variable another thread is writing it?
+- The thread reading the shared variable may end up with an invalid or incorrect value.
+- We will discuss these issues in detail in the upcoming section on writing thread-safe code.
+
+
+## Creating Threads with the Concurrency API
+
+- Java includes the Concurrency API to handle the complicated work of managing threads for you.
+- The Concurrency API includes the ExecutorService interface, which defines services that create and manage threads for 
+  for you.
+- It is recommended that you use this framework anytime you need to create and execute a separate task, even if you need 
+  only a single thread.
+
+## Introducing the Single-Thread Executor
+
+- 
