@@ -260,3 +260,41 @@ Printing record: 2
 - While the order of thread execution once the thread have been started is indeterminate, the order within a single 
   thread is still linear. In particular, the *for()* loop in *PrintData* is still ordered. Also, *begin* appears before
   *end* in the main() method.
+
+
+---
+### Calling run() Instead of start() ###
+
+- Be careful with code that attempts to start a thread by calling run() instead of start().
+- Calling *run()* on a *Thread* or a *Runnable* does not actually start a new thread.
+- While the following code snippets will compile, none will actually execute a task on a separate thread:
+
+```
+    System.out.println("begin");
+    (new ReadInventoryThread()).run();
+    (new Thread(new PrintData())).run();
+    (new ReadInventoryThread()).run();
+    System.out.println("end");
+```
+
+- Unlike the previous example, each line of this code will wait until the *run()* method is complete before moving on to 
+  the next line.
+- Also unlike the previous program, the output for this code sample will be the same each time it is executed.
+---
+
+- In general, you should extend the *Thread* class only under specific circumstances, such as when you are creating your
+  own priority-based thread.
+- In most situations, you should implement the *Runnable* interface rather than extend the Thread class.
+- For the exam, previous version required understand difference between extending *Thread* and implement *Runnable*.
+- The exam now strongly encourages developers to use the Concurrency API.
+- For the exam, you also do not need to know about other thread-related methods, such as *Object.wait()*, 
+  *Object.notify()*, *Thread.join()*, etc. In fact, you should avoid them in general and use the Concurrency API as much 
+  as possible. It takes a large amount of skill (and some luck!) to use these methods correctly.
+
+
+---
+### Real World Scenario ###
+### For interviews, Be Familiar with Thread-Creation Option ###
+
+- 
+---
