@@ -297,5 +297,11 @@ i.e: chapter_7.thread.ThreadAndRunnableUsingRunMethod.java
 ### Real World Scenario ###
 ### For interviews, Be Familiar with Thread-Creation Option ###
 
-- 
+- Despite that the exam no long focuses on creating threads by extending the *Thread* class and implementing the Runnable
+  interface. 
+- If asked this question, you should answer it accurately. 
+- You should also mention that you can now create and manage threads indirectly using an ExecutorService.
 ---
+
+## Polling with Sleep
+
