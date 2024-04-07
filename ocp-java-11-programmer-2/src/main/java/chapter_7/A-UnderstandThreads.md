@@ -179,7 +179,7 @@ public class CalculateAverages implements Runnable {
 - First, you define the *Thread* with the corresponding task to be done.
 - Then, you start the task by using the *Thread.start()* method.
 
-> Note: Remember that order of thread execution is not often guaranteed.
+> Note: Remember that order of thread execution is not often guaranteed. <br>
 > The exam commonly presents questions in which multiple tasks are started at the same time, and you must determine the 
 > result.
 
