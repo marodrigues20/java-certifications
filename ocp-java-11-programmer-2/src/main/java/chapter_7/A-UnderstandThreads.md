@@ -220,3 +220,43 @@ public class ReadInventoryThread extends Thread {
   }
 }
 ```
+
+- Let's try this.
+- What is the output of the following code snippet using these two classes?
+
+
+i.e: chapter_7.thread.ThreadAndRunnableTest.java
+```
+2:   public static void main(String[] args) {
+3:       System.out.println("begin");
+4:       (new ReadInventoryThread()).start();
+5:       (new Thread(new PrintData())).start();
+6:       (new ReadInventoryThread()).start();
+7:       System.out.println("end");
+8:    }
+```
+
+- The answer is that it is unknown until runtime.
+- The following is just one possible output:
+
+```
+begin
+Printing zoo inventory
+end
+Printing zoo inventory
+Printing record: 0
+Printing record: 1
+Printing record: 2
+```
+
+- This sample uses a total of four threads-the main() user thread and three additional threads created on lines 4-6.
+- Each thread created on these lines is executed as an asynchronous task.
+- By asynchronous, we mean that the thread executing the main() method does not wait for the result of each newly
+  created thread before continuing.
+- For example, lines 5 and 6 may be executed before the thread created on line 4 finishes.
+- The opposite of this behavior is a *synchronous* task in which the program waits (or blocks) on line 4 for the thread
+  to finish executing before moving on to the next line.
+- The vast majority of method calls used in this book have been synchronous up until now.
+- While the order of thread execution once the thread have been started is indeterminate, the order within a single 
+  thread is still linear. In particular, the *for()* loop in *PrintData* is still ordered. Also, *begin* appears before
+  *end* in the main() method.
