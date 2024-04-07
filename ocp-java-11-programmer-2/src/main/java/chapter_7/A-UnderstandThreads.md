@@ -269,6 +269,7 @@ Printing record: 2
 - Calling *run()* on a *Thread* or a *Runnable* does not actually start a new thread.
 - While the following code snippets will compile, none will actually execute a task on a separate thread:
 
+i.e: chapter_7.thread.ThreadAndRunnableUsingRunMethod.java
 ```
     System.out.println("begin");
     (new ReadInventoryThread()).run();
