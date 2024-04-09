@@ -497,3 +497,23 @@ Printing zoo inventory
 | <T> T invokeAny(Collection<? extends Callable<T>> tasks) thorws InterruptedException, ExecutionException | Executes the given tasks and waits for at least one to complete. Returns a *Future* instance for a complete task and cancels any unfinished tasks            |
 ---
 
+> Submitting Tasks: execute() vs. submit()
+> In your own code we recommend submit() over execute() whenever possible
+
+
+## Waiting for Results
+
+- How do we know when a task submitted to an *ExecutorService* is complete? As mentioned in the previous section, 
+  she *submit()* method returns a *java.util.concurrent.Future<V> instance that can be used to determine this result.
+
+```java
+Future<?> future = service.submit(() -> System.out.println("Hello"));
+```
+
+---
+### TABLE 7.2 *Future* methods ###
+
+| Method name        | Description                                                                     |
+|--------------------|---------------------------------------------------------------------------------|
+| boolean isDone()   | Returns *true* if the task was completed, threw an exception, or was cancelled  |
+---
