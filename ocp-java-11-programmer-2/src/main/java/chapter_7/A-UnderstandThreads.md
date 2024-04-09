@@ -462,5 +462,15 @@ Printing zoo inventory
 
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_7/images/Figure_7_2.png?raw=true)
 
+- The *ExecutorService* provides a method called *shutdownNow()*, which attempts to stop all running tasks and discard 
+  any that have not been started yet.
+- It is possible to create a thread that will never terminate, so any attempt to interrupt it may be ignored.
+- Lastly, *shutdownNow()* returns a *List<Runnable>* of tasks that were submitted to the thread executor but that were 
+  never started.
 
+> Tip: As you learned in Chapter 5, resources such as thread executors should be properly closed to prevent memory leaks.
+> Unfortunately, the ExecutorService interface does not extend the AutoCloseable interface, so you cannot use a 
+  try-with-resources statement. You can still use a finally block. Not required but it is considered a good practice 
+  to do so.
 
+## Submitting Tasks
