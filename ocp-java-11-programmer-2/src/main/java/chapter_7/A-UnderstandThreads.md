@@ -475,4 +475,25 @@ Printing zoo inventory
 
 ## Submitting Tasks
 
+- The first method we presented, *execute()*, is inherited from the *Executor* interface, which the *ExecutorService*
+  interface extends.
+- Because the return type of the method is *void*, it does not tell us anything about the result of the task. It is 
+  considered a "fire-and-forget" method, as once it is submitted, the results are not directly available to the calling
+  thread.
+- Fortunately, the writers of Java added *submit()* methods to the *ExecutorService* interface, which, like *execute()*,
+  can be used to complete tasks asynchronously.
+- Unlike *execute()*, though, *submit()* returns a *Future* instance that can be used to determine whether the task is
+  complete. It can also be used to return a generic result object after the task has been completed.
+
+---
+### TABLE 7.1 ExecutorService methods ###
+
+| Method name                                                                                              | Description                                                                                                                                                  |
+|----------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| void execute(Runnable command)                                                                           | Executes a *Runnable* task at some point in the future                                                                                                       |
+| Future<?> submit(Runnable task)                                                                          | Executes a *Runnable* task at some point in the future and returns a *Future* representing the task                                                          |
+| <T> Future<T> submit(Callable<T> task)                                                                   | Executes a Callable task at some point in the future and returns a *Future* representing the pending results of the task                                     |
+| <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException       | Executes the given tasks and waits for all tasks to complete. Returns a *List* of *Future* instances, in the same order they were in the original collection |
+| <T> T invokeAny(Collection<? extends Callable<T>> tasks) thorws InterruptedException, ExecutionException | Executes the given tasks and waits for at least one to complete. Returns a *Future* instance for a complete task and cancels any unfinished tasks            |
+---
 
