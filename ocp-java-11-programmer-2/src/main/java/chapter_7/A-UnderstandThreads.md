@@ -390,4 +390,58 @@ public class CheckResults {
 
 ## Introducing the Single-Thread Executor
 
-- 
+- Since *ExecutorService* is an interface, how do you obtain an instance of it?
+- The Concurrency API includes the *Executors* factory class that can be used to create instances of the 
+  *ExecutorService* object.
+- Let's start with a simple example using the *newSingleThreadExecutor()* method to obtain an *ExecutorService* instance
+  and the *execute()* method to perform asynchronous tasks.
+
+i.e: chapter_7.concurrencyapi.singleThread.ZooInfo.java
+
+```java
+import java.util.concurrent.*;
+public class ZooInfo {
+    public static void main(String[] args){
+        ExecutorService service = null;
+        Runnable task1 = () -> 
+                System.out.println("Printing zoo inventory");
+        Runnable task2 = () -> 
+        { for (int i = 0; i < 3; i++)
+          System.out.println("Printing record: " +i);
+        };
+        try{
+          service = Executors.newSingleThreadExecutor();
+          System.out.println("begin");
+          service.execute(task1);
+          service.execute(task2);
+          service.execute(task1);
+          System.out.println("end");
+        }finally {
+            if(service != null) service.shutdown();
+        }
+    }
+}
+```
+
+- As you may notice, this is just a rewrite of our earlier PrintData and ReadInventoryThread classes.
+- In this example, we use the *Executors.newSingleThreadExecutor()* method to create the service.
+- Unlike our earlier example, in which we had three extra theads for newly created tasks, this example uses only one, 
+  which means that the threads will order their results.
+- For example, the following is a possible output for this code snippet:
+
+```
+begin
+end
+Printing zoo inventory
+Printing record: 0
+Printing record: 1
+Printing record: 2
+Printing zoo inventory
+```
+
+- With a single-thread executor, result are guaranteed to be executed sequentially.
+- Notice that the *end* text is output while our thread executor tasks are still running.
+- This is because the *main()* method is still an independent thread from the *ExecutorService*.
+
+
+## Shutting Down a Thread Executor
