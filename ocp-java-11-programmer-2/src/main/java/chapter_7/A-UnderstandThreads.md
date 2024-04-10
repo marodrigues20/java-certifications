@@ -592,3 +592,69 @@ public interface Callable<V> {
   returns a generic *Future<T>* instance
 
 - Let's take a look at an example using *Callable*.
+
+i.e: chapter_7.concurrencyapi.callable.AddData.java
+```java
+import java.util.concurrent.*;
+
+public class AddData {
+    public static void main(String[] args) throws Exception {
+        ExecutorService service = null;
+        try {
+            service = Executors.newSingleThreadExecutor();
+            Future<Integer> result = service.submit(() -> 30 + 11);
+            System.out.println(result.get()); // 41
+        } finally {
+            if (service != null) service.shutdown();
+        }
+    }
+}
+```
+
+## Waiting for All Tasks to Finish
+
+- If we don't need the results of the tasks and are finished using our thread executor, there is a simplier approach.
+- First, we shut down the threads executor using the *shutdown()* method.
+- Next, we use the *awaitTerminiation()* method available for all thread executors. The method waits the specified time
+  to complete all tasks, returning sooner if all tasks finish or an *InterruptedException* is detected.
+- You can see an example of this in the following code snippet:
+
+i.e: chapter_7.concurrencyapi.callable.AddData_v2.java
+```java
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+public class AddData_v2 {
+    public static void main(String[] args) {
+        ExecutorService service = null;
+        try {
+            service = Executors.newSingleThreadExecutor();
+            // Add tasks to the thread executor
+            // ...
+        } finally {
+            if (service != null) service.shutdown();
+        }
+
+        if (service != null) {
+            service.awaitTermination(1, TimeUnit.MINUTES);
+
+            // Check whether all tasks are finished
+            if (service.isTerminated()) System.out.println("Finished");
+            else System.out.println("At least one task is still running");
+        }
+    }
+}
+```
+
+- In this example, we submit a number of tasks to the thread executor and then shut down the thread executor and wait up
+  to one minute for the results.
+- Notice that we can call *isTerminated()* after the *awaitTermination()* method finishes to confirm that all tasks 
+  are actually finished.
+
+> Note: If *awaitTermination()* is called before *shutdown()* within the same thread, then that thread will wait the full
+> timeout value sent with *awaitTermination().
+
+## Submitting Task Collections
+
+

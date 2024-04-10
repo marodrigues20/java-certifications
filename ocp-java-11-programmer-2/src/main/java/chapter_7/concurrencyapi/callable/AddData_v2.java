@@ -1,4 +1,4 @@
-package chapter_7.concurrencyapi.singleThread;
+package chapter_7.concurrencyapi.callable;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * If awaitTermination() is called before shutdown() within the same thread, then that thread will wait the full
  * timeout value sent with awaitTermination().
  */
-public class AddData2 {
+public class AddData_v2 {
 
     public static void main(String[] args) throws Exception {
 

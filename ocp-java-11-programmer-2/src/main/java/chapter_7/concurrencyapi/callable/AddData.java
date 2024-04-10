@@ -1,4 +1,4 @@
-package chapter_7.concurrencyapi.singleThread;
+package chapter_7.concurrencyapi.callable;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
