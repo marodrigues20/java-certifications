@@ -513,7 +513,18 @@ Future<?> future = service.submit(() -> System.out.println("Hello"));
 ---
 ### TABLE 7.2 *Future* methods ###
 
-| Method name        | Description                                                                     |
-|--------------------|---------------------------------------------------------------------------------|
-| boolean isDone()   | Returns *true* if the task was completed, threw an exception, or was cancelled  |
+| Method name                                   | Description                                                                                                                                                                           |
+|-----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| boolean isDone()                              | Returns *true* if the task was completed, threw an exception, or was cancelled                                                                                                        |
+| boolean isCancelled()                         | Returns *true* if the task was cancelled before it completed normally                                                                                                                 |
+| boolean cancel(boolean mayInterruptIfRunning) | Attempts to cancel execution of the task and returns *true* if it was successfully cancelled or *false* if it could not be cancelled or is complete                                   |
+| V get()                                       | Retrieves the result of a task, waiting endlessly if it is not yet available                                                                                                          |
+| V get(long timeout, TimeUnit unit)            | Retrieves the result of a task, waiting the specified amount of time. If the result is not ready by the time the timeout is reached, a checked *TimeoutException* will be thrown.     |
 ---
+
+- The following is an updated verstion of our earlier polling example *CheckResults* class, which uses a *Future* instance
+  to wait for the results:
+
+```java
+
+```
