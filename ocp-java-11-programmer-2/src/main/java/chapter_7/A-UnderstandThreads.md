@@ -525,6 +525,70 @@ Future<?> future = service.submit(() -> System.out.println("Hello"));
 - The following is an updated verstion of our earlier polling example *CheckResults* class, which uses a *Future* instance
   to wait for the results:
 
-```java
 
+i.e: chapter_7.wait_results.CheckResults_v3.java
+
+```java
+import java.util.concurrent.*;
+
+public class CheckResults_v3 {
+    public static void main(String[] unused) {
+        ExecutorService service = null;
+        try {
+            service = Executors.newSingleThreadExecutor();
+            Future<?> result = service.submit(() -> {
+                for (int i = 0; i < 500; i++) CheckResults_v3.counter++;
+            });
+            result.get(10, TimeUnit.SECONDS);
+            System.out.println("Reached!");
+        } catch (TimeoutException e) {
+            System.out.println("Not reached in time");
+        } finally {
+            if (service != null) service.shutdown();
+        }
+    }
+}
 ```
+
+- This example is similar to our earlier polling implementation, but it does not use the *Thread* class directly.
+- In part, this is the essence of the Concurrency API: to do complex things threads without having to manage threads 
+  directly.
+- As *Future<V>* is a generic interface, the type V is determined by the return type of the Runnable method.
+- Since the return type of *Runnable.run()* is *void*, the *get()* method always returns *null* when working with 
+  *Runnable* expressions.
+- The *Future.get()* method can take an optional value and enum type *java.util.concurrent.TimeUnit*. 
+- We present the full list of *TimeUnit* values in Table 7.3 in increasing order of duration.
+
+
+---
+### TABLE 7.3 TimeUnit values ###
+
+| Enum name             | Description                                         |
+|-----------------------|-----------------------------------------------------|
+| TimeUnit.NANOSECONDS  | Time in one-billionth of a second (1/1,000,000,000) |
+| TimeUnit.MICROSECONDS | Time in one-millionth of a second (1/1,000,000)     |
+| TimeUnit.MILLISECONDS | Time in one-thousandth of a second (1/1,000)        |
+| TimeUnit.SECONDS      | Time in seconds                                     |
+| TimeUnit.MINUTES      | Time in minutes                                     |
+| TimeUnit.HOURS        | Time in hours                                       |
+| TimeUnit.DAYS         | Time in days                                        |
+---
+
+## Introducing Callable
+
+- The *java.util.concurrent.Callable* functional interface is similar to *Runnable* except exept that its *call()* method
+  returns a value and can throw a checked exception.
+
+```java
+@FunctionalInterface
+public interface Callable<V> {
+  V call() throws Exception;
+}
+```
+
+- The *Callable* interface is often preferable over *Runnable*, since it allows more details to be retrieved easly from 
+  the task after it is completed.
+- The *ExecutorService* includes an overloaded version of the *submit()* method that takes a *Callable* object and 
+  returns a generic *Future<T>* instance
+
+- Let's take a look at an example using *Callable*.
