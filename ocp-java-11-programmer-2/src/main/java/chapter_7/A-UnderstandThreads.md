@@ -777,3 +777,17 @@ service.scheduleAtFixedRate(command, 5, 1,TimeUnit.MINUTES);
 > executor feels, Given enough time, the program would submit more tasks to the executor service than could fit in 
 > memory, causing the program to crash.
 
+
+- On the other hand, the *scheduleWithFixedDelay()* method creates a new task only after the previous task has finished.
+- For example, if a task runs at 12:00 and takes five minutes to finish, with a period between executions of two minutes,
+  then the next task will start at 12:07.
+
+```
+service.scheduleWithFixedDelay(command, 0, 2, TimeUnit.MINUTES);
+```
+
+- The *scheduleWithFixedDelay()* is useful for process that you want to happen repeatedly but whose specific time is 
+  unimportant.
+
+> Tip: If you are familiar with creating Cron jobs in Linux to schedule tasks, then you should know that *scheduleAtFixedRate() is the closest built-in Java equivalent.
+
