@@ -708,3 +708,72 @@ i.e: chapter_7.concurrencyapi.future.InvokeAny.java
 
 
 ## Scheduling Tasks
+
+- Oftentimes in Java, we need to schedule a task to happen at some future time. We might even need to schedule the task
+  to happen repeatedly, at some set interval.
+- For example, imagine that we want to check the supply of food for zoo animals once an hour and fill it as needed.
+- The *ScheduledExecutorService*, which is a subinterface of *ExecutorService*, can be used for just such a task.
+- Like *ExecutorService*, we obtain an instance of *ScheduleExecutorService* using a factory method in the *Executors* 
+  class, as shown in the following snippet:
+
+```java
+ScheduledExecutorService service
+    = Executors.newSingleThreadScheduleExecutor();
+```
+---
+### TABLE 7.4 *ScheduledExecutorService* methods (Summary) ###
+
+| Method Name                                                                            | Description                                                                                                                                                                        |
+|----------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| schedule(Callable<V> callable, long delay, TimeUnit unit)                              | Creates and executes a *Callable* task after the given delay                                                                                                                       |
+| schedule(Runnable command, long delay, TimeUnite unit)                                 | Creates and executes a Runnable task after the given delay                                                                                                                         |
+| scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit    | Creates and executes a *Runnable* task after the given initial delay, creating a new task every period value that passes                                                           |
+| scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) | Creates and executes a *Runnable* a task after the given initial delay an dsubsequnelty with tiven delay between the termination of one execution and the commencement of the next |
+
+---
+
+- The first two *schedule()* methods in Table 7.4 take a *Callable* or *Runnable*, respectively; perform the task after
+  some delay; and return a *ScheduledFuture* instance.
+- The *ScheduledFuture* interface is identical to the *Future* interface, except that it includes a *getDelay()* method 
+  that returns the remaning delay.
+- The following uses the *schedule()* method with *Callable* and *Runnable* tasks:
+
+```java
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
+ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+Runnable task1 = () -> System.out.println("Hello Zoo");
+Callable<String> task2 = () -> "Monkey";
+ScheduledFuture<?> r1 = service.schedule(task1, 10, TimeUnit.SECONDS);
+ScheduledFuture<?> r2 = service.schedule(task2, 8, TimeUnit.MINUTES);
+```
+
+- The first task is scheduled 10 seconds in the future, whereas the second task is scheduled 8 minutes in the future.
+
+> Note: While these tasks are scheduled in the future, the actual execution may be delayed.
+> For example, there may be no threads available to perform the task, at which point they will just wait in the queue.
+> Also, if the *ScheduledExecutorService* is shutdown by the time the scheduled task execution time is reached, then
+> these tasks will be discarded.
+
+
+- The *scheduleAtFixedRate()* method creates a new task and submits it to the executor every period, regardless of 
+  whether the previous task finished.
+- The following example executes a *Runnable* task every minute, following an initial five-minute delay:
+
+```
+service.scheduleAtFixedRate(command, 5, 1,TimeUnit.MINUTES);
+```
+
+- The *scheduleAtFixedRate()* method is useful for tasks that need to be run at specific intervals, such as checking the
+  health of the animals once a day. Even if it takes two hours to examine an animal on Monday, this doesn't mean that
+  Tuesday's exam should start any later in the day.
+
+> TIP: Bad things can happen with *scheduleAtFixedRate() if each task consistently takes longer to run than the execution
+> interval. Imagine your boss came by your desk every minute and dropped off a piece of paper. Now imagine it took you
+> five minutes to read each piece of paper. Before long, you would be drowning in piles of paper. This is how an 
+> executor feels, Given enough time, the program would submit more tasks to the executor service than could fit in 
+> memory, causing the program to crash.
+
