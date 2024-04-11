@@ -738,17 +738,26 @@ ScheduledExecutorService service
   that returns the remaning delay.
 - The following uses the *schedule()* method with *Callable* and *Runnable* tasks:
 
-```java
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
-ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-Runnable task1 = () -> System.out.println("Hello Zoo");
-Callable<String> task2 = () -> "Monkey";
-ScheduledFuture<?> r1 = service.schedule(task1, 10, TimeUnit.SECONDS);
-ScheduledFuture<?> r2 = service.schedule(task2, 8, TimeUnit.MINUTES);
+i.e: chapter_7.concurrencyapi.schedule.ScheduledExecutorServiceExample.java
+```java
+public class ScheduledExecutorServiceExample {
+
+  public static void main(String[] args) {
+    ScheduledExecutorService service = null;
+    try {
+      service = Executors.newSingleThreadScheduledExecutor();
+      Runnable task1 = () -> System.out.println("Hello Zoo");
+      Callable<String> task2 = () -> "Monkey";
+      ScheduledFuture<?> r1 = service.schedule(task1, 10, TimeUnit.SECONDS);
+      ScheduledFuture<?> r2 = service.schedule(task2, 8, TimeUnit.MINUTES);
+      service.scheduleAtFixedRate(task1, 5, 1, TimeUnit.MINUTES); // Initial delay 5. Every 1 minute.
+      service.scheduleWithFixedDelay(task1, 0, 2, TimeUnit.MINUTES); // Initial delay 0. Every 2 minutes
+    }finally {
+      if(service != null) service.shutdown();
+    }
+  }
+}
 ```
 
 - The first task is scheduled 10 seconds in the future, whereas the second task is scheduled 8 minutes in the future.
@@ -790,4 +799,7 @@ service.scheduleWithFixedDelay(command, 0, 2, TimeUnit.MINUTES);
   unimportant.
 
 > Tip: If you are familiar with creating Cron jobs in Linux to schedule tasks, then you should know that *scheduleAtFixedRate() is the closest built-in Java equivalent.
+
+
+## Increasing Concurrency with Pools
 

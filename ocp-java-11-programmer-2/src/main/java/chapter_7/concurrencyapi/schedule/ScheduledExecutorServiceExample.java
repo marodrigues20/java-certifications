@@ -1,4 +1,4 @@
-package chapter_7.concurrencyapi.singleThread;
+package chapter_7.concurrencyapi.schedule;
 
 import java.util.concurrent.*;
 
@@ -40,15 +40,10 @@ public class ScheduledExecutorServiceExample {
             Callable<String> task2 = () -> "Monkey";
             ScheduledFuture<?> r1 = service.schedule(task1, 10, TimeUnit.SECONDS);
             ScheduledFuture<?> r2 = service.schedule(task2, 8, TimeUnit.MINUTES);
-            //service.scheduleAtFixedRate(task1, 5, 1, TimeUnit.MINUTES); // Initial delay 5. Every 1 minute.
-            //service.scheduleWithFixedDelay(task1, 0, 2, TimeUnit.MINUTES); // Initial delay 0. Every 2 minutes
+            service.scheduleAtFixedRate(task1, 5, 1, TimeUnit.MINUTES); // Initial delay 5. Every 1 minute.
+            service.scheduleWithFixedDelay(task1, 0, 2, TimeUnit.MINUTES); // Initial delay 0. Every 2 minutes
         }finally {
             if(service != null) service.shutdown();
         }
-
-
-
-
-
     }
 }
