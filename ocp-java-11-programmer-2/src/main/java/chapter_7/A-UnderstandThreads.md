@@ -662,6 +662,8 @@ public class AddData_v2 {
 - The *invokeAll()* method executes all tasks ina provided collection and returns a *List* of ordered *Future* instances,
   with one *Future* instance corresponding to each submitted task, in the order they were in the original collection.
 
+i.e: chapter_7.concurrencyapi.future.InvokeAll.java
+
 ### invokeAll() method
 ```
 20: ExecutorService service = ...
@@ -687,6 +689,7 @@ public class AddData_v2 {
 - While the first task to finish is often returned, this behavior is not guaranted, as any completed task can be
   returned by this method.
 
+i.e: chapter_7.concurrencyapi.future.InvokeAny.java
 ```
 20: ExecutorService service = ...
 21: System.out.println("begin");

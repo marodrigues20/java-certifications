@@ -1,4 +1,4 @@
-package chapter_7.concurrencyapi.singleThread;
+package chapter_7.concurrencyapi.future;
 
 import java.util.List;
 import java.util.concurrent.*;
