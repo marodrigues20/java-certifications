@@ -810,3 +810,18 @@ service.scheduleWithFixedDelay(command, 0, 2, TimeUnit.MINUTES);
   tasks.
 - Table 7.5 includes our two previous single-thread executor methods, along with the new ones that you should know for 
   exam.
+
+
+---
+### TABLE 7.5 *Executors factory methods ###
+
+| Method                                                      | Description                                                                                                                                                                        |
+|-------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ExecutorService newSingleThreadExecutor()                   | Creates a single-threaded executor that uses a single worker thread operating off an unbounded queue. Results are processed sequentially in the order in which they are submitted. |
+| ScheduledExecutorService newSinglethreadScheduledExecutor() | Creates a single-threaded executor that can schedule commands to run after a given delay or to execute periodically                                                                |
+| ExecutorService newCachedThreadPool()                       | Creates a thread pool that creates new threads as needed but will reuse previously contructed threads when they are available                                                      |
+| ExecutorService newFixedThreadPool(int)                     | Creates a thread pool that reuses a fixed number of threads operating off a shared unbounded queue                                                                                 |
+| ScheduledExecutorService newScheduledThreadPool(int)        | Creates a thread pool that can schedule commands to run after a given delay or to execute periodically                                                                             |
+
+---
+
