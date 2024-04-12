@@ -803,3 +803,10 @@ service.scheduleWithFixedDelay(command, 0, 2, TimeUnit.MINUTES);
 
 ## Increasing Concurrency with Pools
 
+- All of our examples up until now have been with sigle-thread executors.
+- We now present three additional factory methods in the *Executors* class that act on a pool of threads, rather than on 
+  a single thread.
+- A ***thread pool*** is a group of pre-instantiated reusable threads that are available to perform a set of arbitrary 
+  tasks.
+- Table 7.5 includes our two previous single-thread executor methods, along with the new ones that you should know for 
+  exam.
