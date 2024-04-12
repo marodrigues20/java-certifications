@@ -822,6 +822,57 @@ service.scheduleWithFixedDelay(command, 0, 2, TimeUnit.MINUTES);
 | ExecutorService newCachedThreadPool()                       | Creates a thread pool that creates new threads as needed but will reuse previously contructed threads when they are available                                                      |
 | ExecutorService newFixedThreadPool(int)                     | Creates a thread pool that reuses a fixed number of threads operating off a shared unbounded queue                                                                                 |
 | ScheduledExecutorService newScheduledThreadPool(int)        | Creates a thread pool that can schedule commands to run after a given delay or to execute periodically                                                                             |
+---
+
+- The difference between a single-thread and a pooled-thread executor is what happens when a task is already running.
+- While a single-thread executor will wait for a thread to become available before running the next task, a pooled-thread
+  executor can execute the next task concurrently.
+- If the pool runs out of available threads, the task will be queued by the thread executor and wait to be completed.
+
+<br>
+
+- The *newFixedThreadPool()* takes a number of threads and allocates them all upon creation.
+- As long as our number of tasks is less than our number of threads, all tasks will be executed concurrently.
+- If at any point the number of tasks exceeds the number of threads in the pool, they will wait in a similiar manner as 
+  you saw with a single-thead executor. 
+- In fact, calling *newFixedThreadPool()* with a value of 1 is equivalent to calling *newSingleThreadExecutor()*.
+
+<br>
+
+- The *newCachedThreadPool()* method will create a thread pool of unbounded size, allocating a new thread anytime one is
+  required or all existing threads are busy.
+- This is commonly used for pools that require executing many short-lived asynchronous tasks.
+- For long-lived process, usage of this executor is strongly discouraged, as it could grow to encompass a large number
+  of threads over the application life cycle.
+
+<br>
+
+- The *newScheduledThreadPool()* is identical to the *newFixedThreadPool()* method, except that it returns an instance
+  of *ScheduledExecutorService* and is therefore compatible with scheduling tasks.
+
 
 ---
+### Real World Scenario - Choosing a Pool Size ###
+
+- In practice, choosing an appropriate pool size requires some thought.
+- In general, you want at least a handful more threads than you think you will ever possibly need.
+- On the other hand, you don't want to choose so many threads that your application uses up too many resources or too 
+  much CPU processing power.
+- Oftentimes, the number of CPUs avaialable is used to determine the thread pool size using this command.
+
+```
+Runtime.getRuntime().availableProcessors()
+```
+
+- It is a common practice to allocate threads based on the number of CPUs.
+---
+
+## Writing Thread-Safe Code
+
+- *Thread-safety* is the property of an object that guarantees safe execution by multiple threads at the same time.
+- Since threads run in a shared environemnt and memory space, how do we prevent two threads from interfering with each other?
+- In this part of the chapter, we show how to use a variety of techiniques to protect data including: atomic classes,
+  *synchronized blocks*, the *Lock framework*, and *cyclic barriers*.
+
+## Understanding Thread-Safety
 
