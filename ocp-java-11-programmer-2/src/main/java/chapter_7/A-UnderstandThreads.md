@@ -969,5 +969,19 @@ public class SheepManager {
 
 
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_7/images/Figure_7_4.png?raw=true)
+Figure 7.4 Thread synchronization using atomic operations
 
 
+---
+### TABLE 7.6 Atomic classes ###
+
+| Class Name    | Description                                      |
+|---------------|--------------------------------------------------|
+| AtomicBoolean | A *boolean* value that may be updated atomically |
+| AtomicInteger | An *int* value that may be updated atomically    |
+| AtomicLong    | A *long* value that may be updated atomically    |
+---
+
+- How do we use an atomic class?
+- Each class includes numerous methods that are equivalent to many of the primitive built-in operators that we use on 
+  primitives such as the assignment operator (=) and the increment operators (++).
