@@ -942,3 +942,32 @@ public class SheepManager {
 
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_7/images/Figure_7_3.png?raw=true)
 
+
+## Protecting Data with Atomic Classes
+
+- One way to improve our sheep counting example is to use the *java.util.concurrent.atomic* package.
+- As with many of the classes in the Concurrency API, these classes exist to make your life easier.
+
+- In our SheepManager sample output, we printed twice, with the highest counter being 9 instead of 10.
+- As we demonstrated in the previous section, the increment operator ++ is not thread-safe.
+- The reason that it is not thread-safe is that the operation is not atomic, carrying out two tasks, read and write, 
+  that can be interrupted by other threads.
+
+---
+- *Atomic* is the property of an operation to be carried out as a single unit of execution without any interference by
+  another thread.
+- A thread-safe atomic version of the increment operator would be one that performed the read and write of the variable
+  as a single operation.
+- Figure 7.4 shows result of making the *sheepCount* variable atomic.
+---
+
+- Figure 7.4 resembles our earlier Figure 7.3, except that reading and writing the data is atomic with regard to the 
+- *sheepCount* variable while an atomic operation is in process will have to wait until the atomic operation on the
+  variable is complete.
+- Since accessing primitives and references in Java is common in shared environments, the Concurrency API includes 
+  numerous useful classes that are conceptually the same as our primitive classes but that support atomic operations.
+
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_7/images/Figure_7_4.png?raw=true)
+
+
