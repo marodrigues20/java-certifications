@@ -4,13 +4,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class SheepManager {
-
     private int sheepCount = 0;
-
     private void incrementAndReport() {
         System.out.print((++sheepCount) + " ");
     }
-
     public static void main(String[] args) {
         ExecutorService service = null;
         try {
@@ -23,6 +20,4 @@ public class SheepManager {
             if(service != null) service.shutdown();
         }
     }
-
-
 }

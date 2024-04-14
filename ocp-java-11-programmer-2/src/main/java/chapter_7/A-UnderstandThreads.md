@@ -919,5 +919,26 @@ public class SheepManager {
 1 8 7 3 2 6 5 4 2 9
 ```
 
+- So, what went wrong?
+- In this example, we use the pre-increment (++) operator to update the *sheepCount* variable.
+- A problem occurs when two threads both execute the right side of the expression, reading the "old" value before either
+  thread writes the "new" value of the variable.
+- The two assignments become redundant; they both assign the same value, with one thread overwriting the result of the 
+  other.
+- Figure 7.3 demonstrate this problem with two threads, assuming the *sheepCound* has a starting value of 1.
 
+<br>
+
+- You can see in Figure 7.3 that both threads read and write the same values, causing one of the two ++  is not 
+  thread-safe. 
+- As you will see later in this chapter, the unexpected result of two tasks executing at the same time is referred to 
+  as a *race condition*.
+
+<br>
+
+- Conceptually, the idea here is that some zoo workers may run faster on their way to the field but more slowly on their
+  way back and report late.
+- Other workers may get to the field last but somehow be the first ones back to report the results.
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_7/images/Figure_7_3.png?raw=true)
 
