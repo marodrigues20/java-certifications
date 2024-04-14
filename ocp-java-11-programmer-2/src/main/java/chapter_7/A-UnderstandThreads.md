@@ -985,3 +985,33 @@ Figure 7.4 Thread synchronization using atomic operations
 - How do we use an atomic class?
 - Each class includes numerous methods that are equivalent to many of the primitive built-in operators that we use on 
   primitives such as the assignment operator (=) and the increment operators (++).
+- In the following example, we update our SheepManager class with an *AtomicInteger*:
+
+```java
+
+private AtomicInteger sheepCount = new AtomicInteger(0);
+private void incrementAndReport(){
+    System.out.print(sheepCount.incrementAngGet()+ " ");
+}
+```
+
+- When we run this modification, we get varying output, such as the following:
+
+```
+2 3 1 4 5 6 7 8 9 10
+1 4 3 2 5 6 7 8 9 10
+1 4 3 5 6 2 7 8 10 9
+```
+
+- Unlike our previous sample output, the number 1 through 10 will always be printed, although the order is still not 
+  guaranteed.
+- Using the atomic classes ensures that the data is consistent between workers and that no values are lost due to 
+  concurrent modification.
+
+---
+### TABLE 7.7 Common atomic methods ###
+
+| Method name | Description |
+|-------------|-------------|
+
+---
