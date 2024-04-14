@@ -876,3 +876,48 @@ Runtime.getRuntime().availableProcessors()
 
 ## Understanding Thread-Safety
 
+- Imagine that our zoo has a program to count sheep, preferably one that won't put the zoo workers to sleep!
+- Each zoo worker runs out to a field, adds a new sheep to the flock, counts the total number of sheep, and runs back 
+  to us to report the results. We present the following code to represent this conceptually, choosing a thread pool size
+  so that all tasks can be run concurrenlty:
+
+i.e: chapter_7.concurrencyapi.thread_safety.SheepManager.java
+```java
+import java.util.concurrent.*;
+
+public class SheepManager {
+    private int sheepCount = 0;
+
+    private void incrementAndReport() {
+        System.out.print((++sheepCount) + " ");
+    }
+
+    public static void main(String[] args) {
+        ExecutorService service = null;
+        try {
+            service = Executors.newFixedThreadPool(20);
+            SheepManager manager = new SheepManager();
+            for (int i = 0; i < 10; i++) {
+                service.submit(() -> manager.incrementAndReport());
+            }
+        } finally {
+            if(service != null) service.shutdown();
+        }
+    }
+}
+```
+
+- What does this program output?
+- You might think it will output numbers from 1 to 10, in order, but that is far from guaranteed.
+- It may output in a different order.
+- Worse yet, it may print some numbers twice and not print some numbers at all!
+- The following are all possible outputs of this program:
+
+```
+1 2 3 4 5 6 7 8 9 10
+1 9 8 7 3 6 6 2 4 5
+1 8 7 3 2 6 5 4 2 9
+```
+
+
+
