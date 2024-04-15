@@ -1161,3 +1161,31 @@ public static synchronized void printDaysWork(){
 
 - You can use *static* synchronization if you need to order thread access across all instances, rather than single instance.
 
+
+---
+### Avoid Synchronization Whenever Possible ###
+
+- Correctly using the *synchronized* keyword can be quite challenging, especially if the data you are trying to protect
+  is available to a dozen of methods.
+- Even when the data is protected, though, the performance cost for using it can be high.
+- In this chapter, we present many classes within the Concurrency API that are a lot easier to use and more performant 
+  than synchronization.
+- Some you have seen already, like the atomic classes, and others we'll be covering shortly, including the *Lock* framework,
+  *concurrent* collections, and *cyclic barriers*.
+- You should be familiar with all the classes in the Concurrency API, you should study them carefully if you are writing
+  a lot of multithreading applications.
+- They contain a wealth of methods that manage complex process for you in a thread-safe and performant manner.
+---
+
+## Understanding the Lock Framework
+
+- A *synchronized* block support only a limited set of functionality.
+- For example, what if we want to check whether a lock is available and, if it is not, perform some other task?
+- Futhermore, if the lock is never available and we synchornize on it, we might hang forever.
+<br>
+- The Concurrency API includes the *Lock* interface that is conceptually similar to using the *synchronized* keywork, but
+  with a lot more bells and whistels.
+- Instead of synchronizing on any *Object*, though, we can "lock" only on an object that implements the *Lock* interface.
+
+## Applying a ReentrantLock Interface
+
