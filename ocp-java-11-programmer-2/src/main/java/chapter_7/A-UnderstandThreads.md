@@ -1309,14 +1309,80 @@ lock.unlock(); // IllegalMonitorStateException
 
 ## Attempting to Acquire a Lock
 
+- While the *ReentrantLock* class allows you to wait for a lock, it so far suffers from the same problem as a *synchronized* 
+  block.
+- A thread could end up waiting forever to obtain a lock.
+- Luckily, Table 7.8 includes two additional methods that make the *Lock* interface a lot safer to use than a *synchronized* block.
+
+- For convenience, we'll be using the following *printMessage()* method for the code in this section:
+
+```java
+public static void printMessage(Lock lock){
+    try{
+        lock.lock();
+    } finally {
+        lock.unlock();
+    }
+}
+```
+
+## tryLock()
+
+- The *tryLock()* method will attempt to acquire a lock and immediately return a *boolean* result indicating whether the
+  lock was obtained.
+- Unlike the *lock() method, it does not wait if another already holds the lock.
+- It returns immediately, regardless of weather or not a lock is available.
+- The following is a sample implementation using the *tryLock() method:
 
 
+i.e: chapter_7.concurrencyapi.thread_safety.SheepManagerTryLock.java
+```
+Lock lock = new ReentrantLock();
+new Thread(() -> printMessage(lock)).start();
+if (lock.tryLock()) {
+    try {
+        System.out.println("Lock obtained, entering protected code");
+    } finally {
+        lock.unlock();
+    }
+} else {
+    System.out.println("Enable to acquire lock, doing something else");
+}
+```
 
 
+- When you run this code, it could reproduce either message, depending on the order of execution.
+- A fun exercise is to insert some *Thread.sleep()* delays into this snippet to encourage a particular to be displayed.
+- Like *lock()*, the *tryLock()* method should be used with a *try/finally* block.
+- Fortunately, you need to release the lock only if it was successfully acquired.
+
+> Tip: It is imperative that your program always checks the return value of the *tryLock() method. It tells your programm
+> whether the lock needs to be released later.
 
 
+## tryLock(long, TimeUnit)
 
+- The *Lock* interface includes an overloaded version of *tryLock(long, TimeUnit) that acts like a hybrid of *lock()* and
+  *tryLock()*. 
+- Like the other two methods, if a lock is available, then it will immediately return with it.
+- If a lock is unavailable, though, it will wait up to the specified time limit for the lock.
 
+i.e: chapter_7.concurrencyapi.thread_safety.SheepManagerTryLockOverloaded.java
+```
+Lock lock = new ReentrantLock();
+new Thread(() -> printMessage(lock)).start();
+if (lock.tryLock(10, TimeUnit.SECONDS)) {
+try {
+System.out.println("Lock obtained, entering protected code");
+    } finally {
+       lock.unlock();
+    }
+} else {
+  System.out.println("Enable to acquire lock, doing something else");
+}
+```
+
+- The code is the same as before, except this time one of the threads waits up to 10 seconds to acquire the lock.
 
 
 
