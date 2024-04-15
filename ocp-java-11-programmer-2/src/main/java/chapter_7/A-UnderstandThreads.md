@@ -1336,7 +1336,7 @@ public static void printMessage(Lock lock){
 
 
 i.e: chapter_7.concurrencyapi.thread_safety.SheepManagerTryLock.java
-```
+```java
 Lock lock = new ReentrantLock();
 new Thread(() -> printMessage(lock)).start();
 if (lock.tryLock()) {
@@ -1368,7 +1368,7 @@ if (lock.tryLock()) {
 - If a lock is unavailable, though, it will wait up to the specified time limit for the lock.
 
 i.e: chapter_7.concurrencyapi.thread_safety.SheepManagerTryLockOverloaded.java
-```
+```java
 Lock lock = new ReentrantLock();
 new Thread(() -> printMessage(lock)).start();
 if (lock.tryLock(10, TimeUnit.SECONDS)) {
@@ -1391,7 +1391,7 @@ System.out.println("Lock obtained, entering protected code");
 - The following code snippet contains an error.
 - Can you spot it?
 
-```
+```java
 Lock lock = new ReentrantLock();
 if(lock.tryLock()){
     try{
