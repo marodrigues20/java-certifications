@@ -1,106 +1,112 @@
 ## Chapter 7 - Concurrency
+
 ### Objectives covered in this chapter
 
 - Concurrency
-  - Create worker threads using Runnable, Callable and use an ExecutorService to concurrently execute tasks.
-  - Use *java.util.concurrent* collections and classes including CyclicBarrier and CopyOnWriteArrayList
-  - Write thread-safe code
-  - Identity threading problems such as deadlocks and live-locks.
+    - Create worker threads using Runnable, Callable and use an ExecutorService to concurrently execute tasks.
+    - Use *java.util.concurrent* collections and classes including CyclicBarrier and CopyOnWriteArrayList
+    - Write thread-safe code
+    - Identity threading problems such as deadlocks and live-locks.
 - Parallel Streams
-  - Develop code that uses parallel streams
-  - Implement decomposition and reduction with streams
+    - Develop code that uses parallel streams
+    - Implement decomposition and reduction with streams
 
 
 - As you will learn in Chapter 8, "I/O", Chapter 9 "NIO.2", and Chapter 10, "JDBC", computers are capable of reading
-  and writing data to external resources. Unfortunately, as compared to CPU operations, these disk/network operations 
+  and writing data to external resources. Unfortunately, as compared to CPU operations, these disk/network operations
   tend to be extremely slow-so slow, in fact, that if your computer's operating system were to stop and wait for every
   disk or network operation to finish, your computer would appear to freeze or lock up constantly.
 
-- Luckily, all moderns operating system support what is known as multithreading processing. 
-- The idea behind multithreading processing is to allow an application or group of applications to execute multiple 
+- Luckily, all moderns operating system support what is known as multithreading processing.
+- The idea behind multithreading processing is to allow an application or group of applications to execute multiple
   tasks at the same time.
 
-- Since its early days, Java has supported multithreading programming using Thread class. More recently, the Concurrency API
-was introduced. It included numerous classes for performing complex thread-based tasks. The idea was simple: managing 
-complex thread interactions is quite difficult for even the most skilled developers; therefore, a set of reusable 
-features was created. The Concurrency API has grown over the years to include numerous classes and frameworks to assist
-you in developing complex, multithreading applications.
+- Since its early days, Java has supported multithreading programming using Thread class. More recently, the Concurrency
+  API
+  was introduced. It included numerous classes for performing complex thread-based tasks. The idea was simple: managing
+  complex thread interactions is quite difficult for even the most skilled developers; therefore, a set of reusable
+  features was created. The Concurrency API has grown over the years to include numerous classes and frameworks to
+  assist
+  you in developing complex, multithreading applications.
 
 - Threads and concurrency tend to be one of the more challenging topics for many programmers to grasp.
 
 ## Introducing Threads
 
-- A thread is the smallest unit of execution that can be scheduled by the operating system. A process is a group of 
-  associated threads that execute in the same, shared environment. It follows, then, that a single-threaded process is 
+- A thread is the smallest unit of execution that can be scheduled by the operating system. A process is a group of
+  associated threads that execute in the same, shared environment. It follows, then, that a single-threaded process is
   one that contains exactly one thread, whereas a multithreading process is one that contains one or more threads.
 
-- By shared process, we mean that the threads in the same process share the same memory space and can communicate directly
+- By shared process, we mean that the threads in the same process share the same memory space and can communicate
+  directly
   with one another. Refer to Figure 7.1 for an overview of threads and their shared environment within a process.
 
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_7/images/Figure_7_1.png?raw=true)
 
-
-- Figure 7.1 shows a single process with three threads. It also shows how they are mapped to an arbitrary number of *n* 
+- Figure 7.1 shows a single process with three threads. It also shows how they are mapped to an arbitrary number of *n*
   CPUs available within the system. Keep this diagram in mind when we discuss task schedulers later in this section.
 
 - A task is a single unit of work performed by a thread.
 - A thread can complete multiple independent tasks but only one task at a time.
-- By shared memory in Figure 7.1, we are generally referring to *static* variables, as well as instance and local 
+- By shared memory in Figure 7.1, we are generally referring to *static* variables, as well as instance and local
   variables passed to a thread.
 
 ## Distinguishing Thread Types
 
-- A system thread is created by the JVM and runs in the background of the application. 
-- For example, the garbage collection is managed by a system thread that is created by the JVM and runs 
-  in the background. 
-- For the most part, the execution of system-defined threads is invisible to the application developer. 
-- When a system-defined thread encounters a problem and cannot recover, such as running out of memory, 
+- A system thread is created by the JVM and runs in the background of the application.
+- For example, the garbage collection is managed by a system thread that is created by the JVM and runs
+  in the background.
+- For the most part, the execution of system-defined threads is invisible to the application developer.
+- When a system-defined thread encounters a problem and cannot recover, such as running out of memory,
   it generates a Java Error, as opposed to an Exception.
 
-> Note: Even though it is possible to catch an Error, it is considered a poor practice to do so, since it is rare that 
+> Note: Even though it is possible to catch an Error, it is considered a poor practice to do so, since it is rare that
 > an application can recover from a system-level failure.
 
-- Alternatively, a ***user-defined*** thread is one created by the application developers to accomplish a specific task. 
-- With the exception of parallel streams presented briefly in Chapter 4, "Functional Programming," all applications 
-  that we have created up to this point have been multithreading, but they contained only one user-defined thread, 
-  which calls the main() thread. For simplicity, we commonly refer to threads that contain only a single user-defined 
+- Alternatively, a ***user-defined*** thread is one created by the application developers to accomplish a specific task.
+- With the exception of parallel streams presented briefly in Chapter 4, "Functional Programming," all applications
+  that we have created up to this point have been multithreading, but they contained only one user-defined thread,
+  which calls the main() thread. For simplicity, we commonly refer to threads that contain only a single user-defined
   thread as a single-threaded application, since we are often uninterested in the system threads.
 
 > Note: Daemon thread is one that will not prevent the JVM from exiting when the program finishes.
-> A Java application terminates when the only threads that are running  are daemon threads.
+> A Java application terminates when the only threads that are running are daemon threads.
 > For example, if garbage collection is the only thread left running, the JVM will automatically shut down.
 > Both system and user-defined thread can be marked as daemon threads.
 
-
 ## Understanding Thread Concurrency
 
-- The property of executing multiple threads and processes at the same time is referred to as concurrency. 
-- Of course, with a single-core CPU system, only one task is actually executing. For example, a thread scheduler may 
-  employ a round-robin schedule in which available thread receives an equal number of CPU cycles with which to execute, 
-  with threads visited in a circular order. If there are 10 available threads, they might each get 100 milliseconds in 
+- The property of executing multiple threads and processes at the same time is referred to as concurrency.
+- Of course, with a single-core CPU system, only one task is actually executing. For example, a thread scheduler may
+  employ a round-robin schedule in which available thread receives an equal number of CPU cycles with which to execute,
+  with threads visited in a circular order. If there are 10 available threads, they might each get 100 milliseconds in
   which to execute, with the process returning to the first thread after the last thread has executed.
 
-- A context switch is the process of storing a thread's current state and later restoring the state of the thread to 
-continue execution.
+- A context switch is the process of storing a thread's current state and later restoring the state of the thread to
+  continue execution.
 
 - Finally, a thread can interrupt or supersede another thread if it has a higher thread priority than the order thread.
-A thread priority is a numeric value associated with a thread that is taken into consideration by the thread scheduler
-when determining which threads should currently be executing. In Java, thread priorities are specified as integer values.
+  A thread priority is a numeric value associated with a thread that is taken into consideration by the thread scheduler
+  when determining which threads should currently be executing. In Java, thread priorities are specified as integer
+  values.
 
 ---
+
 ### Real World Scenario ###
+
 ### The importance of Thread Scheduling ###
 
-- Even though multicore CPUs are quite common these days, single-core CPUs were the standard in personal computing for 
+- Even though multicore CPUs are quite common these days, single-core CPUs were the standard in personal computing for
   many decades. During this time, operating systems developed complex thread-scheduling and context-switching algorithms
   that allowed users to execute dozens or even hundreds of threads on a single-core CPU system.
-- These scheduling algorithms allowed users to experience the illusion that multiple tasks were being performed at the 
-  same time within a single-CPU system. For example, a user could listen to music while writing a paper and received 
+- These scheduling algorithms allowed users to experience the illusion that multiple tasks were being performed at the
+  same time within a single-CPU system. For example, a user could listen to music while writing a paper and received
   notifications for new messages.
-- Since the number of threads requested often far outweighs the numbers of processors available even in multicore system,
+- Since the number of threads requested often far outweighs the numbers of processors available even in multicore
+  system,
   these thread-scheduling algorithms are still employed in operating system today.
----
 
+---
 
 ## Defining a Task with Runnable
 
@@ -108,6 +114,7 @@ when determining which threads should currently be executing. In Java, thread pr
 - The following is the definition of the *Runnable* interface:
 
 ```java
+
 @FunctionalInterface
 public interface Runnable {
     void run();
@@ -115,27 +122,35 @@ public interface Runnable {
 ```
 
 - The Runnable interface is commonly used to define the task or work a thread will execute, separate from the main
-  application thread. We will be relying on the Runnable interface throughout this chapter, especially when we discuss 
+  application thread. We will be relying on the Runnable interface throughout this chapter, especially when we discuss
   applying parallel operations to stream.
 
 - The following lambda expressions each implement the *Runnable* interface:
 
 ```java
 Runnable sloth = () -> System.out.println("Hello World");
-Runnable snake = () -> { int i=10; i++; };
-Runnable beaver = () -> { return; };
-Runnable coyote = () -> {};
+Runnable snake = () -> {
+    int i = 10;
+    i++;
+};
+Runnable beaver = () -> {
+    return;
+};
+Runnable coyote = () -> {
+};
 ```
 
 - Notice that all of these lambda expressions start with a set of empty parentheses, ().
-- Also, none of the lambda expression returns a value. 
-- The following lambdas, while valid for other functional interfaces, are not compatible with *Runnable* because they 
+- Also, none of the lambda expression returns a value.
+- The following lambdas, while valid for other functional interfaces, are not compatible with *Runnable* because they
   return a value.
 
 ```java
 Runnable capybara = () -> "";                   // DOES NOT COMPILE
 Runnable Hippopotamus = () -> 5;                // DOES NOT COMPILE
-Runnable emu = () -> { return new Object(); };  // DOES NOT COMPILE
+Runnable emu = () -> {
+    return new Object();
+};  // DOES NOT COMPILE
 ```
 
 ## Creating Runnable Classes
@@ -159,17 +174,19 @@ i.e: chapter_7.runnable.CalculateAverages.java
 
 ```java
 public class CalculateAverages implements Runnable {
-  private double[] scores;
-  public CalculateAverages (double[] scores){
-      this.scores = scores;
-  }
-  public void run(){
-      // Define work here that uses the scores object
-  }
+    private double[] scores;
+
+    public CalculateAverages(double[] scores) {
+        this.scores = scores;
+    }
+
+    public void run() {
+        // Define work here that uses the scores object
+    }
 }
 ```
 
-- In this chapter, we focus on creating lambda expressions that implicitly implement the *Runnable* interface. 
+- In this chapter, we focus on creating lambda expressions that implicitly implement the *Runnable* interface.
 - Just be aware that it is commonly used in class definitions.
 
 ## Creating a Thread
@@ -180,29 +197,28 @@ public class CalculateAverages implements Runnable {
 - Then, you start the task by using the *Thread.start()* method.
 
 > Note: Remember that order of thread execution is not often guaranteed. <br>
-> The exam commonly presents questions in which multiple tasks are started at the same time, and you must determine the 
+> The exam commonly presents questions in which multiple tasks are started at the same time, and you must determine the
 > result.
 
-
 - Defining the task that a Thread instance will execute can be done two ways in Java:
-  - Provide a *Runnable* object or lambda expression to the *Thread* constructor.
-  - Create a class that extends *Thread* and overrides the *run()* method.
+    - Provide a *Runnable* object or lambda expression to the *Thread* constructor.
+    - Create a class that extends *Thread* and overrides the *run()* method.
 
 - The following are example of these techniques:
 
 i.e: i.e: chapter_7.runnable.PrintData.java
 
 ```java
-public class PrintData implements Runnable{
-    @Override 
-    public void run(){
-        for(int i=0; i<3; i++)
-          System.out.println("Printing record: " +i);
+public class PrintData implements Runnable {
+    @Override
+    public void run() {
+        for (int i = 0; i < 3; i++)
+            System.out.println("Printing record: " + i);
     }
 
-  public static void main(String[] args) {
-    (new Thread(new PrintData())).start();
-  }
+    public static void main(String[] args) {
+        (new Thread(new PrintData())).start();
+    }
 }
 ```
 
@@ -211,21 +227,21 @@ i.e: chapter_7.runnable.ReadInventoryThread.java
 ```java
 public class ReadInventoryThread extends Thread {
     @Override
-    public void run(){
-      System.out.println("Printing zoo inventory");
+    public void run() {
+        System.out.println("Printing zoo inventory");
     }
 
-  public static void main(String[] args) {
-    (new ReadInventoryThread()).start();
-  }
+    public static void main(String[] args) {
+        (new ReadInventoryThread()).start();
+    }
 }
 ```
 
 - Let's try this.
 - What is the output of the following code snippet using these two classes?
 
-
 i.e: chapter_7.thread.ThreadAndRunnableTest.java
+
 ```
 2:   public static void main(String[] args) {
 3:       System.out.println("begin");
@@ -257,12 +273,12 @@ Printing record: 2
 - The opposite of this behavior is a *synchronous* task in which the program waits (or blocks) on line 4 for the thread
   to finish executing before moving on to the next line.
 - The vast majority of method calls used in this book have been synchronous up until now.
-- While the order of thread execution once the thread have been started is indeterminate, the order within a single 
+- While the order of thread execution once the thread have been started is indeterminate, the order within a single
   thread is still linear. In particular, the *for()* loop in *PrintData* is still ordered. Also, *begin* appears before
   *end* in the main() method.
 
-
 ---
+
 ### Calling run() Instead of start() ###
 
 - Be careful with code that attempts to start a thread by calling run() instead of start().
@@ -270,6 +286,7 @@ Printing record: 2
 - While the following code snippets will compile, none will actually execute a task on a separate thread:
 
 i.e: chapter_7.thread.ThreadAndRunnableUsingRunMethod.java
+
 ```
     System.out.println("begin");
     (new ReadInventoryThread()).run();
@@ -278,9 +295,10 @@ i.e: chapter_7.thread.ThreadAndRunnableUsingRunMethod.java
     System.out.println("end");
 ```
 
-- Unlike the previous example, each line of this code will wait until the *run()* method is complete before moving on to 
+- Unlike the previous example, each line of this code will wait until the *run()* method is complete before moving on to
   the next line.
 - Also unlike the previous program, the output for this code sample will be the same each time it is executed.
+
 ---
 
 - In general, you should extend the *Thread* class only under specific circumstances, such as when you are creating your
@@ -288,110 +306,112 @@ i.e: chapter_7.thread.ThreadAndRunnableUsingRunMethod.java
 - In most situations, you should implement the *Runnable* interface rather than extend the Thread class.
 - For the exam, previous version required understand difference between extending *Thread* and implement *Runnable*.
 - The exam now strongly encourages developers to use the Concurrency API.
-- For the exam, you also do not need to know about other thread-related methods, such as *Object.wait()*, 
-  *Object.notify()*, *Thread.join()*, etc. In fact, you should avoid them in general and use the Concurrency API as much 
+- For the exam, you also do not need to know about other thread-related methods, such as *Object.wait()*,
+  *Object.notify()*, *Thread.join()*, etc. In fact, you should avoid them in general and use the Concurrency API as much
   as possible. It takes a large amount of skill (and some luck!) to use these methods correctly.
 
-
 ---
+
 ### Real World Scenario ###
+
 ### For interviews, Be Familiar with Thread-Creation Option ###
 
-- Despite that the exam no long focuses on creating threads by extending the *Thread* class and implementing the Runnable
-  interface. 
-- If asked this question, you should answer it accurately. 
+- Despite that the exam no long focuses on creating threads by extending the *Thread* class and implementing the
+  Runnable
+  interface.
+- If asked this question, you should answer it accurately.
 - You should also mention that you can now create and manage threads indirectly using an ExecutorService.
+
 ---
 
 ## Polling with Sleep
 
-- Even though multi-threaded programming allows you to execute multiple tasks at the same time, one thread often needs 
+- Even though multi-threaded programming allows you to execute multiple tasks at the same time, one thread often needs
   to wait for the results of another thread to proceed.
-- One solution is to use polling. 
+- One solution is to use polling.
 - Polling is the process of intermittently checking data at some fixed interval.
-
 
 i.e: chapter_7.pooling.CheckResults.java
 
 ```java
 public class CheckResults {
-  private static int counter = 0;
-  public static void main(String[] args) {
-    new Thread(() -> {
-      for(int i = 0; i < 500; i++)
-        CheckResults.counter++; }
-    ).start();
+    private static int counter = 0;
 
-    while(CheckResults.counter < 100){
-      System.out.println("Not reached yet");
+    public static void main(String[] args) {
+        new Thread(() -> {
+            for (int i = 0; i < 500; i++)
+                CheckResults.counter++;
+        }
+        ).start();
+
+        while (CheckResults.counter < 100) {
+            System.out.println("Not reached yet");
+        }
+
+        System.out.println("Reached");
+
     }
-
-    System.out.println("Reached");
-
-  }
 }
 ```
 
 - How many times does this program print "Not reached yet"?
 - The answer is, we don't know! It could output zero, ten, or a million times.
 - If our thread scheduler is particularly poor, it could operate infinitely!
-- Using a while() loop to check for data without some kind of delay is considered a bad coding practice as it ties up 
+- Using a while() loop to check for data without some kind of delay is considered a bad coding practice as it ties up
   CPU resources for no reason.
 - We can improve this result by using the *Thread.sleep()* method to implement polling.
 - The *Thread.sleep()* method requests the current thread of execution rest for a specified number of milliseconds.
-- When used inside the body of the *main()* method, the thread associated with the *main()* method will pause, while the 
+- When used inside the body of the *main()* method, the thread associated with the *main()* method will pause, while the
   separate thread will continue to run.
 - Compare the previous implementation with the following one that uses *Thread.sleep();*
 
-
 ```java
   public static void main(String[] args) throws InterruptedException {
-        new Thread(() -> {
-            for (int i = 0; i < 500; i++)
-                CheckResults_v2.counter++;
-        }
-        ).start();
-        while (CheckResults_v2.counter < 100) {
-            System.out.println("Not reached yet");
-            Thread.sleep(1000); // 1 SECOND
-        }
-        System.out.println("Reached");
+    new Thread(() -> {
+        for (int i = 0; i < 500; i++)
+            CheckResults_v2.counter++;
     }
+    ).start();
+    while (CheckResults_v2.counter < 100) {
+        System.out.println("Not reached yet");
+        Thread.sleep(1000); // 1 SECOND
+    }
+    System.out.println("Reached");
+}
 ```
 
 - In this example, we delay 1,000 milliseconds at the end of the loop, or 1 second.
 - While this may seem like a small amount, we have now prevented a possibly infinite loop from executing and locking up
   our program.
-- Notice that we also changed the signature of the *main()* method, since *Thread.sleep()* throws the checked 
+- Notice that we also changed the signature of the *main()* method, since *Thread.sleep()* throws the checked
   *InterruptedException*.
 - Alternatively, we could have wrapped each call to the *Thread.sleep()* method in a *try/catch* block.
-<br>
-<br>
+  <br>
+  <br>
 - How many times does the *while()* loop execute in this revised class?
 - Still unknown!
-- While pooling does prevent the CPU from being overwhelmed with a potentially infinite loop, it does not guarantee when 
-  the loop will terminate. For example, the separate thread could be losing CPU time to a higher-priority process, 
+- While pooling does prevent the CPU from being overwhelmed with a potentially infinite loop, it does not guarantee when
+  the loop will terminate. For example, the separate thread could be losing CPU time to a higher-priority process,
   resulting in multiple executions of the *while()* loop before it finishes.
-<br>
-<br>
+  <br>
+  <br>
 - Another issue to be concerned about is the shared *counter* variable.
 - What if one thread is reading the *counter* variable another thread is writing it?
 - The thread reading the shared variable may end up with an invalid or incorrect value.
 - We will discuss these issues in detail in the upcoming section on writing thread-safe code.
 
-
 ## Creating Threads with the Concurrency API
 
 - Java includes the Concurrency API to handle the complicated work of managing threads for you.
-- The Concurrency API includes the ExecutorService interface, which defines services that create and manage threads for 
+- The Concurrency API includes the ExecutorService interface, which defines services that create and manage threads for
   for you.
-- It is recommended that you use this framework anytime you need to create and execute a separate task, even if you need 
+- It is recommended that you use this framework anytime you need to create and execute a separate task, even if you need
   only a single thread.
 
 ## Introducing the Single-Thread Executor
 
 - Since *ExecutorService* is an interface, how do you obtain an instance of it?
-- The Concurrency API includes the *Executors* factory class that can be used to create instances of the 
+- The Concurrency API includes the *Executors* factory class that can be used to create instances of the
   *ExecutorService* object.
 - Let's start with a simple example using the *newSingleThreadExecutor()* method to obtain an *ExecutorService* instance
   and the *execute()* method to perform asynchronous tasks.
@@ -400,24 +420,26 @@ i.e: chapter_7.concurrencyapi.singleThread.ZooInfo.java
 
 ```java
 import java.util.concurrent.*;
+
 public class ZooInfo {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         ExecutorService service = null;
-        Runnable task1 = () -> 
+        Runnable task1 = () ->
                 System.out.println("Printing zoo inventory");
-        Runnable task2 = () -> 
-        { for (int i = 0; i < 3; i++)
-          System.out.println("Printing record: " +i);
+        Runnable task2 = () ->
+        {
+            for (int i = 0; i < 3; i++)
+                System.out.println("Printing record: " + i);
         };
-        try{
-          service = Executors.newSingleThreadExecutor();
-          System.out.println("begin");
-          service.execute(task1);
-          service.execute(task2);
-          service.execute(task1);
-          System.out.println("end");
-        }finally {
-            if(service != null) service.shutdown();
+        try {
+            service = Executors.newSingleThreadExecutor();
+            System.out.println("begin");
+            service.execute(task1);
+            service.execute(task2);
+            service.execute(task1);
+            System.out.println("end");
+        } finally {
+            if (service != null) service.shutdown();
         }
     }
 }
@@ -425,7 +447,7 @@ public class ZooInfo {
 
 - As you may notice, this is just a rewrite of our earlier PrintData and ReadInventoryThread classes.
 - In this example, we use the *Executors.newSingleThreadExecutor()* method to create the service.
-- Unlike our earlier example, in which we had three extra theads for newly created tasks, this example uses only one, 
+- Unlike our earlier example, in which we had three extra theads for newly created tasks, this example uses only one,
   which means that the threads will order their results.
 - For example, the following is a possible output for this code snippet:
 
@@ -443,7 +465,6 @@ Printing zoo inventory
 - Notice that the *end* text is output while our thread executor tasks are still running.
 - This is because the *main()* method is still an independent thread from the *ExecutorService*.
 
-
 ## Shutting Down a Thread Executor
 
 - Once you have finished using a thread executor, it is important that you call the *shutdown()* method.
@@ -453,31 +474,32 @@ Printing zoo inventory
 <br>
 <br>
 
-- The shutdown process for a thread executor involves first rejection any new tasks submitted to the thread executor 
+- The shutdown process for a thread executor involves first rejection any new tasks submitted to the thread executor
   while continuing to execute any previously submitted tasks.
-- During this time, calling *isShutdown()* will return *true*, while *isTerminated()* will return *false*. 
-- If a new task is submitted to the thread executor while it is shutting down, a *RejectedExecutionException* will be 
+- During this time, calling *isShutdown()* will return *true*, while *isTerminated()* will return *false*.
+- If a new task is submitted to the thread executor while it is shutting down, a *RejectedExecutionException* will be
   thrown. Once all active tasks have been completed, *isShutdown()* and *isTerminated()* will both return *true*.
 - Figure 7.2 shows the life cycle of an *ExecutorService* object.
 
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_7/images/Figure_7_2.png?raw=true)
 
-- The *ExecutorService* provides a method called *shutdownNow()*, which attempts to stop all running tasks and discard 
+- The *ExecutorService* provides a method called *shutdownNow()*, which attempts to stop all running tasks and discard
   any that have not been started yet.
 - It is possible to create a thread that will never terminate, so any attempt to interrupt it may be ignored.
-- Lastly, *shutdownNow()* returns a *List<Runnable>* of tasks that were submitted to the thread executor but that were 
+- Lastly, *shutdownNow()* returns a *List<Runnable>* of tasks that were submitted to the thread executor but that were
   never started.
 
-> Tip: As you learned in Chapter 5, resources such as thread executors should be properly closed to prevent memory leaks.
-> Unfortunately, the ExecutorService interface does not extend the AutoCloseable interface, so you cannot use a 
-  try-with-resources statement. You can still use a finally block. Not required but it is considered a good practice 
-  to do so.
+> Tip: As you learned in Chapter 5, resources such as thread executors should be properly closed to prevent memory
+> leaks.
+> Unfortunately, the ExecutorService interface does not extend the AutoCloseable interface, so you cannot use a
+> try-with-resources statement. You can still use a finally block. Not required but it is considered a good practice
+> to do so.
 
 ## Submitting Tasks
 
 - The first method we presented, *execute()*, is inherited from the *Executor* interface, which the *ExecutorService*
   interface extends.
-- Because the return type of the method is *void*, it does not tell us anything about the result of the task. It is 
+- Because the return type of the method is *void*, it does not tell us anything about the result of the task. It is
   considered a "fire-and-forget" method, as once it is submitted, the results are not directly available to the calling
   thread.
 - Fortunately, the writers of Java added *submit()* methods to the *ExecutorService* interface, which, like *execute()*,
@@ -486,6 +508,7 @@ Printing zoo inventory
   complete. It can also be used to return a generic result object after the task has been completed.
 
 ---
+
 ### TABLE 7.1 ExecutorService methods ###
 
 | Method name                                                                                              | Description                                                                                                                                                  |
@@ -495,15 +518,15 @@ Printing zoo inventory
 | <T> Future<T> submit(Callable<T> task)                                                                   | Executes a Callable task at some point in the future and returns a *Future* representing the pending results of the task                                     |
 | <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException       | Executes the given tasks and waits for all tasks to complete. Returns a *List* of *Future* instances, in the same order they were in the original collection |
 | <T> T invokeAny(Collection<? extends Callable<T>> tasks) thorws InterruptedException, ExecutionException | Executes the given tasks and waits for at least one to complete. Returns a *Future* instance for a complete task and cancels any unfinished tasks            |
+
 ---
 
 > Submitting Tasks: execute() vs. submit()
 > In your own code we recommend submit() over execute() whenever possible
 
-
 ## Waiting for Results
 
-- How do we know when a task submitted to an *ExecutorService* is complete? As mentioned in the previous section, 
+- How do we know when a task submitted to an *ExecutorService* is complete? As mentioned in the previous section,
   she *submit()* method returns a *java.util.concurrent.Future<V> instance that can be used to determine this result.
 
 ```java
@@ -511,20 +534,22 @@ Future<?> future = service.submit(() -> System.out.println("Hello"));
 ```
 
 ---
+
 ### TABLE 7.2 *Future* methods ###
 
-| Method name                                   | Description                                                                                                                                                                           |
-|-----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| boolean isDone()                              | Returns *true* if the task was completed, threw an exception, or was cancelled                                                                                                        |
-| boolean isCancelled()                         | Returns *true* if the task was cancelled before it completed normally                                                                                                                 |
-| boolean cancel(boolean mayInterruptIfRunning) | Attempts to cancel execution of the task and returns *true* if it was successfully cancelled or *false* if it could not be cancelled or is complete                                   |
-| V get()                                       | Retrieves the result of a task, waiting endlessly if it is not yet available                                                                                                          |
-| V get(long timeout, TimeUnit unit)            | Retrieves the result of a task, waiting the specified amount of time. If the result is not ready by the time the timeout is reached, a checked *TimeoutException* will be thrown.     |
+| Method name                                   | Description                                                                                                                                                                       |
+|-----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| boolean isDone()                              | Returns *true* if the task was completed, threw an exception, or was cancelled                                                                                                    |
+| boolean isCancelled()                         | Returns *true* if the task was cancelled before it completed normally                                                                                                             |
+| boolean cancel(boolean mayInterruptIfRunning) | Attempts to cancel execution of the task and returns *true* if it was successfully cancelled or *false* if it could not be cancelled or is complete                               |
+| V get()                                       | Retrieves the result of a task, waiting endlessly if it is not yet available                                                                                                      |
+| V get(long timeout, TimeUnit unit)            | Retrieves the result of a task, waiting the specified amount of time. If the result is not ready by the time the timeout is reached, a checked *TimeoutException* will be thrown. |
+
 ---
 
-- The following is an updated verstion of our earlier polling example *CheckResults* class, which uses a *Future* instance
+- The following is an updated verstion of our earlier polling example *CheckResults* class, which uses a *Future*
+  instance
   to wait for the results:
-
 
 i.e: chapter_7.wait_results.CheckResults_v3.java
 
@@ -551,16 +576,16 @@ public class CheckResults_v3 {
 ```
 
 - This example is similar to our earlier polling implementation, but it does not use the *Thread* class directly.
-- In part, this is the essence of the Concurrency API: to do complex things threads without having to manage threads 
+- In part, this is the essence of the Concurrency API: to do complex things threads without having to manage threads
   directly.
 - As *Future<V>* is a generic interface, the type V is determined by the return type of the Runnable method.
-- Since the return type of *Runnable.run()* is *void*, the *get()* method always returns *null* when working with 
+- Since the return type of *Runnable.run()* is *void*, the *get()* method always returns *null* when working with
   *Runnable* expressions.
-- The *Future.get()* method can take an optional value and enum type *java.util.concurrent.TimeUnit*. 
+- The *Future.get()* method can take an optional value and enum type *java.util.concurrent.TimeUnit*.
 - We present the full list of *TimeUnit* values in Table 7.3 in increasing order of duration.
 
-
 ---
+
 ### TABLE 7.3 TimeUnit values ###
 
 | Enum name             | Description                                         |
@@ -572,28 +597,32 @@ public class CheckResults_v3 {
 | TimeUnit.MINUTES      | Time in minutes                                     |
 | TimeUnit.HOURS        | Time in hours                                       |
 | TimeUnit.DAYS         | Time in days                                        |
+
 ---
 
 ## Introducing Callable
 
-- The *java.util.concurrent.Callable* functional interface is similar to *Runnable* except exept that its *call()* method
+- The *java.util.concurrent.Callable* functional interface is similar to *Runnable* except exept that its *call()*
+  method
   returns a value and can throw a checked exception.
 
 ```java
+
 @FunctionalInterface
 public interface Callable<V> {
-  V call() throws Exception;
+    V call() throws Exception;
 }
 ```
 
-- The *Callable* interface is often preferable over *Runnable*, since it allows more details to be retrieved easly from 
+- The *Callable* interface is often preferable over *Runnable*, since it allows more details to be retrieved easly from
   the task after it is completed.
-- The *ExecutorService* includes an overloaded version of the *submit()* method that takes a *Callable* object and 
+- The *ExecutorService* includes an overloaded version of the *submit()* method that takes a *Callable* object and
   returns a generic *Future<T>* instance
 
 - Let's take a look at an example using *Callable*.
 
 i.e: chapter_7.concurrencyapi.callable.AddData.java
+
 ```java
 import java.util.concurrent.*;
 
@@ -620,6 +649,7 @@ public class AddData {
 - You can see an example of this in the following code snippet:
 
 i.e: chapter_7.concurrencyapi.callable.AddData_v2.java
+
 ```java
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -649,22 +679,25 @@ public class AddData_v2 {
 
 - In this example, we submit a number of tasks to the thread executor and then shut down the thread executor and wait up
   to one minute for the results.
-- Notice that we can call *isTerminated()* after the *awaitTermination()* method finishes to confirm that all tasks 
+- Notice that we can call *isTerminated()* after the *awaitTermination()* method finishes to confirm that all tasks
   are actually finished.
 
-> Note: If *awaitTermination()* is called before *shutdown()* within the same thread, then that thread will wait the full
+> Note: If *awaitTermination()* is called before *shutdown()* within the same thread, then that thread will wait the
+> full
 > timeout value sent with *awaitTermination().
 
 ## Submitting Task Collections
 
 - You should know for the exam the methods *invokeAll()* and *invokeAny()*.
 - Both of these methods execute synchronously and take a Collection of tasks.
-- The *invokeAll()* method executes all tasks ina provided collection and returns a *List* of ordered *Future* instances,
+- The *invokeAll()* method executes all tasks ina provided collection and returns a *List* of ordered *Future*
+  instances,
   with one *Future* instance corresponding to each submitted task, in the order they were in the original collection.
 
 i.e: chapter_7.concurrencyapi.future.InvokeAll.java
 
 ### invokeAll() method
+
 ```
 20: ExecutorService service = ...
 21: System.out.println("begin");
@@ -678,18 +711,19 @@ i.e: chapter_7.concurrencyapi.future.InvokeAll.java
 ```
 
 - In this example, the JVM waits on line 23 for all tasks to finish before moving on line 25.
-- Unlike our earlier examples, this means that *end* will always be printed last. 
-- Also, even though *future.isDone()* returns *true* for each element in the return *List*, a task could have completed 
+- Unlike our earlier examples, this means that *end* will always be printed last.
+- Also, even though *future.isDone()* returns *true* for each element in the return *List*, a task could have completed
   normally or thrown an exception.
 
 ### invokeAny() method
 
-- On the other hand, the *invokeAny()* method executes a colletion of tasks and returns the result of one of the tasks 
+- On the other hand, the *invokeAny()* method executes a colletion of tasks and returns the result of one of the tasks
   that successfully completes execution, cancelling all unfinished tasks.
 - While the first task to finish is often returned, this behavior is not guaranted, as any completed task can be
   returned by this method.
 
 i.e: chapter_7.concurrencyapi.future.InvokeAny.java
+
 ```
 20: ExecutorService service = ...
 21: System.out.println("begin");
@@ -701,11 +735,10 @@ i.e: chapter_7.concurrencyapi.future.InvokeAny.java
 
 - As before, the JVM waits on line 23 for a completed task before moving on the next line.
 - The other tasks that did not completed are cancelled.
-- For the exam, remember that the *invokeAll()* method will wait indefinitely until all tasks are complete, while the 
+- For the exam, remember that the *invokeAll()* method will wait indefinitely until all tasks are complete, while the
   *invokeAny()* method will wait indefinitely until at least one task completes.
 - The ExecutorService interface also includes overloaded versions of *invokeAll()* and *invokeAny()* that take a
   *timeout* value and *TimeUnit* parameter.
-
 
 ## Scheduling Tasks
 
@@ -713,14 +746,16 @@ i.e: chapter_7.concurrencyapi.future.InvokeAny.java
   to happen repeatedly, at some set interval.
 - For example, imagine that we want to check the supply of food for zoo animals once an hour and fill it as needed.
 - The *ScheduledExecutorService*, which is a subinterface of *ExecutorService*, can be used for just such a task.
-- Like *ExecutorService*, we obtain an instance of *ScheduleExecutorService* using a factory method in the *Executors* 
+- Like *ExecutorService*, we obtain an instance of *ScheduleExecutorService* using a factory method in the *Executors*
   class, as shown in the following snippet:
 
 ```java
 ScheduledExecutorService service
-    = Executors.newSingleThreadScheduleExecutor();
+        = Executors.newSingleThreadScheduleExecutor();
 ```
+
 ---
+
 ### TABLE 7.4 *ScheduledExecutorService* methods (Summary) ###
 
 | Method Name                                                                            | Description                                                                                                                                                                        |
@@ -734,29 +769,29 @@ ScheduledExecutorService service
 
 - The first two *schedule()* methods in Table 7.4 take a *Callable* or *Runnable*, respectively; perform the task after
   some delay; and return a *ScheduledFuture* instance.
-- The *ScheduledFuture* interface is identical to the *Future* interface, except that it includes a *getDelay()* method 
+- The *ScheduledFuture* interface is identical to the *Future* interface, except that it includes a *getDelay()* method
   that returns the remaning delay.
 - The following uses the *schedule()* method with *Callable* and *Runnable* tasks:
 
-
 i.e: chapter_7.concurrencyapi.schedule.ScheduledExecutorServiceExample.java
+
 ```java
 public class ScheduledExecutorServiceExample {
 
-  public static void main(String[] args) {
-    ScheduledExecutorService service = null;
-    try {
-      service = Executors.newSingleThreadScheduledExecutor();
-      Runnable task1 = () -> System.out.println("Hello Zoo");
-      Callable<String> task2 = () -> "Monkey";
-      ScheduledFuture<?> r1 = service.schedule(task1, 10, TimeUnit.SECONDS);
-      ScheduledFuture<?> r2 = service.schedule(task2, 8, TimeUnit.MINUTES);
-      service.scheduleAtFixedRate(task1, 5, 1, TimeUnit.MINUTES); // Initial delay 5. Every 1 minute.
-      service.scheduleWithFixedDelay(task1, 0, 2, TimeUnit.MINUTES); // Initial delay 0. Every 2 minutes
-    }finally {
-      if(service != null) service.shutdown();
+    public static void main(String[] args) {
+        ScheduledExecutorService service = null;
+        try {
+            service = Executors.newSingleThreadScheduledExecutor();
+            Runnable task1 = () -> System.out.println("Hello Zoo");
+            Callable<String> task2 = () -> "Monkey";
+            ScheduledFuture<?> r1 = service.schedule(task1, 10, TimeUnit.SECONDS);
+            ScheduledFuture<?> r2 = service.schedule(task2, 8, TimeUnit.MINUTES);
+            service.scheduleAtFixedRate(task1, 5, 1, TimeUnit.MINUTES); // Initial delay 5. Every 1 minute.
+            service.scheduleWithFixedDelay(task1, 0, 2, TimeUnit.MINUTES); // Initial delay 0. Every 2 minutes
+        } finally {
+            if (service != null) service.shutdown();
+        }
     }
-  }
 }
 ```
 
@@ -767,8 +802,7 @@ public class ScheduledExecutorServiceExample {
 > Also, if the *ScheduledExecutorService* is shutdown by the time the scheduled task execution time is reached, then
 > these tasks will be discarded.
 
-
-- The *scheduleAtFixedRate()* method creates a new task and submits it to the executor every period, regardless of 
+- The *scheduleAtFixedRate()* method creates a new task and submits it to the executor every period, regardless of
   whether the previous task finished.
 - The following example executes a *Runnable* task every minute, following an initial five-minute delay:
 
@@ -780,39 +814,40 @@ service.scheduleAtFixedRate(command, 5, 1,TimeUnit.MINUTES);
   health of the animals once a day. Even if it takes two hours to examine an animal on Monday, this doesn't mean that
   Tuesday's exam should start any later in the day.
 
-> TIP: Bad things can happen with *scheduleAtFixedRate() if each task consistently takes longer to run than the execution
+> TIP: Bad things can happen with *scheduleAtFixedRate() if each task consistently takes longer to run than the
+> execution
 > interval. Imagine your boss came by your desk every minute and dropped off a piece of paper. Now imagine it took you
-> five minutes to read each piece of paper. Before long, you would be drowning in piles of paper. This is how an 
-> executor feels, Given enough time, the program would submit more tasks to the executor service than could fit in 
+> five minutes to read each piece of paper. Before long, you would be drowning in piles of paper. This is how an
+> executor feels, Given enough time, the program would submit more tasks to the executor service than could fit in
 > memory, causing the program to crash.
 
-
 - On the other hand, the *scheduleWithFixedDelay()* method creates a new task only after the previous task has finished.
-- For example, if a task runs at 12:00 and takes five minutes to finish, with a period between executions of two minutes,
+- For example, if a task runs at 12:00 and takes five minutes to finish, with a period between executions of two
+  minutes,
   then the next task will start at 12:07.
 
 ```
 service.scheduleWithFixedDelay(command, 0, 2, TimeUnit.MINUTES);
 ```
 
-- The *scheduleWithFixedDelay()* is useful for process that you want to happen repeatedly but whose specific time is 
+- The *scheduleWithFixedDelay()* is useful for process that you want to happen repeatedly but whose specific time is
   unimportant.
 
-> Tip: If you are familiar with creating Cron jobs in Linux to schedule tasks, then you should know that *scheduleAtFixedRate() is the closest built-in Java equivalent.
-
+> Tip: If you are familiar with creating Cron jobs in Linux to schedule tasks, then you should know that *
+> scheduleAtFixedRate() is the closest built-in Java equivalent.
 
 ## Increasing Concurrency with Pools
 
 - All of our examples up until now have been with sigle-thread executors.
-- We now present three additional factory methods in the *Executors* class that act on a pool of threads, rather than on 
+- We now present three additional factory methods in the *Executors* class that act on a pool of threads, rather than on
   a single thread.
-- A ***thread pool*** is a group of pre-instantiated reusable threads that are available to perform a set of arbitrary 
+- A ***thread pool*** is a group of pre-instantiated reusable threads that are available to perform a set of arbitrary
   tasks.
-- Table 7.5 includes our two previous single-thread executor methods, along with the new ones that you should know for 
+- Table 7.5 includes our two previous single-thread executor methods, along with the new ones that you should know for
   exam.
 
-
 ---
+
 ### TABLE 7.5 *Executors* factory methods ###
 
 | Method                                                      | Description                                                                                                                                                                        |
@@ -822,10 +857,12 @@ service.scheduleWithFixedDelay(command, 0, 2, TimeUnit.MINUTES);
 | ExecutorService newCachedThreadPool()                       | Creates a thread pool that creates new threads as needed but will reuse previously contructed threads when they are available                                                      |
 | ExecutorService newFixedThreadPool(int)                     | Creates a thread pool that reuses a fixed number of threads operating off a shared unbounded queue                                                                                 |
 | ScheduledExecutorService newScheduledThreadPool(int)        | Creates a thread pool that can schedule commands to run after a given delay or to execute periodically                                                                             |
+
 ---
 
 - The difference between a single-thread and a pooled-thread executor is what happens when a task is already running.
-- While a single-thread executor will wait for a thread to become available before running the next task, a pooled-thread
+- While a single-thread executor will wait for a thread to become available before running the next task, a
+  pooled-thread
   executor can execute the next task concurrently.
 - If the pool runs out of available threads, the task will be queued by the thread executor and wait to be completed.
 
@@ -833,8 +870,8 @@ service.scheduleWithFixedDelay(command, 0, 2, TimeUnit.MINUTES);
 
 - The *newFixedThreadPool()* takes a number of threads and allocates them all upon creation.
 - As long as our number of tasks is less than our number of threads, all tasks will be executed concurrently.
-- If at any point the number of tasks exceeds the number of threads in the pool, they will wait in a similiar manner as 
-  you saw with a single-thead executor. 
+- If at any point the number of tasks exceeds the number of threads in the pool, they will wait in a similiar manner as
+  you saw with a single-thead executor.
 - In fact, calling *newFixedThreadPool()* with a value of 1 is equivalent to calling *newSingleThreadExecutor()*.
 
 <br>
@@ -850,13 +887,13 @@ service.scheduleWithFixedDelay(command, 0, 2, TimeUnit.MINUTES);
 - The *newScheduledThreadPool()* is identical to the *newFixedThreadPool()* method, except that it returns an instance
   of *ScheduledExecutorService* and is therefore compatible with scheduling tasks.
 
-
 ---
+
 ### Real World Scenario - Choosing a Pool Size ###
 
 - In practice, choosing an appropriate pool size requires some thought.
 - In general, you want at least a handful more threads than you think you will ever possibly need.
-- On the other hand, you don't want to choose so many threads that your application uses up too many resources or too 
+- On the other hand, you don't want to choose so many threads that your application uses up too many resources or too
   much CPU processing power.
 - Oftentimes, the number of CPUs avaialable is used to determine the thread pool size using this command.
 
@@ -865,23 +902,26 @@ Runtime.getRuntime().availableProcessors()
 ```
 
 - It is a common practice to allocate threads based on the number of CPUs.
+
 ---
 
 ## Writing Thread-Safe Code
 
 - *Thread-safety* is the property of an object that guarantees safe execution by multiple threads at the same time.
-- Since threads run in a shared environemnt and memory space, how do we prevent two threads from interfering with each other?
+- Since threads run in a shared environemnt and memory space, how do we prevent two threads from interfering with each
+  other?
 - In this part of the chapter, we show how to use a variety of techiniques to protect data including: atomic classes,
   *synchronized blocks*, the *Lock framework*, and *cyclic barriers*.
 
 ## Understanding Thread-Safety
 
 - Imagine that our zoo has a program to count sheep, preferably one that won't put the zoo workers to sleep!
-- Each zoo worker runs out to a field, adds a new sheep to the flock, counts the total number of sheep, and runs back 
+- Each zoo worker runs out to a field, adds a new sheep to the flock, counts the total number of sheep, and runs back
   to us to report the results. We present the following code to represent this conceptually, choosing a thread pool size
   so that all tasks can be run concurrenlty:
 
 i.e: chapter_7.concurrencyapi.thread_safety.SheepManager.java
+
 ```java
 import java.util.concurrent.*;
 
@@ -901,7 +941,7 @@ public class SheepManager {
                 service.submit(() -> manager.incrementAndReport());
             }
         } finally {
-            if(service != null) service.shutdown();
+            if (service != null) service.shutdown();
         }
     }
 }
@@ -923,15 +963,15 @@ public class SheepManager {
 - In this example, we use the pre-increment (++) operator to update the *sheepCount* variable.
 - A problem occurs when two threads both execute the right side of the expression, reading the "old" value before either
   thread writes the "new" value of the variable.
-- The two assignments become redundant; they both assign the same value, with one thread overwriting the result of the 
+- The two assignments become redundant; they both assign the same value, with one thread overwriting the result of the
   other.
 - Figure 7.3 demonstrate this problem with two threads, assuming the *sheepCound* has a starting value of 1.
 
 <br>
 
-- You can see in Figure 7.3 that both threads read and write the same values, causing one of the two ++  is not 
-  thread-safe. 
-- As you will see later in this chapter, the unexpected result of two tasks executing at the same time is referred to 
+- You can see in Figure 7.3 that both threads read and write the same values, causing one of the two ++ is not
+  thread-safe.
+- As you will see later in this chapter, the unexpected result of two tasks executing at the same time is referred to
   as a *race condition*.
 
 <br>
@@ -942,7 +982,6 @@ public class SheepManager {
 
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_7/images/Figure_7_3.png?raw=true)
 
-
 ## Protecting Data with Atomic Classes
 
 - One way to improve our sheep counting example is to use the *java.util.concurrent.atomic* package.
@@ -950,29 +989,31 @@ public class SheepManager {
 
 - In our SheepManager sample output, we printed twice, with the highest counter being 9 instead of 10.
 - As we demonstrated in the previous section, the increment operator ++ is not thread-safe.
-- The reason that it is not thread-safe is that the operation is not atomic, carrying out two tasks, read and write, 
+- The reason that it is not thread-safe is that the operation is not atomic, carrying out two tasks, read and write,
   that can be interrupted by other threads.
 
 ---
+
 - *Atomic* is the property of an operation to be carried out as a single unit of execution without any interference by
   another thread.
 - A thread-safe atomic version of the increment operator would be one that performed the read and write of the variable
   as a single operation.
 - Figure 7.4 shows result of making the *sheepCount* variable atomic.
+
 ---
 
-- Figure 7.4 resembles our earlier Figure 7.3, except that reading and writing the data is atomic with regard to the 
+- Figure 7.4 resembles our earlier Figure 7.3, except that reading and writing the data is atomic with regard to the
 - *sheepCount* variable while an atomic operation is in process will have to wait until the atomic operation on the
   variable is complete.
-- Since accessing primitives and references in Java is common in shared environments, the Concurrency API includes 
+- Since accessing primitives and references in Java is common in shared environments, the Concurrency API includes
   numerous useful classes that are conceptually the same as our primitive classes but that support atomic operations.
-
 
 ![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_7/images/Figure_7_4.png?raw=true)
 Figure 7.4 Thread synchronization using atomic operations
 
 
 ---
+
 ### TABLE 7.6 Atomic classes ###
 
 | Class Name    | Description                                      |
@@ -980,14 +1021,16 @@ Figure 7.4 Thread synchronization using atomic operations
 | AtomicBoolean | A *boolean* value that may be updated atomically |
 | AtomicInteger | An *int* value that may be updated atomically    |
 | AtomicLong    | A *long* value that may be updated atomically    |
+
 ---
 
 - How do we use an atomic class?
-- Each class includes numerous methods that are equivalent to many of the primitive built-in operators that we use on 
+- Each class includes numerous methods that are equivalent to many of the primitive built-in operators that we use on
   primitives such as the assignment operator (=) and the increment operators (++).
 - In the following example, we update our SheepManager class with an *AtomicInteger*:
 
 i.e: chapter_7.concurrencyapi.thread_safety.SheepManager_v2.java
+
 ```
 private AtomicInteger sheepCount = new AtomicInteger(0);
 private void incrementAndReport(){
@@ -1003,33 +1046,35 @@ private void incrementAndReport(){
 1 4 3 5 6 2 7 8 10 9
 ```
 
-- Unlike our previous sample output, the number 1 through 10 will always be printed, although the order is still not 
+- Unlike our previous sample output, the number 1 through 10 will always be printed, although the order is still not
   guaranteed.
-- Using the atomic classes ensures that the data is consistent between workers and that no values are lost due to 
+- Using the atomic classes ensures that the data is consistent between workers and that no values are lost due to
   concurrent modification.
 
 ---
+
 ### TABLE 7.7 Common atomic methods ###
 
-| Method name         | Description                                                                  |
-|---------------------|------------------------------------------------------------------------------|
-| get()               | Retrieves the current value                                                  |
-| set()               | Sets the given value, equivalent to the assignement *=* operator             |
-| getAndSet()         | Atomically sets the new value and returns the old value                      |
-| incrementAndGet()   | For numeric classes, atomic pre-increment operation equivalent to ++value    |
-| getAndIncrement()   | For numeric classes, atomic post-increment operation equivalent to value++   |
-| decrementAndGet()   | For numeric classes, atomic pre-decrement operation equivalent --value       |
-| getAndDecrement()   | For numeric classes, atomic post-decrement operation equivalent to value--   |
----
+| Method name       | Description                                                                |
+|-------------------|----------------------------------------------------------------------------|
+| get()             | Retrieves the current value                                                |
+| set()             | Sets the given value, equivalent to the assignement *=* operator           |
+| getAndSet()       | Atomically sets the new value and returns the old value                    |
+| incrementAndGet() | For numeric classes, atomic pre-increment operation equivalent to ++value  |
+| getAndIncrement() | For numeric classes, atomic post-increment operation equivalent to value++ |
+| decrementAndGet() | For numeric classes, atomic pre-decrement operation equivalent --value     |
+| getAndDecrement() | For numeric classes, atomic post-decrement operation equivalent to value-- |
 
+---
 
 ## Improving Access with Synchronized Blocks
 
-- While atomic classes are great at protecting single variables, they aren't particularly useful if you need to execute 
+- While atomic classes are great at protecting single variables, they aren't particularly useful if you need to execute
   a series of commands or call a method.
 - How do we improve the results so that each worker is able to increment and report the results in order?
 - The most common technique is to use a monitor, also called a lock, to synchronize access.
-- A *monitor* is a structure that supports  *mutual exclusion*, which is the property that at most one thread is executing 
+- A *monitor* is a structure that supports  *mutual exclusion*, which is the property that at most one thread is
+  executing
   a particular segment of code at a given time.
 - In Java, any *Object* can be used as a monitor, along with the *synchronized* keyword, as shown in the following
   example:
@@ -1045,10 +1090,8 @@ synchronized(manager){
 - Each thread that arrives will first check if any threads are in the block.
 - In this manner, a thread "acquires the lock" for the monitor.
 
-
 > Note: To synchronize access across multiple threads, each thread must have access to the same Object.
 > For example, synchronizing on different objects would not actually order the results.
-
 
 - Let's say that we replaced our *for()* loop with the following implementation:
 
@@ -1066,14 +1109,17 @@ for(int i = 0; i < 10; i++){
 - We now present a correct version of the *SheepManager* class, which does order the workers.
 
 i.e: chapter_7.concurrencyapi.thread_safety.SheepManager_v3.java
+
 ```java
 public class SheepManager_v3 {
     private int sheepCount = 0;
+
     private void incrementAndReport() {
         synchronized (this) {
             System.out.print((++sheepCount) + " ");
         }
     }
+
     public static void main(String[] args) {
         ExecutorService service = null;
         try {
@@ -1095,7 +1141,7 @@ public class SheepManager_v3 {
 1 2 3 4 5 6 7 8 9 10 
 ```
 
-- Although all threads are still created and executed at the same time, they each wait at the *synchronized* block for 
+- Although all threads are still created and executed at the same time, they each wait at the *synchronized* block for
   worker to increment and report the result before entering.
 - We could have synchronized on any object, so long as it was the same object.
 - For example, the following code snippet would have also worked:
@@ -1112,29 +1158,27 @@ private void incrementAndReport(){
 - Although we didn't need to make the *herd* variable final, doing so ensures that it is not reassigned after threads
   start using it.
 
-> Note: We are not gaining any improvement by using an atomic variable if the only time that we access the variable is 
+> Note: We are not gaining any improvement by using an atomic variable if the only time that we access the variable is
 > within a *synchronized* block.
-
 
 ## Synchronizing on Methods
 
 - We can add the *synchronized* modifiers to any instance method to *synchronize* automatically on the object itself.
 - For example, the following two method definitions are equivalent:
 
-
 ```java
 // synchronized block
-private void incrementAndReport(){
-    synchronized (this){
-      System.out.println((++sheepCount)+ " ");
+private void incrementAndReport() {
+    synchronized (this) {
+        System.out.println((++sheepCount) + " ");
     }
 }
 ```
 
 ```java
 // synchronized method modifier
-private synchronized void incrementAndReport(){
-  System.out.println((++sheepCount)+ " ");
+private synchronized void incrementAndReport() {
+    System.out.println((++sheepCount) + " ");
 }
 ```
 
@@ -1145,36 +1189,39 @@ private synchronized void incrementAndReport(){
 
 ```java
 // syncronized block
-public static void printDaysWork(){
-    synchronized (SheepManager.class){
-      System.out.println("Finished work");
+public static void printDaysWork() {
+    synchronized (SheepManager.class) {
+        System.out.println("Finished work");
     }
 }
 ```
 
 ```java
 // synchronized modifier
-public static synchronized void printDaysWork(){
-  System.out.println("Finished work");
+public static synchronized void printDaysWork() {
+    System.out.println("Finished work");
 }
 ```
 
-- You can use *static* synchronization if you need to order thread access across all instances, rather than single instance.
-
+- You can use *static* synchronization if you need to order thread access across all instances, rather than single
+  instance.
 
 ---
+
 ### Avoid Synchronization Whenever Possible ###
 
 - Correctly using the *synchronized* keyword can be quite challenging, especially if the data you are trying to protect
   is available to a dozen of methods.
 - Even when the data is protected, though, the performance cost for using it can be high.
-- In this chapter, we present many classes within the Concurrency API that are a lot easier to use and more performant 
+- In this chapter, we present many classes within the Concurrency API that are a lot easier to use and more performant
   than synchronization.
-- Some you have seen already, like the atomic classes, and others we'll be covering shortly, including the *Lock* framework,
+- Some you have seen already, like the atomic classes, and others we'll be covering shortly, including the *Lock*
+  framework,
   *concurrent* collections, and *cyclic barriers*.
 - You should be familiar with all the classes in the Concurrency API, you should study them carefully if you are writing
   a lot of multithreading applications.
 - They contain a wealth of methods that manage complex process for you in a thread-safe and performant manner.
+
 ---
 
 ## Understanding the Lock Framework
@@ -1182,10 +1229,79 @@ public static synchronized void printDaysWork(){
 - A *synchronized* block support only a limited set of functionality.
 - For example, what if we want to check whether a lock is available and, if it is not, perform some other task?
 - Futhermore, if the lock is never available and we synchornize on it, we might hang forever.
-<br>
-- The Concurrency API includes the *Lock* interface that is conceptually similar to using the *synchronized* keywork, but
+  <br>
+- The Concurrency API includes the *Lock* interface that is conceptually similar to using the *synchronized* keywork,
+  but
   with a lot more bells and whistels.
-- Instead of synchronizing on any *Object*, though, we can "lock" only on an object that implements the *Lock* interface.
+- Instead of synchronizing on any *Object*, though, we can "lock" only on an object that implements the *Lock*
+  interface.
 
 ## Applying a ReentrantLock Interface
+
+- Using the *Lock* interface is pretty easy.
+- When you need to protect a piece of code from multithreaded precessing, create an instance of *Lock* that all threads
+  have access to.
+- Each thread then calls *lock()* before it enters the protected code and calls unlock() before it exists the protected
+  code.
+- For contrast, the following shows two implementations, one with a *synchronized* block and one with a *Lock* instance.
+- As we'll see in the next section, the *Lock* solution has a number of features not available to the *synchronized*
+  block.
+
+```
+// Implementation #1 with a synchronized block
+Object object = new Object();
+synchronized (object){
+    // Protected code
+}
+```
+
+```
+Lock lock = new ReentrantLock();
+try {
+  lock.lock();
+  //Protected code
+} finally{
+  lock.unlock();
+}
+```
+
+> Tip: While certainly not required, it is a good practice to use a try/finally block with *Lock* instances.
+> This ensures any acquired locks are properly released.
+
+- These two implementations are conceptually equivalent.
+- The ReentrantLock class is a simple monitor that implements the *Lock* interface and
+  supports mutual exclusion.
+- In other words, at most one thread is allowed to hold a lock at any given time.
+- The *ReentrantLock* class ensures that once a thread has called *lock()* and obtained
+  the lock, all other threads that call *lock()* will wait until the first thread calls
+  *unlock().
+- As far as which thread gets the lock next, that depends on the parameters used to create the *Lock* object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
