@@ -1435,14 +1435,127 @@ new Thread(() -> System.out.print(lock.tryLock())).start();
 
 ## Orchestrating Tasks with a CyclicBarrier
 
-- 
+- We complete our discussion of thread-safety by discussing how to orchestrate complex tasks across many things.
+- Our zoo workers are back, and this time they are cleaning pens.
+- Imagine that there is a lion pen that needs to be emptied, cleaned, and then filled back up with the lions.
+- To complete the task, we have assigned four zoo workers.
+- Obviously, we don't want to start cleaning the cage while a lion is roaming in it, lest we end up losing a zoo worker!
+- Furthermore, we don't want to let the lions back into the pen while it is still being cleaned.
+<br>
+- We could have all the work completed by a single worker, but this would be slow and ignore the fact that we have 
+  three zoo workers standing by to help.
+- A better solution would be to have all four zoo employees work concurrently, pausing between the end of one set of 
+  tasks and the start of the next.
+- Ot coordinate these tasks, we can use the *CyclicBarrier* class.
+- For now, let's start with a code sample without a *CyclicBarrier*.
+
+i.e: chapter_7.concurrencyapi.thread_safety.LionPenManager.java
+```java
+public class LionPenManager {
+    private void removeLions() {
+        System.out.println("Removing lions");
+    }
+    private void cleanPen() {
+        System.out.println("Cleaning the pen");
+    }
+    private void addLions() {
+        System.out.println("Adding Lions");
+    }
+    public void performTask() {
+            removeLions();
+            cleanPen();
+            addLions();
+    }
+
+    public static void main(String[] args) {
+        ExecutorService service = null;
+        try {
+            service = Executors.newFixedThreadPool(4);
+            var manager = new LionPenManager();
+            for (int i = 0; i < 4; i++) {
+                service.submit(() -> manager.performTask());
+            }
+        } finally {
+            if (service != null) service.shutdown();
+        }
+    }
+}
+```
+
+- The following is sample output based on this implementation:
+
+```
+Removing lions
+Cleaning the pen
+Adding Lions
+Removing lions
+Removing lions
+Cleaning the pen
+Adding Lions
+Removing lions
+Cleaning the pen
+Adding Lions
+Cleaning the pen
+Adding Lions
+```
 
 
+- Although within a single thread the results are ordered, among multiple workers the output is entirely random.
+- We see that some lions are still being removed while the cage, and other lions are added before the cleaning process is 
+  finished.
+- In our conceptual example, this would be quite chaotic and would not lead to a very clean cage.
+- We can improve these results by using the *CyclicBarrier* class.
+- The *CyclicBarrier* takes in its constructors a limit value, indicating the number of threads to wait for.
+- As each thread finishes, it calls *await()* method on the cyclic barrier.
+- Once the specified number of threads have each called *await()*, the barrier is released, and all threads can continue.
+
+- The following is a reimplementation of our *LionPenManager* class that uses *CyclicBarrier* objects to coordinate access.
 
 
+i.e: chapter_7.concurrencyapi.thread_safety.LionPenManager_v2.java
+```java
+public class LionPenManager_v2 {
+    private void removeLions() {
+        System.out.println("Removing lions");
+    }
+    private void cleanPen() {
+        System.out.println("Cleaning the pen");
+    }
+    private void addLions() {
+        System.out.println("Adding Lions");
+    }
+    public void performTask(CyclicBarrier c1, CyclicBarrier c2) {
 
+        try {
+            removeLions();
+            c1.await();
+            cleanPen();
+            c2.await();
+            addLions();
+        } catch (InterruptedException | BrokenBarrierException e) {
+           // Handle checked exceptions here
+        }
 
+    }
 
+    public static void main(String[] args) {
+        ExecutorService service = null;
+        try {
+            service = Executors.newFixedThreadPool(4);
+            var manager = new LionPenManager_v2();
+
+            var c1 = new CyclicBarrier(4);
+            var c2 = new CyclicBarrier(4, () -> System.out.println("*** Pen Cleaned!"));
+
+            for (int i = 0; i < 4; i++) {
+                service.submit(() -> manager.performTask(c1, c2));
+            }
+        } finally {
+            if (service != null) service.shutdown();
+        }
+    }
+}
+```
 
 
 
