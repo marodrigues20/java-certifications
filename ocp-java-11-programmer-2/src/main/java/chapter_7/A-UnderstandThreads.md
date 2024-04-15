@@ -1011,7 +1011,15 @@ private void incrementAndReport(){
 ---
 ### TABLE 7.7 Common atomic methods ###
 
-| Method name | Description |
-|-------------|-------------|
-
+| Method name         | Description                                                                  |
+|---------------------|------------------------------------------------------------------------------|
+| get()               | Retrieves the current value                                                  |
+| set()               | Sets the given value, equivalent to the assignement *=* operator             |
+| getAndSet()         | Atomically sets the new value and returns the old value                      |
+| incrementAndGet()   | For numeric classes, atomic pre-increment operation equivalent to ++value    |
+| getAndIncrement()   | For numeric classes, atomic post-increment operation equivalent to value++   |
+| decrementAndGet()   | For numeric classes, atomic pre-decrement operation equivalent --value       |
+| getAndDecrement()   | For numeric classes, atomic post-decrement operation equivalent to value--   |
 ---
+
+
