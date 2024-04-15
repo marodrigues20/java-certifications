@@ -1277,6 +1277,37 @@ try {
   *unlock().
 - As far as which thread gets the lock next, that depends on the parameters used to create the *Lock* object.
 
+> Note: The *ReentrantLock* class contains a constructor that can be used to send a *boolean* "fairness" parameter.
+> If set to true, then the lock will usually be granted to each thread in the order it was requested.
+> It is false by default when using the no-argument constructor. 
+> In practice, you should enable fairness only when ordering is absolutely required, as it could lead to a siginificant
+  slowdown.
+
+
+- Besides always making sure to release a lock, you also need to make sure that you only release a lock that you actually
+  have.
+- If you attempt to release a lock that you do not have, you will get an exception at runtime.
+
+```
+Lock lock = new ReentrantLock();
+lock.unlock(); // IllegalMonitorStateException
+```
+
+- The *Lock* interface includes four methods that you should know for the exam, as listed in Table 7.8.
+
+---
+### TABLE 7.8 Lock methods
+
+| Method                          | Description                                                                                                                                        |
+|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| void lock()                     | Request a lock and blocks until lock is acquired                                                                                                   |
+| void unlock()                   | Release a lock                                                                                                                                     | 
+| boolean tryLock()               | Requests a lock and returns immediately. Returns a boolean indicating whether the lock was succefully acquired                                     |
+| boolean tryLock(long, TimeUnit) | Requests a lock and block up to the specified time until lock is required. Returns a boolean indicating whether the lock was successfully acquired |
+---
+
+
+## Attempting to Acquire a Lock
 
 
 
