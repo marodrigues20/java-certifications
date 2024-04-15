@@ -1028,6 +1028,136 @@ private void incrementAndReport(){
 - While atomic classes are great at protecting single variables, they aren't particularly useful if you need to execute 
   a series of commands or call a method.
 - How do we improve the results so that each worker is able to increment and report the results in order?
-- The most common techinique is to use a monitor, also called a lock, to synchronize access.
+- The most common technique is to use a monitor, also called a lock, to synchronize access.
 - A *monitor* is a structure that supports  *mutual exclusion*, which is the property that at most one thread is executing 
   a particular segment of code at a given time.
+- In Java, any *Object* can be used as a monitor, along with the *synchronized* keyword, as shown in the following
+  example:
+
+```
+SheepManager manager = new SheepManager();
+synchronized(manager){
+  // work to be completed by one thread at a time
+}
+```
+
+- This example is reffered to as a *synchronized block*.
+- Each thread that arrives will first check if any threads are in the block.
+- In this manner, a thread "acquires the lock" for the monitor.
+
+
+> Note: To synchronize access across multiple threads, each thread must have access to the same Object.
+> For example, synchronizing on different objects would not actually order the results.
+
+
+- Let's say that we replaced our *for()* loop with the following implementation:
+
+```
+for(int i = 0; i < 10; i++){
+  synchronzied(manager){
+    service.submit(() -> manager.incrementAndReport());
+  }
+}
+```
+
+- Does this solution fix the problem?
+- We've synchronized the creation of the threads but not the execution of the threads.
+- Diagnosing and resolving threading problems is often one of the most difficult tasks in any program language.
+- We now present a correct version of the *SheepManager* class, which does order the workers.
+
+i.e: chapter_7.concurrencyapi.thread_safety.SheepManager_v3.java
+```java
+public class SheepManager_v3 {
+    private int sheepCount = 0;
+    private void incrementAndReport() {
+        synchronized (this) {
+            System.out.print((++sheepCount) + " ");
+        }
+    }
+    public static void main(String[] args) {
+        ExecutorService service = null;
+        try {
+            service = Executors.newFixedThreadPool(20);
+            SheepManager_v3 manager = new SheepManager_v3();
+            for (int i = 0; i < 10; i++) {
+                service.submit(() -> manager.incrementAndReport());
+            }
+        } finally {
+            if (service != null) service.shutdown();
+        }
+    }
+}
+```
+
+- When this code executes, it will consistently output the following:
+
+```
+1 2 3 4 5 6 7 8 9 10 
+```
+
+- Although all threads are still created and executed at the same time, they each wait at the *synchronized* block for 
+  worker to increment and report the result before entering.
+- We could have synchronized on any object, so long as it was the same object.
+- For example, the following code snippet would have also worked:
+
+```
+private final Object herd = new Object();
+private void incrementAndReport(){
+  synchronized(herd){
+    System.out.println((++sheepCount)+" ");
+  }
+}
+```
+
+- Although we didn't need to make the *herd* variable final, doing so ensures that it is not reassigned after threads
+  start using it.
+
+> Note: We are not gaining any improvement by using an atomic variable if the only time that we access the variable is 
+> within a *synchronized* block.
+
+
+## Synchronizing on Methods
+
+- We can add the *synchronized* modifiers to any instance method to *synchronize* automatically on the object itself.
+- For example, the following two method definitions are equivalent:
+
+
+```java
+// synchronized block
+private void incrementAndReport(){
+    synchronized (this){
+      System.out.println((++sheepCount)+ " ");
+    }
+}
+```
+
+```java
+// synchronized method modifier
+private synchronized void incrementAndReport(){
+  System.out.println((++sheepCount)+ " ");
+}
+```
+
+- We can also apply the *synchronized* modifier to *static* methods.
+- What object is used as the monitor when we synchronize on a *static* method?
+- The class object, of course!
+- For example, the following two methods are equivalent for *static* synchronization inside our *SheepManager* class:
+
+```java
+// syncronized block
+public static void printDaysWork(){
+    synchronized (SheepManager.class){
+      System.out.println("Finished work");
+    }
+}
+```
+
+```java
+// synchronized modifier
+public static synchronized void printDaysWork(){
+  System.out.println("Finished work");
+}
+```
+
+- You can use *static* synchronization if you need to order thread access across all instances, rather than single instance.
+
