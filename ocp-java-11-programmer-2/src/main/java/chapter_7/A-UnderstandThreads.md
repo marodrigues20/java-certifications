@@ -987,8 +987,8 @@ Figure 7.4 Thread synchronization using atomic operations
   primitives such as the assignment operator (=) and the increment operators (++).
 - In the following example, we update our SheepManager class with an *AtomicInteger*:
 
-```java
-
+i.e: chapter_7.concurrencyapi.thread_safety.SheepManager_v2.java
+```
 private AtomicInteger sheepCount = new AtomicInteger(0);
 private void incrementAndReport(){
     System.out.print(sheepCount.incrementAngGet()+ " ");
@@ -1023,3 +1023,11 @@ private void incrementAndReport(){
 ---
 
 
+## Improving Access with Synchronized Blocks
+
+- While atomic classes are great at protecting single variables, they aren't particularly useful if you need to execute 
+  a series of commands or call a method.
+- How do we improve the results so that each worker is able to increment and report the results in order?
+- The most common techinique is to use a monitor, also called a lock, to synchronize access.
+- A *monitor* is a structure that supports  *mutual exclusion*, which is the property that at most one thread is executing 
+  a particular segment of code at a given time.
