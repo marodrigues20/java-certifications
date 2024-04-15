@@ -1557,9 +1557,39 @@ public class LionPenManager_v2 {
 }
 ```
 
+- In this example, we have updated *performTask()* to use *CyclicBarrier* objects.
+- Like synchronizing on the same object, coordinating a task with a *CyclicBarrier* requires the object to be *static* or
+  passed to the thread performing the task.
+- We also add a try/ catch block in the *performingTask()* method, as the *await()* method throws multiple checked exceptions.
 
+- The following is sample output based on this revised implementation of our *LionPenManager* class:
 
+```
+Removing lions
+Removing lions
+Removing lions
+Removing lions
+Cleaning the pen
+Cleaning the pen
+Cleaning the pen
+Cleaning the pen
+*** Pen Cleaned!
+Adding Lions
+Adding Lions
+Adding Lions
+Adding Lions
+```
 
+- As you can see, all of the results are now organized.
+- Removing the lions all happens in one step, as does cleaning the pen and adding the lions back in.
+- In this example, we used two different constructors for our *CyclicBarrier* objects, the latter of which called 
+  a *Runnable* method upon completion.
+
+---
+### Thread Pool Size and Cyclic Barrier Limit ###
+
+- 
+---
 
 
 
