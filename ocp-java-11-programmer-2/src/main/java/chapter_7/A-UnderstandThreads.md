@@ -1384,7 +1384,58 @@ System.out.println("Lock obtained, entering protected code");
 
 - The code is the same as before, except this time one of the threads waits up to 10 seconds to acquire the lock.
 
+## Duplicate Lock Requests
 
+- The *ReetrantLock* class maintains a counter of the number of times a lock has been given to a thread.
+- To release the lock for other threads to use, *unlock()* must be called the same number of times the lock was granted.
+- The following code snippet contains an error.
+- Can you spot it?
+
+```
+Lock lock = new ReentrantLock();
+if(lock.tryLock()){
+    try{
+        lock.lock();
+        System.out.println("Lock obtained, entering protected code");
+    } finally{
+        lock.unlock();
+    }
+}
+```
+
+- The thread obtains the lock twice but releases it only once..
+- You can verify this by spawining a new thread after this code runs that attemps to obtain a lock.
+- The following prints *false*;
+
+```
+new Thread(() -> System.out.print(lock.tryLock())).start();
+```
+
+- It is critical that you release a lock the same number of times it is acquired.
+- For calls with *tryLock()*, you need to call *unlock()* only if the methods returned *true*.
+
+
+## Reviewing the Lock Framework
+
+- To review, the *ReentrantLock* class supports the same features as a *synchronized* block, while adding a number of 
+  improvements.
+  - Ability to request a lock without blocking
+  - Ability to request a lock while blocking for a specified amount of time.
+  - A lock can be created with a fairness property, in which the lock is granted to threads in the order it was requested.
+
+- The Concurrency API includes other lock-based classes, although *ReentrantLock* is the only one you need to know for 
+  the exam.
+
+> Tip: While not on the exam, *ReentrantReadWriteLock* is a really useful class.
+> It includes separate locks for reading and writing data and is useful on data structures where reads are far more common
+> than writes.
+> For example, if you have a thousand threads reading data but only one thread writing data, this class can help you 
+> maximize concurrent access.
+
+
+## Orchestrating Tasks with a CyclicBarrier
+
+- 
 
 
 
