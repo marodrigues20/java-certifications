@@ -1407,7 +1407,7 @@ if(lock.tryLock()){
 - You can verify this by spawining a new thread after this code runs that attemps to obtain a lock.
 - The following prints *false*;
 
-```
+```java
 new Thread(() -> System.out.print(lock.tryLock())).start();
 ```
 
