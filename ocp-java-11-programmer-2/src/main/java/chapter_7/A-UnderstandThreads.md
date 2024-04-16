@@ -1905,3 +1905,56 @@ private static void linkedBlockingQueue() {
 
 ## Obtaining Synchronized Collections
 
+- Besides the concurrent collection classes that we have covered, the Concurrency API also includes methods for obtaining
+  synchronized versions of existing non-concurrent collection objects.
+- These synchronized methods are defined in the *Collections* class.
+- They operate on the inputted collection and return a reference that is the same type as the underlying collection.
+- We list these methods in Table 7.11.
+
+---
+### TABLE 7.11 Synchronized collections methods ###
+
+| Methods                                       |
+|-----------------------------------------------|
+| synchronizedCollection(Collection<T> c)       |
+| synchronizedList(List<T> list                 |
+| synchronizedMap(Map<K,V> m)                   |
+| synchronizedNavigableMap(NavigableMap<K,V> m) |
+| synchronizedNavigableSet(NavigableSet<T> s    |
+| synchronizedSortedMap(SortedMap<K,V> m)       |
+| synchronizedSortedSet(SortedSet<T> s)         |
+---
+
+- When should you 7.9 use these methods?
+- If you know at the time creation that your object requires synchronization, then you should use one of the concurrent 
+  collection classes listed in Table 7.9.
+- On the other hand, if you are given an existing collection that is not a concurrent class and need to access it among 
+  multiple threads, you can wrap it using the methods in TABLE 7.11.
+- Unlike the concurrent collection, the synchronized collections also throw an exception if they are modified within an 
+  iterator by a single thread.
+- For example, take a look at the following modification of our earlier example:
+
+
+- i.e: chapter_7.concurrencyapi.collections.SyncCollectionMethods.java
+```java
+public static void main(String[] args) {
+        var foodData = new HashMap<String,Object>();
+        foodData.put("penguin", 1);
+        foodData.put("flaming", 2);
+        var synFoodData = Collections.synchronizedMap(foodData);
+        for(String key: synFoodData.keySet()){
+            synFoodData.remove(key);
+        }
+    }
+```
+
+- This loop throws a *ConcurrentModificationException*, whereas our example that used *ConcurrentHashMap*
+  did not.
+- Other than iterating over the collection, the object returned by methods in Table 7.11 are safe from memory consistency
+  errors and can be used among multiple threads.
+
+
+## identifying Threading Problems
+
+- 
+
