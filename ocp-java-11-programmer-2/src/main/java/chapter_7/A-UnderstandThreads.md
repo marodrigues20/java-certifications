@@ -1619,6 +1619,110 @@ ExecutorService service = Executors.newFixedThreadPool(2);
 
 ## Using Concurrent Collections
 
+- Besides managing threads, the Concurrency API includes interfaces and classes that help you coordinate access to 
+  collections shared by multiple tasks.
+- By collections, we are of course referring to the Java Collections Framework that we introduced in Chapter 3, "Generics
+  and Collections."
+- In this section, we will demonstrate many of the concurrent classes available to you when using the Concurrency API.
+
+## Understanding Memory Consistency Errors
+
+- The purpose of the concurrent collection classes is to solve common memory consistency errors.
+- A *memory consistency error* occurs when two threads have inconsistent views of what should be the same data.
+- Conceptually, we want to write on one thread to be available to another thread if it accesses the concurrent collection
+  after the write has occurred.
+- When two threads try to modify the same non-concurrent collection, the JVM may throw a *ConcurrentModificationException* at runtime.
+- In fact, it can happen with a single thread.
+- Take a look at the following code snippet:
+
+```java
+var foodData = new HashMap<String, Integer>()>;
+foodData.put("penguin", 1);
+foodData.put("flamingo", 2);
+for(String key: foodData.keySet())
+    foodData.remove(key);
+```
+
+- This snippet will throw a *ConcurrentModificationException* during the second iteration of the loop, since the iterator
+  on *keySet()* is not properly updated after the first element is removed.
+- Changing the first line to use a *ConcurrentHashMap* will prevent the code from throwing an exception at runtime.
+
+```java
+var foodData = new ConcurrentHashMap<String, Integer>()>;
+foodData.put("penguin", 1);
+foodData.put("flamingo", 2);
+for(String key: foodData.keySet())
+    foodData.remove(key);
+```
+
+- Although we don't usually modify a loop variable, this example highlights the fact that the *ConcurrentHashMap()* is
+  ordering read/write access such that all access to the class is consistent.
+- In this code snippet, the iterator created by *keySet()* is updated as soon as an object is removed from the *Map*.
+- The concurrent classes were created to help avoid common issues in which multiple threads are adding and removing
+  objects from the same collections.
+- At any given instance, all threads should have the same consistent view of the structure of the collection.
 
 
+## Working with Concurrent Classes
 
+- You should use a concurrent collection class anytime that you are going to have multiple threads to modify a collections
+  object outside a *synchoronized* blocked or method, even if you don't expect a concurrency problem.
+- On the other hand, immutable or read-only objects can be accessed by any number of threads without a concurrent collection.
+
+> Tip: Immutable objects can be accessed by any number of threads and do not require synchronization.
+> By definition, they do not change, so there is no chance of a memory consistency error.
+
+
+- In the same way that we instantiate an *ArrayList* object but pass around a *List* reference, it is considered a good 
+  practice to instantiate a concurrent collection but pass it around using a nonconcurrent interface whenever possible.
+- In some cases, the callers may need to know that it is a concurrent collection so that a concurrent interface or class
+  is appropriate, but for the majority of circumstances, that distinction is not necessary.
+
+- Table 7.9 lists the common concurrent classes with which you should be familiar with the exam.
+
+
+---
+### TABLE 7.9 Concurrent collection classes
+
+| Class name            | Java Collections Framework interfaces  | Elements ordered? | Sorted? | Blocking? |
+|-----------------------|----------------------------------------|-------------------|---------|-----------|
+| ConcurrentHashMap     | ConcurrentMap                          | No                | No      | No        |
+| ConcurrentLinkedQueue | Queue                                  | Yes               | No      | No        |
+| ConcurrentSkipListMap | ConcurrentMap; SortedMap; NavigableMap | Yes               | Yes     | No        |
+| ConcurrentSkipListSet | SortedSet; NavigableSet                | Yes               | Yes     | No        |
+| CopyOnWriteArrayList  | List                                   | Yes               | No      | No        |
+| CopyOnWriteArraySet   | Set                                    | No                | No      | No        |
+| LinkedBlockingQueue   | BlockingQueue                          | Yes               | No      | Yes       |
+---
+
+- Based on your knowledge of collections from Chapter 3, classes like *ConcurrentHashMap* and *ConcurrentLinkedQueue* 
+  should be quite easy for you to learn.
+- Take a look at the following code samples:
+
+```java
+Map<String,Integer> map = new ConcurrentHashMap<>();
+map.put("zebra", 52);
+map.put("elephant", 10);
+System.out.println(map.get("elephant")); // 10
+```
+
+```java
+Queue<Integer> queue = new ConcurrentLinkedQueue<>();
+queue.offer(31);
+System.out.println(queue.peek()); //31
+System.out.println(queue.pool()); //31
+```
+
+- Like we often did in Chapter 3, we use an interface reference for the variable type of the newly created object
+  and use it the same way as we would a non-concurrent object.
+- The difference is that these objects are safe to pass to multiple threads.
+- All of these classes implement multiple interfaces.
+- For example, *ConcurrentHashMap* implements *Map* and *ConcurrentMap*
+- When declaring methods that take a concurrent collection, it is up to you to determine the appropriate method parameter
+  type. For example, a method signature may require a *ConcurrentMap* reference to ensure that an object passed to it is
+  properly supported in a multithreaded environment.
+
+
+## Understanding SkipList Collections
+
+- 
