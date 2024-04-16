@@ -1860,7 +1860,48 @@ System.out.println(birds.size()); // 0
 
 ## Understanding Blocking Queues
 
+- The *BlockingQueue* is just like a regular *Queue*, except that it includes methods that will wait a specific amount
+  of time to complete an operation.
+- Since *BlockingQueue* inherits all the methods from *Queue*, we skip the inherited methods you learned in Chapter 3 
+  present the new methods in Table 7.10.
 
+---
+### TABLE 7.10 BlockingQueue waiting methods ###
 
+| Method name                               | Description                                                                                                                                    |
+|-------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| offer(E e, long timeout, TimeUnit unit)   | Adds an item to the queue, waiting the specified time and returning *false* if the time elapses before space is available                      |
+| poll(long timeout, TimeUnit unit)         | Retrieves and removes an item from the queue, waiting the specified time and returning *null* if the time elapses before the item is available |
+---
 
+- The implementation class *LinkedBlockingQueue*, as the name implies, maintains a linked list between elements.
+- The following sample is using a *LinkedBlockingQueue* to wait for the result of some of the operations.
+- The methods in Table 7.10 can each throw a checked *InterruptedException*, as they can be interrupted before they finish
+  waiting for a result; therefore, they must be propertly caught.
+
+```java
+private static void linkedBlockingQueue() {
+        try {
+            var blockingQueue = new LinkedBlockingQueue<Integer>();
+            blockingQueue.offer(39);
+            blockingQueue.offer(3, 4, TimeUnit.SECONDS);
+            System.out.println(blockingQueue.poll());
+            System.out.println(blockingQueue.poll(10, TimeUnit.MILLISECONDS));
+        } catch (InterruptedException e) {
+            // Handler interruption
+        }
+
+    }
+```
+
+- This code snippet prints the following:
+```
+39
+3
+```
+
+- As shown in this example, since *LinkedBlockingQueue* implements both *Queue* and *BlockingQueue*, we can use methods 
+  available to both, such as those that don't take any wait arguments.
+
+## Obtaining Synchronized Collections
 
