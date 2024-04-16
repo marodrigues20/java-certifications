@@ -4,37 +4,17 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-/**
- * Concurrent Collection classes
- * <p>
- * Class name            | Java Collection Framework interfaces | Elements ordered? | Sorted? | Blocking? |
- * ConcurrentHashMap     | ConcurrentMap                        | No                | No      | No        |
- * ConcurrentLinkedQueue | Queue                                | Yes               | No      | No        |
- * ConcurrentSkipListMap | ConcurrentMap                        | Yes               | Yes     | No        |
- * SortedMap
- * NavigableMap
- * ConcurrentSkipListSet | SortedSet                            | Yes               | Yes      | No      |
- * NavigableSet
- * CopyOnWriteArrayList  | List                                 | Yes               | No       | No      |
- * CopyOnWriteArraySet   | Set                                  | No                | No       | No      |
- * LinkedBlockingQueue   | BlockingQueue                        | Yes               | No       | Yes     |
- *
- *
- * We use an interface reference for the variable type of the newly created object and use it the same way as
- * we would a nonconcurrent object. The difference is that these objects is that these objects are safe to
- * pass to multiple threads.
- */
 public class ConcurrentCollection {
 
     public static void main(String[] args) {
 
-        concurrentHashMap();
-        concurrentLinkedQueue();
-        concurrentSkipListSet();
-        concurrentSkipListMap();
+        //concurrentHashMap();
+        //concurrentLinkedQueue();
+        //concurrentSkipListSet();
+        //concurrentSkipListMap();
         copyOnWriteArrayList();
-        copyOnWriteArraySet();
-        linkedBlockingQueue();
+        //copyOnWriteArraySet();
+        //linkedBlockingQueue();
 
     }
 

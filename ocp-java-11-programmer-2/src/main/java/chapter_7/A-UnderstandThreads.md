@@ -1725,4 +1725,142 @@ System.out.println(queue.pool()); //31
 
 ## Understanding SkipList Collections
 
-- 
+- The *SkipList* classes, *ConcurrentSkipListSet* and *ConcurrentSkipListMap*, are concurrent version of their sorted 
+  counterparts, TreeSet and TreeMap, respectively. 
+- They maintain their elements or keys in the natura ordering or their elements.
+- In this manner, using them is the same as the cod that you worked with in Chapter 3.
+
+i.e: chapter_7.concurrencyapi.collections.ConcurrentCollection.java
+```java
+private static void concurrentSkipListSet() {
+  Set<String> gardenAnimals = new ConcurrentSkipListSet<>();
+  gardenAnimals.add("rabbit");
+  gardenAnimals.add("gopher");
+  System.out.println(gardenAnimals.stream()
+          .collect(Collectors.joining(","))); // gopher, rabbit
+}
+```
+
+i.e: chapter_7.concurrencyapi.collections.ConcurrentCollection.java
+```java
+private static void concurrentSkipListMap() {
+
+        Map<String, String> rainForestAnimalDiet = new ConcurrentSkipListMap<>();
+        rainForestAnimalDiet.put("koala", "bamboo");
+        rainForestAnimalDiet.entrySet()
+                .stream()
+                .forEach((e) -> System.out.println(e.getKey() + "-" + e.getValue())); //koala-bamboo
+    }
+```
+
+- When you see SkipList or SkipSet on the exam, just think "sorted" concurrent collections, and the rest should follow 
+  naturally.
+
+## Understanding CopyOnWrite Collections
+
+- Table 7.9 included two classes, *CopyOnWriteArrayList* and *CopyOnWriteArraySet*, that behave a little differently than 
+  the other concurrent examples that you have seen.
+- These classes copy all of their elements to a new underlying structure anytime an element is added, mofified, or removed
+  from the collection.
+- By a *modified* element, we mean that the reference in the collection is changed. Modifying the actual contents of 
+  objects within the collection will not cause a new structure to be allocated.
+- Although the data is copied to a new underlying structure, our reference to the *Collection* object does not change.
+- This is particularly useful in multithreaded environments that need to iterate the collection.
+- Any iterator established prior to a modification will not see the changes, but instead it will iterate over the orignal
+  elements prior to the modification.
+- Let's take a look at how this works with an example.
+- Does the following program terminate?
+- If so, how many times does the loop execute?
+
+````java
+private static void copyOnWriteArrayList() {
+    List<Integer> favNumbers = new CopyOnWriteArrayList<>(List.of(4, 3, 42));
+    for (var n : favNumbers) {
+        System.out.println(n + " ");
+        favNumbers.add(9);
+    }
+
+    System.out.println(); 
+    System.out.println("Size: " + favNumbers.size()); 
+}
+````
+
+- When executed as part of a program, this code snippet outputs the following:
+
+```
+4 3 42 
+Size: 6
+```
+
+- Despite adding elements to the array while iterating over it, the *for* loop only iterate on the ones created when the 
+  loop started.
+- Alternatively, if we had used a regular *ArrayList* object, a *concurrentModificationException* would have been thrown
+  at run time.
+
+> Note: The *CopyOnWrite* classes are similar to the immutable object patterns that you saw in Chapter 1,
+> "Java Fundamentals", as a new underlying structure is created every time the collection is modified.
+> Unlike a true immutable object, though, the reference to the object stays the same even while the underlying data is 
+> changed.
+
+- The *CopyOnWriteArraySet* is used just like a *HashSet* and has similar properties as the *CopyOnWriteArrayList* class.
+
+```java
+  private static void copyOnWriteArraySet() {
+      Set<Character> favLetters = new CopyOnWriteArraySet<>(List.of('a', 't'));
+      for (char c : favLetters) {
+          System.out.println(c + " ");
+          favLetters.add('s');
+      }
+      System.out.println();
+      System.out.println("Size: " + favLetters.size());
+  }
+```
+
+- This code snippet prints:
+
+```
+a t 
+Size: 3
+```
+
+- The *CopyOnWrite* classes can use a lot of memory, since a new collection structure needs to be allocated anytime the 
+  collection is modified.
+- They are commonly used in multithreading environment situations where reads are far more common than writes.
+
+---
+### Revisting Deleting While Looping ###
+
+- In Chapter 3, we showed an example where deleting from an *ArrayList* while iterating over it triggered a 
+  *ConcurrentModificationException*.
+- Here we present a version that does work using *CopyOnWriteArrayList:
+
+```java
+List<String> birds = new CopyOnWriteArrayList<>();
+birds.add("hawk");
+birds.add("hawk");
+birds.add("hawk");
+
+for(String bird : birds)
+    birds.remove(bird);
+System.out.print(birds.size()); // 0
+```
+
+- As mentioned, though, *CopyOnWrite* classes can use a lot of memory.
+- Another approach is to use the ArrayList class with an iterator, as shown here:
+
+```java
+var iterator = birds.iterator();
+while(iterator.hasNext()){
+    iterator.next();
+    iterator.remove();
+}
+System.out.println(birds.size()); // 0
+```
+---
+
+## Understanding Blocking Queues
+
+
+
+
+
