@@ -1580,7 +1580,7 @@ Adding Lions
 Adding Lions
 ```
 
-- As you can see, all of the results are now organized.
+- As you can see, all the results are now organized.
 - Removing the lions all happens in one step, as does cleaning the pen and adding the lions back in.
 - In this example, we used two different constructors for our *CyclicBarrier* objects, the latter of which called 
   a *Runnable* method upon completion.
@@ -1588,10 +1588,36 @@ Adding Lions
 ---
 ### Thread Pool Size and Cyclic Barrier Limit ###
 
-- 
+- If you are using a thread pool, make sure that you set the number of available threads to be at least as large as your
+  *CyclicBarrier* limit value.
+- For example, what if we changed the code in the previous example to allocate only two threads, such as in the following
+  snippet?
+
+```java
+ExecutorService service = Executors.newFixedThreadPool(2);
+```
+
+- In this case, the code will hang indefinitely.
+- The barrier would never be reached as the only threads available in the pool are stuck waiting for the barrier to be 
+  completed.
+- This would result in a deadlock, which will be discussed shortly.
 ---
 
+- The *CyclicBarrier* class allows us to perform complex, multithreaded tasks, while all threads stop and wait at logical
+  barriers.
+- This solution is superior to a single-threaded solution, as the individual tasks, such as removing the lions, can be 
+  completed in parallel by all four zoo workers.
 
+## Reusing CyclicBarrier
+
+- After a *CyclicBarrier* is broken, all threads are released, and the number of threads waiting on the *CyclicBarrier*
+  goes back to zero.
+- At this point, the *CyclicBarrier* may be used again for a new set of waiting threads.
+- For example, if our *CyclicBarrier* limit is 5 and we have 15 threads that call *await()*, then the *CyclicBarrier* will
+  be activated a total of three times.
+
+
+## Using Concurrent Collections
 
 
 
