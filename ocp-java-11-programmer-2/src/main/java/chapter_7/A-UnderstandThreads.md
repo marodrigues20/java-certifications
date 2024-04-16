@@ -1956,5 +1956,116 @@ public static void main(String[] args) {
 
 ## identifying Threading Problems
 
-- 
+- A threading problem can occur in multi-threaded applications when two or more threads interact in an unexpected and 
+  undesirable way.
+- For example, two threads may block each other from accessing a particular segment of code.
+- Although the Concurrency API reduces the potential for threading issues, it does not eliminate it.
+- In practice, finding and identifying threading issues within an application is often one of the most difficult tasks
+  a developer can undertake.
+
+## Understanding Liveliness
+
+- As you have seen in this chapter, many thread operations can be performed independently, but some require coordination.
+- For example, synchronizing on a method requires all threads that call the method to wait for other threads to finish
+  before continuing.
+- You also saw earlier in the chapter that threads in a *CyclicBarrier* will each wait for the barrier limit to be reached
+  before continuing.
+
+
+- Liveliness is the ability of an application to be able to execute in a timely manner.
+- Liveliness problems, then, are those in which the application becomes unresponsive or in some kind of "stuck" state.
+- For the exam, there are three types of lineliness issues with which you should be familiar: deadlock, starvation, and 
+  livelock.
+
+
+## Deadlock
+
+- Deadlock occurs when two or more threads are blocked forever, each waiting on the other.
+
+- The following application models this behavior:
+
+
+i.e: chapter_7.concurrencyapi.collections.Fox.java
+```java
+class Food {
+}
+
+class Water {
+}
+
+public class Fox {
+
+    public void eatAndDrink(Food food, Water water) {
+        synchronized (food) {
+            System.out.println("Got Food");
+            moved();
+            synchronized (water) {
+                System.out.println("Got Water");
+            }
+        }
+    }
+
+    public void drinkAndEat(Food food, Water water) {
+        synchronized (water) {
+            System.out.println("Got Water!");
+            moved();
+            synchronized (food) {
+                System.out.println("Got Food!");
+            }
+        }
+    }
+
+    private void moved() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            // Handle Exception
+        }
+    }
+
+    public static void main(String[] args) {
+        // Create participants and resources
+        Fox foxy = new Fox();
+        Fox tails = new Fox();
+        Food food = new Food();
+        Water water = new Water();
+        // Process Data
+        ExecutorService service = null;
+        try {
+            service = Executors.newScheduledThreadPool(10);
+            service.submit(() -> foxy.eatAndDrink(food, water));
+            service.submit(() -> tails.drinkAndEat(food, water));
+        } finally {
+            if (service != null) service.shutdown();
+        }
+    }
+}
+```
+
+- In this example, Foxy obtains the food and then moves to the other side of the environment to obtain the water.
+- Unfortunately, Tails already drank the water and is waiting for the food to become available. The result is that our 
+  program outputs the following, and it hangs indefinitely.
+
+```
+Got Food
+Got Water!
+```
+
+- This example is considered a deadlock because both participants are permanently blocked,
+  waiting on resources that will never become available.
+
+
+## Preventing Deadlocks
+
+- How do you fix a deadlock once it has occurred?
+- The answer is that you can't in most situations.
+- On the other hand, there are numerous strategies to help prevent deadlocks from ever happening in the first place.
+
+
+## Starvation
+
+- *Starvation* occurs ...
+
+
+
 
