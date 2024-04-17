@@ -2106,6 +2106,22 @@ Got Water!
   - Both users are unable to create an account with username ZooFan, returning an error message to both users.
   - One user is able to create the account with the username ZooFan, while the other user receives an error message.
 
+## Working with Parallel Stream
+
+- One of the most powerful features of the Stream API is built-in concurrency support.
+- Up until now, all of the streams with which you have worked have been serial streams.
+- A serial stream is a stream in which the results are ordered, with only one entry being processed at a time.
+<br>
+- A *parallel stream* is a stream that is capable of processing results concurrently, using multiple threads.
+- For example, you can use a *parallel stream* and the *map()* operation to operate concurrently on the elements in the 
+  stream, vastly improving performance over processing a single element at a time.
+<br>
+- Using a parallel stream can change not only the performance of your application but also the expected results.
+- As you shall see, some operations also require special handling to be able to be processed in a parallel manner.
+
+> Tip: The number of threads available in a parallel stream is proportional to the number of available CPUs in your 
+> environment.
+
 
 
 
