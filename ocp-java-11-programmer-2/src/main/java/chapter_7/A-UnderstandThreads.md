@@ -2111,11 +2111,9 @@ Got Water!
 - One of the most powerful features of the Stream API is built-in concurrency support.
 - Up until now, all of the streams with which you have worked have been serial streams.
 - A serial stream is a stream in which the results are ordered, with only one entry being processed at a time.
-<br>
 - A *parallel stream* is a stream that is capable of processing results concurrently, using multiple threads.
 - For example, you can use a *parallel stream* and the *map()* operation to operate concurrently on the elements in the 
   stream, vastly improving performance over processing a single element at a time.
-<br>
 - Using a parallel stream can change not only the performance of your application but also the expected results.
 - As you shall see, some operations also require special handling to be able to be processed in a parallel manner.
 
@@ -2123,6 +2121,12 @@ Got Water!
 > environment.
 
 
+## Creating Parallel Streams
 
+- For the exam, you should be familiar with the two ways of creating a parallel stream.
+
+## Calling *parallel()* on an Existing Stream
+
+- 
 
 
