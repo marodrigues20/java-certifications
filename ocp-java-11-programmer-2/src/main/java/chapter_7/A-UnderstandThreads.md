@@ -2064,7 +2064,48 @@ Got Water!
 
 ## Starvation
 
-- *Starvation* occurs ...
+- *Starvation* occurs when a single thread is perpetually denied access to a shared resource or lock.
+- The thread is still active, but it is unable to complete its work as a result of other threads constantly taking the 
+  resource that they are trying to access.
+<br>
+- In our example, imagine that we have a pack of very hungry, very competitive foxes in our environment.
+- Every time Foxy stands up to get food, one of the other foxes sees her an rushes to eat before her.
+- Foxy is free to roam around the enclosure, take a nap, and howl for a zookeeper but is never able to obtain access to 
+  food.
+- In this example, Foxy literally and figuratively experiences starvation.
+- It's a good thing that this is just a theoretical example!
+
+## Livelock
+
+- Livelock occurs when two or more threads are conceptually blocked forever, although they are each still active and 
+  trying to complete their task.
+- Livelock is a special case of resource starvation in which two or more threads actively try to acquire a set of locks,
+  are unable to do so, and restart part of the process.
+- Livelock is often a result of two threads trying to resolve a deadlock
+- In practice, livelock is often a difficult issue to detect.
+- Threads in a livelock state appear active and able to respond to requests, even when they are in fact stuck in an 
+  endless cycle.
+
+## Managing Race Conditions
+
+- A *race condition* is an undesirable result that occurs when two tasks, which should be completed sequentially, are
+  completed at the same time.
+- We encountered examples of race conditions ealier in the chapter when we introduced synchronization.
+<br>
+- While Figure 7.5 shows a classical thread-based example of a race condition, we now provide a more illustrative example.
+- Image two zoo patrons, Olivia and Sophia, are signing up for an account on the zoo's new visitor website.
+- Both of them want to use the same username, ZooFan, and they each send requests to create the account at the same time,
+  as shown in Figure 7.5.
+- What result does the web server return when both users attempt to create an account with the same username in Figure 7.5?
+
+![alt text](https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_7/images/Figure_7_5.png?raw=true)
+
+
+- Possible Outcomes for This Race Condition
+  - Both users are able to create accounts with the username ZooFan.
+  - Both users are unable to create an account with username ZooFan, returning an error message to both users.
+  - One user is able to create the account with the username ZooFan, while the other user receives an error message.
+
 
 
 
