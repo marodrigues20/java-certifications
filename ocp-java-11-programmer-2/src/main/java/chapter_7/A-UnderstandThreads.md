@@ -2295,11 +2295,33 @@ System.out.print(List.of(1,2,3,4,5,6)
 ---
 ### Real World Scenario - Creating Unordered Stream ###
 
-- 
+- All of the streams wich which you have been working are considered ordered by default.
+- It is possible to create an unordered stream from an ordered stream, similiar to how you create a parallel stream from
+  a serial stream.
+
+```java
+List.of(1,2,3,4,5,6).stream().unordered();
+```
+
+- This method does not actually reorder the elements;
+- It just tells the JVM that if an order-based stream operation is applied, the order can be ignored.
+- For example, calling *skip(5)* on an unordered stream will skip any 5 elements, not the first 5 required on an ordered
+  stream.
+- For serial streams, using an unordered version has no effect, but on parallel streams, the result can greatly improve
+  performance.
+
+```java
+List.of(1,2,3,4,5,6).stream().unordered().parallel();
+```
+
+- Even though unordered streams will not be on the exam, if you are developing application with parallel streams, you
+  should know when to apply an unordered stream to improve performance.
 ---
 
 
+## Combining Results with reduce()
 
+- 
 
 
 
