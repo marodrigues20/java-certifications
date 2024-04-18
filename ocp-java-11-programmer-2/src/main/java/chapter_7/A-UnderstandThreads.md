@@ -2254,5 +2254,91 @@ Time: 5 seconds
 
 ## Processing Parallel Reductions
 
+- Using parallel streams can impact how you write your application.
+- Reduction operations on parallel streams are referred to as *parallel reductions*.
+- The results for parallel reductions can be different from what you expect when working with serial streams.
+
+## Performing Order-Based Tasks
+
+- Since order is not guaranteed with parallel streams, methods such as *findAny()* on parallel streams may result in 
+  unexpected behaviour.
+- Let's take a look at the results of *findAny()* applied to a serial stream.
+
+```java
+System.out.print(List.of(1,2,3,4,5,6)
+    .stream()
+    .findAny().get());
+```
+
+- This code frequently outputs the first value in the serial stream, 1, although this is not guaranteed.
+- The *findAny()* method is free to select any element on either serial or parallel streams.
+- With a parallel stream, the JVM can create any number of threads to process the stream.
+- When you call *findAny()* on a parallel stream, the JVM select the first thread to finish the task and retrieves its
+  data.
+
+```java
+System.out.print(List.of(1,2,3,4,5,6)
+  .parallelStream()
+  .findAny().get());
+```
+
+- The result is that the output could be 4, 1, or really any value in the stream.
+- You can see that with parallel stream, the results of *findAny()* are not as predictable.
+- Any stream operation that is based on order, including *findFirst()*, *limit()*, or *skip()*, may actually perform
+  more slowly in a parallel environment.
+- This is a result of a parallel processing task being forced to coordinate all of its threads in a synchronized-like
+  fashion.
+- On the plus side, the result of ordered operations on a parallel stream will be consistent with a serial stream.
+- For example, calling *skip(5).limit(2).findFirst()* will return the same result on ordered serial and parallel streams.
+
+
+---
+### Real World Scenario - Creating Unordered Stream ###
+
 - 
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
