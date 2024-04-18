@@ -2296,7 +2296,7 @@ System.out.print(List.of(1,2,3,4,5,6)
 ### Real World Scenario - Creating Unordered Stream ###
 
 - All of the streams wich which you have been working are considered ordered by default.
-- It is possible to create an unordered stream from an ordered stream, similiar to how you create a parallel stream from
+- It is possible to create an unordered stream from an ordered stream, similar to how you create a parallel stream from
   a serial stream.
 
 ```java
@@ -2321,9 +2321,37 @@ List.of(1,2,3,4,5,6).stream().unordered().parallel();
 
 ## Combining Results with reduce()
 
-- 
+- As you learned in Chapter 4, the stream operation *reduce()* combines a stream into a single object.
+- Recall that the first parameter to the *reduce()* method is called the *identity*, the second parameter is called the 
+  *accumulator*, and the third parameter is called the *combiner*.
+- The following is the signature for the method:
+
+```java
+    <U> U reduce(U identity,
+       BiFunction<U, ? super T, U> accumulator,
+       BinaryOperator<U> combiner);
+```
+
+- We can concatenete a list of *char* values, using the *reduce()* method, as shown in the following example:
+
+i.e: chapter_7.streams.reductions.CombiningResultsWithReduce.java
+```java
+ private static void parallelStreamReduceMethod(){
+        String word = List.of('w','o','l','f')
+                .parallelStream()
+                .reduce("",(s1,c) -> s1 + c, (s2, s3) -> s2 + s3);
+        System.out.println(word); // wolf
+    }
+```
+
+> Note: The naming of the variables in this stream example is not accidental. 
+> We used c for char, whereas s1, s2, and s3 are String values.
 
 
+- On parallel Stream, the *reduce()* method works by applying the reduction to pairs of elements within the stream to
+  create intermediate values and then combining those intermediate values to produce a final result.
+- Put another way, in a serial stream, *wolf* is built one character at a time.
+- In a parallel stream, the intermediate values *wo* and *lf* are created and then combined.
 
 
 
