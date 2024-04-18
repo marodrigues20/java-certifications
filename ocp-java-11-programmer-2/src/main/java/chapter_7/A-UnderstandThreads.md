@@ -2353,6 +2353,30 @@ i.e: chapter_7.streams.reductions.CombiningResultsWithReduce.java
 - Put another way, in a serial stream, *wolf* is built one character at a time.
 - In a parallel stream, the intermediate values *wo* and *lf* are created and then combined.
 
+- With parallel streams, we now have to be concerned about order.
+- What if the elements of a string are combined in the wrong order to produce *wlfo* or *flwo*?
+- The Stream API prevents this problem, while still allowing streams to be processed in parallel, as long as follow one
+  simple rule: make sure that the accumulator and combiner work regardless of the order they are called in.
+- For example, if we add numbers, we can do so in any order.
+
+> Note: With parallel streams, though, order is no longer guaranteed, and any argument that violates these rules is much
+> more likely to produce side effects or umpredictable results.
+
+
+- Let's take a look at an example using a problematic accumulator.
+- In particular, order matters subtracting numbers; therefore, the following code can output different values depending
+  on whether you use a serial or parallel stream.
+- We can omit a combiner parameter in these examples, as the accumulator can be used when the intermediate data type are 
+  the same.
+
+```java
+System.out.println(List.of(1,2,3,4,5,6)
+.parallelStream()
+.reduce(0, (a,b) -> (a - b)));
+```
+
+- It may output -21,3, or some other value.
+
 
 
 
