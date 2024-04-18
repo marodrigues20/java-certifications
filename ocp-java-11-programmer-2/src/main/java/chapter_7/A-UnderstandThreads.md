@@ -2127,6 +2127,132 @@ Got Water!
 
 ## Calling *parallel()* on an Existing Stream
 
-- 
+- The first way to create a parallel stream is from an existing stream.
+- You just call *parallel()* on an existing stream to convert it to one that supports multithreaded processing, as 
+  shown in the following code:
 
+```java
+Stream<Integer> s1 = List.of(1,2).stream();
+Stream<Integer> s2 = s1.parallel();
+```
+
+- Be aware that *parallel()* is an intermediate operation that operates on the original stream.
+- For example, applying a terminal operation to *s2* also makes *s1* unavailable for further use.
+
+## Calling parallelStream() on a Collection Object
+
+- The second way to create a parallel stream is from a Java *Collection* class.
+- The *Collection* interface includes a method *parallelStream()* that can be called on any collection and returns a 
+  parallel stream.
+- The following creates the parallel stream directly from the *List* object:
+
+```java
+Stream<Integer> s3 = List.of(1,2).parallelStream();
+```
+
+> Note: The *Stream* interface includes a method *isParallel()* that can be used to test if the instance of a stream 
+> supports parallel processing. Some operations on stream preserve the paralallel attribute, while others do not.
+> For example, the *Stream.concat(Stream s1, Stream s2) is parallel if either s1 or s2 is parallel.
+> On the other hand, *flatMap()* creates a new stream that is not parallel by default, regardless of whether the underlying
+> elements were parallel.
+
+
+## Performing a Parallel Decomposition
+
+- A *parallel decomposition* is the process of taking a task, breaking it up into *smaller* pieces that can be performed
+  concurrently, and then reassembling the results. The more concurrent a decomposition, the greater the performance
+  improvement of using parallel stream.
+- For starters, let's define a reusable function that "does work" just by waiting for five seconds.
+
+```java
+private static int doWork(int input){
+    try{
+        Thread.sleep(5000);
+    } catch (InterruptedException e){
+        return input;
+    }
+}
+```
+
+- We can pretend that in a real application this might be calling a database or reading a file.
+- Now let's use this method with a serial stream.
+
+```java
+long start = System.currentTimeMillis();
+List.of(1,2,3,4,5)
+     .stream()
+     .map(w -> doWork(w))
+     .forEach(s -> System.out.println(s + " "));
+```
+
+- What do you think this code will output when executed as part of a *main()* method?
+- Let's take a look.
+```
+1 2 3 4 5
+Time: 25 seconds
+```
+
+- As you might expect, the results are ordered and predictable because we are using a serial stream.
+- It also took around 25 seconds to process all five results, one at a time.
+- What happens if we use a parallel stream, though?
+
+```java
+long start = System.currentTimeMillis();
+List.of(1,2,3,4,5)
+      .parallelStream()
+      .map(w -> doWork(w))
+      .forEach(s -> System.out.print(s + " "));
+
+System.out.println();
+var timeTaken = (System.currentTimeMillis()-start)/1000;
+System.out.println("Time: " + timeTaken + " seconds");
+```
+
+- With a parallel stream, the *map()* and *forEach()* operations are applied concurrently.
+- The following is sample output:
+
+```
+3 2 1 5 4
+Time: 5 seconds
+```
+
+- As you can see, the results are no longer ordered or predictable.
+- The *map()* and *forEach()* operations on a parallel stream are equivalent to submitting multiple *Runnable* lambda 
+  expressions to a pooled thread executor and then waiting for the results.
+- What about the time required?
+- In this case, our system had enough CPUs for all of the tasks to be run concurrently.
+- If you ran this same code on a computer with fewer processors, it might output 10 seconds, 15 seconds, or some other
+  value.
+- The key is that we've written our code to take advantage of parallel processing when available, so our job is done.
+
+---
+### Ordering forEach Results ###
+
+- The Stream API includes an alternative version of the *forEach()* operation called *forEachOrdered()*, which forces a
+  a parallel stream to process the results in order at the cost of performance.
+- For example, take a look at the following code snipped:
+
+```java
+List.of(5,2,1,4,3)
+     .parallelStream()
+     .map(w -> doWork(w))
+     .forEachOrdered(s -> System.out.println(s + " "));
+```
+
+- Like our starting example, this outputs the results in the order that they are defined in the stream:
+
+```
+5 2 1 4 3
+Time: 5 seconds
+```
+
+- With this change, the *forEachOrdered()* operation forces our stream into a single-threaded process.
+- While we've lost some of the performance gains of using a parallel stream, our *map()* operation is still able to take
+  advantage of the parallel stream and perform a parallel decomposition in 5 seconds instead of 25 seconds.
+
+---
+
+## Processing Parallel Reductions
+
+- 
 
