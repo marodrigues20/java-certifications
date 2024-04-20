@@ -40,8 +40,8 @@ public class CombiningResultsWithReduce {
 
     public static void main(String[] args) {
 
-        parallelStreamReduceMethod();
-        parallelStreamProblematicReduceMethod();
+        //parallelStreamReduceMethod();
+        //parallelStreamProblematicReduceMethod();
 
 
     }
@@ -64,12 +64,6 @@ public class CombiningResultsWithReduce {
      * process, the identity is applied to multiple elements in the stream, resulting in very unexpected data.
      */
     private static void parallelStreamProblematicReduceMethod(){
-        var result = List.of(1,2,3,4,5,6)
-                .parallelStream()
-                .reduce(0, (a,b) -> (a-b));
-
-        System.out.println(result);
-
         String word = List.of("w","o","l","f")
                 .parallelStream()
                 .reduce("X", String::concat); //XwXoXlXf

@@ -2392,17 +2392,114 @@ System.out.println(List.of("w","o","l","f")
 ---
 ### Selecting a reduce() Method ###
 
-
+- Although the one- and two-argurments versions of reduce() do support parallel processing, it is recomended that you 
+  use the three-argument version of reduce() when working with parallel streams. 
+- Providing an explicit combined method allows the JVM to partition the operations in the stream more efficiently.
 ---
 
 
+## Combining Resutls with collect()
+
+- Like *reduce()*, the Stream API includes a three-argument version of *collect()* that takes *accumulator* and 
+  *combiner* operators, along with a *supplier* operator instead of an identity.
+
+```java
+<R> R collect(Supplier<R> supplier,
+    BiConsumer<R, ? super T> accumulator,
+    BiConsumer<R, R> combiner);
+```
+
+- Also, like *reduce()*, the accumulator and combiner operations must be able to process results in any order.
+- In this manner, the three-arguments version of *collect()* can be performed as a parallel reduction, as shown in the 
+  following example:
+
+```java
+public static void main(String[] args) {
+        Stream<String> stream = Stream.of("w","o","l","f").parallel();
+        SortedSet<String> set = stream.collect(ConcurrentSkipListSet::new,
+                Set::add,
+                Set::addAll);
+        System.out.println(set); //[f,l,o,w]
+    }
+```
+
+- Recall that elements in a *ConcurrentSkipListSet* are sorted according to their natural ordering.
+- You should use a concurrent collection to combine the results, ensuring that the results of concurrent threads do not 
+  cause a *ConcurrentModificationException*.
+
+- Performing parallel reduction with a collector requires additional considerations.
+- For example, if the collection into which you are inserting is an ordered data set, such as *List*, then the elements
+  in the resulting collection must be in the same order, regardless of whether you use a serial or parallel stream.
+- This may reduce performance, though, as some operations are unable to be completed in parallel.
 
 
+## Performing a Parallel Reduction on a Collector
+
+- Every *Collector* instance defines a *characteristics()* method that returns a set of *Collector.Characteristics* 
+  attributes. When using a *Collector* to perform a parallel reduction, a number of properties must hold true.
+- Otherwise, the *collect()* operation will execute in a single-threaded fashion.
+
+- Requirements for Parallel Reduction with *collect()*
+  - The stream is parallel
+  - The parameter of the *collect()* operation has the *Characteristics.CONCURRENT* characteristic.
+  - Either the stream is unordered or the collector has the characteristic *Characteristics.UNORDERED*.
+
+- For example, while *Collectors.toSet()* does have the UNORDERED characteristics, it does not have the CONCURRENT 
+  characteristics. Therefore, the following is not a parallel reduction even with a parallel stream:
+
+```
+stream.collect(Collectors.toSet()); // Not a parallel reduction
+```
+
+- The *Collectors* class includes two sets of *static* methods for retrieving collectors, *toConcurrentMap()* and 
+  *groupingConcurrent()*, that are both UNORDERED and CONCURRENT.
+- These methods produce *Collector* instance capable of performing parallel reductions efficiently.
+- Like their nonconcurrent counterparts, there are overloaded versions that take additional arguments.
+
+- Here is a rewrite of an example from Chapter 4 to use a parallel stream and parallel reduction:
+
+```java
+private static void parallelStreamAndParallelReductionGroupBy(){
+        var ohMy = Stream.of("lions", "tigers", "bears").parallel();
+        ConcurrentMap<Integer, String> map = ohMy
+                .collect(Collectors.groupingByConcurrent(String::length,
+                        k -> k,
+                        (s1, s2) -> s1 + "," + s2));
+        System.out.println(map); // 5 = [lions, bears], 6=[tigers]
+        System.out.println(map.getClass());
+    }
+```
+
+- We use *ConcurrentMap* reference, although the actual class returned is likely *ConcurrentHashMap*.
+- The particular class is not guaranteed; 
+- It will just be a class that implementes the interface *ConcurrentMap*.
+- Finally, we can rewrite our *groupingBy()* example from Chapter 4 to use parallel stream and parallel reduction.
+
+```java
+var ohMy = Stream.of("lions", "tigers", "bears").parallel();
+ConcurrentMap<Integer, List<String>> map = ohMy.collect(
+        Collectors.groupingByConcurrent(String::length));
+System.out.println(map);  // 5 = [lions, bears], 6=[tigers]
+```
+
+- As before, the returned object can be assigned a *ConcurrentMap* reference.
+
+---
+### Encouragin Parallel Processing
+
+- Guaranteeing that a particular stream will perform reductions in parallel, as opposed to single-threaded, is often 
+  difficult in practice.
+- For example, the one-argument *reduce()* operation on a parallel stream may perform concurrenlty even when there is no
+  explicit combiner argument.
+- Alternatively, you may expect some collectors to perform well on a parallel stream, resorting to single-threaded 
+  processing at runtime.
+- The key to applying parallel reductions is to encourage the JVM to take advantage of the parallel structures, such as 
+  using a *groupingByConcurrent()* collector on a parallel stream rather than a *groupingBy()* collector.
+- By encouraging the JVM to take advantage of the parallel processing, we get the best possible performance at runtime.
+---
 
 
-
-
-
+## Avoiding Stateful Operations
 
 
 
