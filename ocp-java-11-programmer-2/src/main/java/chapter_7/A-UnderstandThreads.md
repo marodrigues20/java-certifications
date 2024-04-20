@@ -2501,10 +2501,83 @@ System.out.println(map);  // 5 = [lions, bears], 6=[tigers]
 
 ## Avoiding Stateful Operations
 
+- Side effects can appear in parallel streams if your lambda expression are stateful.
+- A *stateful lambda expression* is one whose result depends on any state that might change during the execution of a 
+  pipeline.
+- On the other hand, a stateless lambda expression is one whose result does not depend on any state that might change 
+  during the execution of a pipeline.
+- Let's try an example.
+- Image we require a method that keeps only even numbers in a stream and adds them to the list.
+- Also, we want ordering of the numbers in the stream and list to be consistent.
+- The following *addValues()* method accomplishes this:
 
+```java
+public static List<Integer> addValues(IntStream source) {
+  var data = Collections.synchronizedList(new ArrayList<Integer>());
+  source.filter(s -> s % 2 == 0)
+          .forEach(i -> {
+            data.add(i);
+          }); // STATEFUL: DON'T DO THIS
+  return data;
+}
+```
 
+- Let's say this method is executed with the following strema:
 
+```java
+var list = addValues(IntStream.range(1, 11));
+System.out.println(list);
+```
 
+- Then, the output would be as follow:
+
+```
+  [2, 4, 6, 8, 10]
+```
+
+- But what if someone else wrote an implementation that passed our method a parallel stream?
+
+```java
+var list = addValues(IntStream.range(1, 11).parallel());
+System.out.println(list);
+```
+
+- With a parallel stream, the order of the output becomes random.
+
+```
+[6, 8, 10, 2, 4]
+```
+
+- The problem is that our lambda expression is stateful and modifiers a list that is outside our stream.
+- We could use *forEachOrdered()* to add elements to the list, but that forces the parallel stream to be serial,
+  potentially losing concurrency enhancements.
+- While these stream operations in our example are quite simple, imagine using them alongside numerous intermediate 
+  operations.
+
+- We can fix this solution by rewriting our stream operation to no longer have a stateful lambda expression.
+
+```java
+public static List<Integer> addValues(IntStream source){
+    return source.filter(s -> s % 2 == 0)
+            .boxed()
+            .collect(Collectors.toList());
+}
+```
+
+- This method processes the stream and then collects all the results into a new list.
+- It produces the same result on both serial and parallel streams.
+
+```
+[2, 4, 6, 8, 10]
+```
+
+- This implementation removes the stateful operation and relies on the collector to assemble the elements.
+- We could also use a concurrent collector to paralleize the building of the list.
+- The goal is to write our code to allow for parallel processing and let the JVM handle the rest.
+
+- Recommented avoid stateful operations when using parallel streams in order to remove possible side effects.
+- They should be avoided in serial streams since doing so limits the code's ability to someday take advantage of 
+  parallelization.
 
 
 
