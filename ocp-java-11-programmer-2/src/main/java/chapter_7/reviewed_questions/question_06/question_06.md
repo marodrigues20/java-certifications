@@ -12,11 +12,11 @@ public static void main(String[] args) throws Exception {
 }
 ```
 
-A. The peek() method will print the entries in the order: 1 2 5 8 9
-B. The peek() method will print the entries in the order: 2 5 1 9 8
-C. The peek() method will print the entries in an order that cannot be determined ahead of time.
-D. The forEachOrdered() method will print the entries in the order: 1 2 5 8 9.
-E: The forEachOrdered() method will print the entries in an order that cannot be determined ahead of time.
-G: The code does not compile.
+A. The peek() method will print the entries in the order: 1 2 5 8 9   <br>
+B. The peek() method will print the entries in the order: 2 5 1 9 8   <br>
+C. The peek() method will print the entries in an order that cannot be determined ahead of time. <br>
+D. The forEachOrdered() method will print the entries in the order: 1 2 5 8 9.  <br>
+E: The forEachOrdered() method will print the entries in an order that cannot be determined ahead of time. <br>
+G: The code does not compile. <br>
 
 ## Correct Answeres: C; E

@@ -3,11 +3,11 @@
 ## or unexpected data.
 
 
-A. Livelock, Deadlock
-B. Deadlock, Starvation
-C. Race conditions, Deadlock
-D. Livelock, Race conditions
-E. Starvation, Race conditions
-F. Deadlock, Livelock
+A. Livelock, Deadlock  <br>
+B. Deadlock, Starvation  <br>
+C. Race conditions, Deadlock  <br>
+D. Livelock, Race conditions  <br>
+E. Starvation, Race conditions  <br>
+F. Deadlock, Livelock  <br>
 
 ## Correct Answers: D

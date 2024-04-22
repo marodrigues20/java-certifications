@@ -12,13 +12,13 @@ public static void main(String[] args) {
 }
 ```
 
-A. It outputs 100 100.
-B. It outputs 100 99
-C. The output cannot be determined ahead of time.
-D. The code does not compile.
-E. It compiles but throws an exception at runtime.
-F. It compiles but enters an infinite loop at runtime.
-G. None of the above
+A. It outputs 100 100. <br>
+B. It outputs 100 99 <br>
+C. The output cannot be determined ahead of time. <br>
+D. The code does not compile. <br>
+E. It compiles but throws an exception at runtime. <br>
+F. It compiles but enters an infinite loop at runtime. <br>
+G. None of the above. <br>
 
 
 ## Correct Answer: E
