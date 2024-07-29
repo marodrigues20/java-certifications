@@ -25,7 +25,7 @@ A. It compiles without issue.
 B. The code will not compile because of line k2.
 C. The code will not compile because of line k3.
 D. The locks acquired on k1 and k4 are on the same object.
-E. The class correctly protects protects the tickets data from race conditions
+E. The class correctly protects the tickets data from race conditions
 F. At most one instance of TicketManager will be created in an application that uses this class.
 
-Correct Answer:
+Correct Answer: B
