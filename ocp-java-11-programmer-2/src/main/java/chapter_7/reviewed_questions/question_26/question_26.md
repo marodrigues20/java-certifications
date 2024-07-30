@@ -20,7 +20,7 @@ public class CountZooAnimals {
     }
     
     public static void main(String[] args) throws Exception {
-        ExecutorService s = null'
+        ExecutorService s = null;
         final var r = new ArrayList<Future<?>>();
         try {
             s = Executors.newSingleThreadExecutor();
@@ -44,4 +44,4 @@ E. It hangs indefinitely at runtime.
 F. The code will not compile because of line o1.
 G. The code will not compile because of line o2.
 
-Correct Answer:
+Correct Answer: G
