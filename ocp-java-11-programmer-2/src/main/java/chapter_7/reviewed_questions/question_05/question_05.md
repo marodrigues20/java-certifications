@@ -21,4 +21,11 @@ F. It compiles but enters an infinite loop at runtime. <br>
 G. None of the above. <br>
 
 
-## Correct Answer: E
+## Correct Answer: C
+
+- C. The code compiles and runs without throwing an exception or entering an infinite loop, so options D, E and F are incorrect.
+- The key here is that the increment operator ++ is not atomic.
+- While the part of the output will always be 100, the second part is nondeterministic.
+- It could output any value from 1 to 100, because the threads can overwrite each other's work, because the threads can
+- overwrite each other's work.
+- Therefore, option C is the correct answer, and options A and B are incorrect.
