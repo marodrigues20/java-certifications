@@ -31,3 +31,10 @@ F. None of the above, as the code does not compile.
 
 
 ## Correct Answer: B
+
+- The code snippet submits three tasks to an *ExecutorService*, shuts it down, and then waits for the results.
+- The *awaitTermination()* method waits a specified amount of time for all tasks to complete, and the service to finish
+  shutting down.
+- Since each five-seconds tasks is still executing, the *awaitTermination()* method will return with a value of *false* 
+  after two seconds but now throw an exception.
+- For this reason, option B is correct.

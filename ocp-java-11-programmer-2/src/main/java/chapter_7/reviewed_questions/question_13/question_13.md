@@ -12,11 +12,17 @@ private void test() {
 }
 ```
 
-A. It compiles and runs without issue, outputting the total length of all string in the stream.
-B. The code will not compile because of line q1.
-C. The code will not compile because of line q2.
-D. The code will not compile because of line q3.
-E. It compiles but throws an exception at runtime.
-F. None of the above
+A. It compiles and runs without issue, outputting the total length of all string in the stream. <br>
+B. The code will not compile because of line q1. <br>
+C. The code will not compile because of line q2. <br>
+D. The code will not compile because of line q3. <br>
+E. It compiles but throws an exception at runtime. <br>
+F. None of the above. <br>
 
-## Correct Answers: B
+## Correct Answers: C
+
+- The code does not compile, so options A and E are incorrect.
+- The problem here is that *c1* is an *int* and *c2* is a *String*, so the code fails to combine on line *q2*, since 
+  calling *lengh()* on an *int* is not allowed, and option C is correct.
+- The rest of the lines compile without issue.
+- Note that calling *parallel()* on an alrady parallel stream is allowed, and it may in fact return the same objective.

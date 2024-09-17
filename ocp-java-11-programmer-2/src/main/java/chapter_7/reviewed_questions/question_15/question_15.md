@@ -12,12 +12,17 @@
 ```
 
 
-A. It outputs 3 4.
-B. It outputs 4 3.
-C. The code will not compile because of line 6.
-D. The code will not compile because of line 7.
-E. The code will not compile because of line 8.
-F. It compiles but throws an exception at runtime.
+A. It outputs 3 4. <br>
+B. It outputs 4 3. <br>
+C. The code will not compile because of line 6. <br>
+D. The code will not compile because of line 7. <br>
+E. The code will not compile because of line 8. <br>
+F. It compiles but throws an exception at runtime. <br>
 
 
-Correct Answer: B
+Correct Answer: A
+
+- The code compiles and runs without issue, so options C, D, E, and F are incorrect.
+- The *collect()* operation groups the animals into those that do and do not start with the letter p and three animals
+  that do. The logical complement operator (!) before the *startWith()* method means that result are reversed, so the
+  output is 3 4 and option A is correct, making option B incorrect.

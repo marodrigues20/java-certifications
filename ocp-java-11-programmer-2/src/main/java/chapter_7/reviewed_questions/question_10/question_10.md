@@ -19,13 +19,23 @@ private void test() {
 }
 ```
 
-A. It outputs 3 6 4.
-B. It outputs 6 6 6.
-C. It outputs 6 3 4.
-D. The code does not compile.
-E. It compiles but throws an exception at runtime on line x1.
-F. It compiles but throws an exception on line x2.
-G. It compiles but enters an infinite loop at runtime.
+A. It outputs 3 6 4. <br>
+B. It outputs 6 6 6. <br>
+C. It outputs 6 3 4. <br>
+D. The code does not compile. <br>
+E. It compiles but throws an exception at runtime on line x1. <br>
+F. It compiles but throws an exception on line x2. <br>
+G. It compiles but enters an infinite loop at runtime. <br>
 
 
-## Correct Answers: D
+## Correct Answers: A
+
+- The code compiles without issue, so option D is incorrect.
+- The *CopyOnWriteArrayList* class is designed to preserve the original list on iteration,
+  so the first loop will be executed exactly three times and, in the process, will increase the size of *tigers*
+  to six elements.
+- The *ConcurrentSkipListSet* class allows modifications, and since it enforces uniqueness of its elements,
+  the value 5 is added only once leading to a total of four elements in *bears*.
+- Finally, despite using the elements of *lions* to populate the collections, *tigers* and *bears* are not backed by the
+  original list, so the size of *lions* is 3 throughtout this program. 
+- For this reasons, the program prints 3, 6, 4, and option A is correct.

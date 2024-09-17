@@ -8,3 +8,7 @@ E. The executor creates a new temporary thread to complete the task.
 
 
 ## Correct Answer: C
+
+- If a task is submitted to a thread executor, and the thread executor does not have any available threads, the call
+  to the task will return immediately with the task being queued internally by the thread executor. For this reason, 
+  option C would have been correct.

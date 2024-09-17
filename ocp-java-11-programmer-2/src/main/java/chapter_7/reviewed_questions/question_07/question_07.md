@@ -11,3 +11,10 @@ E. Starvation, Race conditions  <br>
 F. Deadlock, Livelock  <br>
 
 ## Correct Answers: D
+
+- Livelock occurs when two or more threads are conceptually blocked forever, although they are each still active and 
+  trying to complete their task.
+- A race condition is an undesirable result that occurs when two tasks are completed at the same time, which should have
+  been completed sequentially.
+
+

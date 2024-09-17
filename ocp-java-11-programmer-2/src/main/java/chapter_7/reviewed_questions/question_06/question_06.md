@@ -20,3 +20,9 @@ E: The forEachOrdered() method will print the entries in an order that cannot be
 G: The code does not compile. <br>
 
 ## Correct Answeres: C; E
+
+- C, E. The code compiles, so option G is incorrect.
+- The peek() method on a parallel stream will process the elements concurrently, so the order cannot be determined ahead
+  of a time, and option C is correct.
+- The *forEachOrdered()* method will process the elements in the order they are stored in the stream, making option E correct.
+- It does not sort the elements, so option D is incorrect.
