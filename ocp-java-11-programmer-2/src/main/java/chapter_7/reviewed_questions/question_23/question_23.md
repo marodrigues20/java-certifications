@@ -17,11 +17,19 @@ public class StockRoomTracker {
 }
 ```
 
-A. It outputs Stock Room Full!
-B. The code will not compile because of line j1.
-C. The code will not compile because of line j2.
-D. The code will not compile because of line j3.
-E. It compiles but throws an exception at runtime.
-F. It compiles but waits forever at runtime.
+A. It outputs Stock Room Full!                      <br>
+B. The code will not compile because of line j1.    <br>
+C. The code will not compile because of line j2.    <br>
+D. The code will not compile because of line j3.    <br>
+E. It compiles but throws an exception at runtime.  <br>
+F. It compiles but waits forever at runtime.        <br>
 
-Correct Answer: A
+Correct Answer: F
+
+- The code compiles without issue, so options B, C and D are incorrect.
+- The limit on the cyclic barrier is 10, but the stream can generate only up to 9 threads that reach the barrier;
+- Therefore, the limit can never be reached, and option F is the correct answer, making option A and E incorrect.
+- Even if the *limit(9)* statement was changed to *limit(10)*, the program could still hang since the JVM might not 
+  allocate 10 threads to the parallel stream.
+  
+
