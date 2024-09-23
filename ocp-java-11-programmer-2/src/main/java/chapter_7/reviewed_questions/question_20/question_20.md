@@ -32,3 +32,8 @@ F. The code will not compile because of line n1. <br>
 G. The code will not compile because of line n2. <br>
 
 Correct Answer: F
+
+- The key to solving this question is to remember that the *execute()* method returns *void*, not a *Future* object.
+- Therefore, line *n1* does not compile, and option F is the correct answer.
+- If the *submit()* method had been used instead of *execute()*, then option C would have been the correct answer,
+  as the output of the *submit(Runnable)* task is a *Future<?>* object that can only return *null* on its *get()* method.
