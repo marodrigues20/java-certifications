@@ -1,45 +1,52 @@
 # Chapter 8
 
-##Objectives
+## Objectives
 - Read data from and write console and data using I/O Streams
 - Use I/O Streams to read and write files
 - Read and write objects using serialization
 
 
-How can they save data so that information is not lost every time the program is terminated. They use files, of course!
-You can design code writes the current state of an application to a file every time the application is closed and then
-reloads the data when the application is executed the next time. This chapter is using the java.io API to interact with
-fields and streams.
+- How can they save data so that information is not lost every time the program is terminated. They use files, of course!
+- You can design code writes the current state of an application to a file every time the application is closed and then<br>
+  reloads the data when the application is executed the next time. This chapter is using the java.io API to interact with
+  fields and streams.
 
 Note: I/O streams are completely unrelated to the streams you saw in Chapter 4, "Functional Programming".
 
 ## Conceptualizing the File System
 
-When working with directories in Java, we often treat them like a files. In fact, we use many of the same classes to 
-operate on files and directories. For example, a file and directory both can be renamed with the same Java method.
+- When working with directories in Java, we often treat them like a files. 
+- In fact, we use many of the same classes to operate on files and directories. 
+- For example, a file and directory both can be renamed with the same Java method.
 
-To interact with the files, we need to connect to the file system. The file system is in charge of reading and writing 
-data withing a computer. Different operating system use different file systems to manage their data.
+- To interact with the files, we need to connect to the ***File System***. 
+- The file system is in charge of reading and writing data withing a computer. 
+- Different ***Operating System*** use different ***File Systems*** to manage their data.
 
-Next, the root directory is the topmost directory in the file system, from which all files and directories inherit.
+- Next, the ***root directory*** is the topmost directory in the ***File System***, from which all files and 
+  directories inherit.
 
+```
 c:\ -> Windows
 /   -> Linux
+```
+
 
 ## Storing Data as Bytes
 
-Data is stored in a file system (and memory) as a 0 or 1, called a bit. Since it's really hard for humans to read/write
-data that is just 0s they are grouped into a set of 8 bits, called a byte. Values are often read or written streams
-using byte values and arrays.
+- Data is stored in a ***File System*** (and memory) as a *0* or *1*, called a bit. 
+- Since it's really hard for humans to read/write data that is just *0s* they are grouped into a set of *8 bits*, 
+  called a *byte*. 
+- Values are often read or written streams using byte values and arrays.
 
 ## The ASCII Characters
 
-Using a little arithmetic (2 power 8), we see a byte can be set in one 256 possible permutations. These 256 values form
-the alphabet for our computer system to be able to type characters like a, #, and 7.
+- Using a little arithmetic *(2 power 8)*, we see a byte can be set in one *256* possible permutations. 
+- These *256* values form the alphabet for our *computer system* to be able to type characters like ***a***, ***#***, and ***7***.
 
-Historically, the 256 characters are referred to ASCII characters, based on the encoding standard that defined them.
-Given all of the languages and emojis available today, 256 characters is pretty limiting. Many newer standards have been
-developed that rely on additional bytes to display characters.
+- Historically, the *256* characters are referred to ***ASCII characters***, based on the *encoding standard* that defined them.
+- Given all of the *languages* and *emojis* available today, *256 characters* is pretty limiting. 
+- Many newer standards have been developed that rely on additional bytes to display characters.
 
 ## Introducing the File Class
 
