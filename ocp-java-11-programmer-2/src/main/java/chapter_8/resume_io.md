@@ -189,92 +189,128 @@ focus on only a small portion of the overall stream at any given time.
 
 ## Low-level vs. High-Level Stream
 
-A low-level stream connects directly with the source of the data, such as a file, an array, or a String. Low-level
-stream process the raw data or resource and are accessed in a direct and unfiltered manner. For example, a 
-FileInputStream is a class that reads file data at a time.
-Alternatively, a high-level stream is built on top of another stream using wrapping. Wrapping is the process by which
-an instance is passed to the constructor of another class, and operations on the resulting instance are filtered and 
-applied to the original instance.
+- A low-level stream connects directly with the source of the data, such as:
+  - a file
+  - an array
+  - a String. 
+- Low-level stream process the raw data or resource and are accessed in a direct and unfiltered manner. 
+- For example, a FileInputStream is a class that reads file data at a time.
+- Alternatively, a high-level stream is built on top of another stream using wrapping. 
+- Wrapping is the process by which an instance is passed to the constructor of another class, and operations on the 
+  resulting instance are filtered and applied to the original instance.
+
+```
+  try ( var br = new BufferedReader(new FileReader("zoo-data.txt"))) {
+      System.out.println(br.readLine());
+  }
+```
+
+```
+  try (var ois = new ObjectInputStream( new BufferedInputStream( new FileInputStream("zoo-data.txt")))){
+    System.out.print(ois.readObject());
+  }
+```
 
 ## Use Buffered Stream When Working with Files
 
-Buffered classes read or write data in groups, rather than a single byte or character at a time. The performance gain
-from using a Buffered class to access a low-level file stream cannot be overstated. Unless you are doing something very
-specialized in your application, you should always wrap a file stream with a Buffered class in practice.
+- Buffered classes read or write data in groups, rather than a single byte or character at a time. 
+- The performance gain from using a Buffered class to access a low-level file stream cannot be overstated. 
+- Unless you are doing something very specialized in your application, you should always wrap a file stream with a 
+  Buffered class in practice.
 
-One of the reasons that Buffered stream tend to perform so well in practice is that many file system are optimized for
-sequential disk access. For example, accessing 1,600 sequential bytes is a lot faster than accessing 1,600 bytes spread
-across the hard drive.
+- One of the reasons that Buffered stream tend to perform so well in practice is that many file system are optimized for
+  sequential disk access. 
+- For example, accessing 1,600 sequential bytes is a lot faster than accessing 1,600 bytes spread
+  across the hard drive.
 
-The java.io library defines four abstract classes that are the parents of all stream classes defined within the API:
-InputStream, OutputStream, Reader ,and Writer.
+- The java.io library defines four abstract classes that are the parents of all stream classes defined within the API:
+  - InputStream
+  - OutputStream
+  - Reader
+  - Writer
 
 ## Note: 
-A low-level stream connects directly with the source of the data.
+- A low-level stream connects directly with the source of the data.
 
 ## The java.io abstract stream base classes
 
- Class Name   | Description                                
- InputStream  | Abstract class for all input byte stream   
- OutputStream | Abstract class for all output  byte stream 
- Reader       | Abstract class for all input character
- Writer       | Abstract class for all output character stream
+ | Class Name   | Description                                    |
+ |--------------|------------------------------------------------|
+ | InputStream  | Abstract class for all input byte stream       |
+ | OutputStream | Abstract class for all output  byte stream     |
+ | Reader       | Abstract class for all input character         |
+ | Writer       | Abstract class for all output character stream |
 
 
 ## The java.io concrete stream classes
 
-Class Name           | Low/High Level | Description
-FileInputStream      | Low            | Reads file data as byte
-FileOutputStream     | Low            | Writes file data as bytes
-FileReader           | Low            | Reads file data as character
-FileWriter           | Low            | Writes file data as character
-BufferedInputStream  | High           | Reads byte data from an existing InputStream in a buffered manner, which improves efficiency and performance
-BufferedOutputStream | High           | Writes byte data to an existing OutputStream in a buffered manner, which improves efficiency and performance
-BufferedReader       | High           | Reads character data from an existing Reader in a buffered manner, which improves efficiency and performance
-BufferedWriter       | High           | Writes character data to an existing Writer in a buffered manner, which improves efficiency and performance
-ObjectInputStream    | High           | Deserializes primitive Java data types and graphs of Java
-ObjectOutputStream   | High           | Serializes primitive Java data types and graphs of Java
-PrintStream          | High           | Writes formatted representations of Java objects to a binary stream.
-PrintWriter          | High           | Writes formatted representations of Java objects to a character stream.
+ |      Class Name      |  Low/High Level  |                                                 Description                                                  |
+ |:--------------------:|:----------------:|:------------------------------------------------------------------------------------------------------------:|
+ |   FileInputStream    |       Low        |                                           Reads file data as byte                                            |
+ |   FileOutputStream   |       Low        |                                           Writes file data as byte                                           |
+ |      FileReader      |       Low        |                                         Reads file data as character                                         |
+ |      FileWriter      |       Low        |                                        Writes file data as character                                         |
+ | BufferedInputStream  |       High       | Reads byte data from an existing InputStream in a buffered manner, which improves efficiency and performance |
+ | BufferedOutputStream |       High       | Writes byte data to an existing OutputStream in a buffered manner, which improves efficiency and performance |
+ |    BufferedReader    |       High       | Reads character data from an existing Reader in a buffered manner, which improves efficiency and performance |
+ |    BufferedWriter    |       High       | Writes character data to an existing Writer in a buffered manner, which improves efficiency and performance  |
+ |  ObjectInputStream   |       High       |                          Deserializes primitive Java data types and graphs of Java                           |
+ |  ObjectOutputStream  |       High       |                           Serializes primitive Java data types and graphs of Java                            |
+ |     PrintStream      |       High       |                     Writes formatted representations of Java objects to a binary stream.                     |
+ |     PrintWriter      |       High       |                   Writes formatted representations of Java objects to a character stream.                    |
 
 
 ## Common I/O Stream Operations
 
-While there are a lot stream classes, many share a lot of the same operations.
+- While there are a lot stream classes, many share a lot of the same operations.
 
 ## Reading and Writing Data
 
-Most important methods are read() and write(). Both InputStream  and Reader declare the following method to read byte
-data from a stream:
+- Most important methods are read() and write(). 
+- Both InputStream and Reader declare the following method to read byte data from a stream:
 
 // InputStream and Reader
-public int read() throws IOException
+```java
+  public int read() throws IOException
+```
+
 
 // OutputStream and Writer
+```java
 public int write() throws IOException
+```
 
-We said we are reading and writing bytes, so why do the methods use int instead of byte?
-Remember, the byte data type has a range of 256 characters. They needed an extra value to indicate the end of a stream.
-The authors of Java decided to use a larger data type, int, so that special values like -1 would indicate the end of a
-stream. The output stream classes use int  as well, to be consistent with the input stream classes.
 
-The byte stream classes also include overloaded methods for reading and writing multiples bytes at a time.
+- We said we are reading and writing bytes, so why do the methods use int instead of byte?
+- Remember, the byte datatype has a range of 256 characters. 
+- They needed an extra value to indicate the end of a stream.
+- The authors of Java decided to use a larger datatype, int, so that special values like -1 would indicate the end of a
+  stream. 
+- The output stream classes use int as well, to be consistent with the input stream classes.
+- The byte stream classes also include overloaded methods for reading and writing multiples bytes at a time.
 
 // InputStream
+```java
 public int read(byte[] b) throws IOException
 public int read(byte[] b, int offset, int length) throws IOException
+```
+
 
 // OutputStream
+```java
 public void write(byte[] b) throws IOException
 public void write(byte[] b, int offset, int length) throws IOException
+```
 
-The offset and length are applied to the array itself. For example, an offset of 5 and length of 3 indicates that 
-the stream should read up to 3 bytes of data and put them into the array starting with position 5.
+
+- The offset and length are applied to the array itself. 
+- For example, an offset of 5 and length of 3 indicates that the stream should read up to 3 bytes of data and put them 
+  into the array starting with position 5.
 
 
 ## Close the Stream
 
-Since streams are considered resources, it is imperative that all I/O streams be closed after they are used lest they
+- Since streams are considered resources, it is imperative that all I/O streams be closed after they are used lest they
 lead to resources leaks. Since all I/O streams implement Closeable, the best way to do this is with a try-with-resources
 statement, which  you saw in Chapter 5, "Exception, Assertions, and Localization". We will close stream resources using
 the try-with-resources syntax since this is the preferred way of closing resources in Java.
