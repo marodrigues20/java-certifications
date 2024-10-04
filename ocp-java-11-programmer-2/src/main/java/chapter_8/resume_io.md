@@ -1,6 +1,7 @@
 # Chapter 8
 
 ## Objectives
+
 - Read data from and write console and data using I/O Streams
 - Use I/O Streams to read and write files
 - Read and write objects using serialization
@@ -11,7 +12,7 @@
   reloads the data when the application is executed the next time. This chapter is using the java.io API to interact with
   fields and streams.
 
-Note: I/O streams are completely unrelated to the streams you saw in Chapter 4, "Functional Programming".
+- Note: I/O streams are completely unrelated to the streams you saw in Chapter 4, "Functional Programming".
 
 ## Conceptualizing the File System
 
@@ -50,33 +51,54 @@ c:\ -> Windows
 
 ## Introducing the File Class
 
-The File class is used to read information about existing files and directors, list of contents of a directory, and 
-create/delete files and directories.
-An instance of a File class represents a path to a particular file or directory on the file system. The File class 
-cannot read or write data within a file, although it can be passed as a reference to many stream classes to read and 
-write data.
+- The File class is used to read information about existing files and directors, list of contents of a directory, and 
+  create/delete files and directories.
+- An instance of a File class represents a path to a particular file or directory on the file system. The File class 
+  cannot read or write data within a file, although it can be passed as a reference to many stream classes to read and 
+  write data.
 
 ## Creating a File Object
 
-A File object often is initialized with a String containing either an absolute or relative path to the file or directory
-within the file system. The absolute path of a file or directory is the full path.
-Alternatively, the relative path of a file or directory is path from the current working directory to the file or 
-directory.
-For convenience, Java offers two options to retrieve the local separator character: a system property and a static 
-variable defined in the File class. Both of the following examples will output the separator character for the current
-environment:
+- A File object often is initialized with a String containing either an absolute or relative path to the file or directory
+  within the file system. The absolute path of a file or directory is the full path.
+- Alternatively, the relative path of a file or directory is path from the current working directory to the file or 
+  directory.
+- For convenience, Java offers two options to retrieve the local separator character: a system property and a static 
+  variable defined in the File class. Both of the following examples will output the separator character for the current
+  environment:
+
+```java
+package chapter_8.file;
+
+import java.io.File;
+
+/**
+ * The following code creates a File object and determines whether the path it references exists within the file system:
+ */
+public class FileSeparator {
+
+    public static void main(String[] args) {
+        System.out.println(System.getProperty("file.separator"));
+        System.out.println(File.separator);
+
+        System.out.println(System.getProperties());
+    }
+}
+```
+
 
 ## The File Object vs. the Actual File
 
-When working with an instance of the File class, keep in mind that it only represents a path to a file. Unless operated
-upon, it is not connected to an actual file within the file system.
+- When working with an instance of the File class, keep in mind that it only represents a path to a file. Unless operated
+  upon, it is not connected to an actual file within the file system.
 
-If you try to operate on a file that does not exist or you do not have access to, some File methods will throw an 
-exception.
+- If you try to operate on a file that does not exist or you do not have access to, some File methods will throw an 
+  exception.
 
 ## Working with a File Object
 
 Method Name:
+```
 boolean delete()
 boolean exists()
 String getAbsolutePath()
@@ -90,70 +112,79 @@ File[] listFiles()
 boolean mkdir()
 boolean mkdirs()
 boolean renameTo(File dest)
+```
+
 
 ## Understanding I/O Stream Fundamentals
 
-The contents of a file may be accessed or written via stream via a stream, which is a list of data elements presented
+- The contents of a file may be accessed or written via a stream, which is a list of data elements presented
 sequentially. Stream should be conceptually thought of as a long, nearly never-ending "stream of water" with data
 presented one "wave" at a time.
 The stream is so large that once we start reading it, we have no idea where the beginning or the end is. We just have
 a pointer to our current position in the stream and read data one block at a time.
 
-Each type of stream segments data into a "wave" or "block" in a particular way. For example, some stream classes read 
-or write data a individual bytes. Other stream classes read or write individual characters or strings of characters. 
-On top of that, some stream classes read or write larger groups of bytes or characters at a time, specifically those 
-with the word Buffered in their name.
+- Each type of stream segments data into a "wave" or "block" in a particular way. 
+- For example, some stream classes read or write data an individual bytes. 
+- Other stream classes read or write individual characters or strings of characters. 
+- On top of that, some stream classes read or write larger groups of bytes or characters at a time, specifically those 
+  with the word Buffered in their name.
 
 ## All Java I/O Stream Use Bytes
 
-Although the java.io API is full of stream that handle characters, strings, groups of bytes, and so on, nearly all built
-on top of reading or writing  an individual byte or an array of bytes at a time. The reason higher-level stream exist
-is for convenience, as well as performance.
+- Although the java.io API is full of stream that handle characters, strings, groups of bytes, and so on, nearly all built
+on top of reading or writing  an individual byte or an array of bytes at a time. 
+- The reason higher-level stream exist is for convenience, as well as performance.
 
-For example, writing a file one byte at a time is time-consuming and slow in practice because the round-trip between
-the Java application and the file system is relatively expensive. By utilizing a BufferedOutputStream, the Java 
-application can write a large chunk of bytes at a time, reducing the round-trips and drastically improving performance.
+- For example, writing a file one byte at a time is time-consuming and slow in practice because the round-trip between
+ the Java application and the file system is relatively expensive. 
+- By utilizing a BufferedOutputStream, the Java application can write a large chunk of bytes at a time, reducing the 
+  round-trips and drastically improving performance.
 
-Although streams are commonly used with file I/O, they are more generally used to handle the reading/writing of any
-sequential data source. For example, you might construct a Java application that submits data to a website an output
-stream and reads the result via an input stream.
+- Although streams are commonly used with file I/O, they are more generally used to ***handle the reading/writing of any
+sequential data source***. 
+- For example, you might construct a Java application that submits data to a website an output stream and reads the 
+  result via an input stream.
 
 ## I/O Streams Can Be Big
 
-The file can still be read and written by a program with very little memory, since the stream allows the application to
+- The file can still be read and written by a program with very little memory, since the stream allows the application to
 focus on only a small portion of the overall stream at any given time.
 
 ## Byte Stream vs. Character Stream
 
-The java.io API defines two sets of stream classes for reading and writing streams. 
+- The java.io API defines two sets of stream classes for reading and writing streams. 
 
-1- Bytes streams read/write binary data (0s and 1s) and have class names that end in InputStream or OutputStream.
-2- Character streams read/write text data and have class names that end in Reader or Writer.
+1- ***Bytes streams** read/write binary data (0s and 1s) and have class names that ***end in InputStream or OutputStream***.
+2- ***Character streams** read/write *text data* and have class names that ***end in Reader or Writer***.
 
-The API frequently includes similar classes for both byte and characters streams, such as FileInputStream and FileReader.
+- The API frequently includes similar classes for ***both Byte and Characters streams***, such as 
+  ***FileInputStream*** and ***FileReader***.
 
-It's important to remember that even though character streams do not contain the word Stream in their class name, 
-they are still I/O stream.
+- It's important to remember that even though ***character streams*** do not contain the word ***Stream*** in their 
+  class name, they are still ***I/O stream***.
 
-The byte stream are primarily used to work with binary data, such as an image or executable file, while characters
-streams are used to work with text files.
+- The ***Bytes streams*** are primarily used to work with ***binary data***, such as ***an image*** or ***executable file***, 
+  while ***Characters streams*** are used to work with ***text files***.
 
-The character encoding determines how characters are encoded and stored in bytes in a stream and later read back or 
-decoded as characters. Although this may sound simple, Java supports a wide variety of characters encoding, ranging
-from ones that may use one byte for Latin characters, UTF-8 and ASCII for example, to using two or more bytes per 
-characters, such as UTF-16.
+- The ***character encoding*** determines how characters are encoded and stored in bytes in a stream and later read back 
+  or ***decoded as characters***. 
+- Although this may sound simple, Java supports a wide variety of characters encoding, ranging from ones that may use 
+  one byte for Latin characters, UTF-8 and ASCII for example, to using two or more bytes per characters, such as UTF-16.
 
+- For ***character encoding***, just remember that using a ***Character stream*** is better for working with text data 
+  than a ***Byte stream***. The ***Character stream*** classes were created for convenience, and you should certainly 
+  take advantage of them when possible.
 
-For character encoding, just remember that using a character stream is better for working with text data than a byte
-stream. The character stream classes were created for convenience, and you should certainly take advantage of them
-when possible.
 
 ## Input vs. Output Stream
-Most InputStream classes have a corresponding OutputStream class, and vice versa. For example, the FileOutputStream 
-class writes data that can be read by a FileInputStream. It follows, then, that most Reader classes have a corresponding
-Writer class. For example, the FileWriter class writes data that can be read by a FileReader.
 
-There are exceptions to this rules. For the exam, you should know that PrintWriter has no accompanying PrintReader class. 
+- Most ***InputStream*** classes have a corresponding ***OutputStream*** class, and vice versa. 
+- For example, the ***FileOutputStream*** class writes data that can be read by a ***FileInputStream***. 
+- It follows, then, that most *Reader classes* have a corresponding *Writer class*. 
+- For example, the *FileWriter class* writes data that can be read by a *FileReader class*.
+
+- There are exceptions to this rules. 
+- For the exam, you should know that ***PrintWriter*** *HAS NO* accompanying ***PrintReader*** class. 
 
 
 ## Low-level vs. High-Level Stream
