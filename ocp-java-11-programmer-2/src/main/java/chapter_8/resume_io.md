@@ -311,22 +311,52 @@ public void write(byte[] b, int offset, int length) throws IOException
 ## Close the Stream
 
 - Since streams are considered resources, it is imperative that all I/O streams be closed after they are used lest they
-lead to resources leaks. Since all I/O streams implement Closeable, the best way to do this is with a try-with-resources
-statement, which  you saw in Chapter 5, "Exception, Assertions, and Localization". We will close stream resources using
-the try-with-resources syntax since this is the preferred way of closing resources in Java.
+  lead to resources leaks. 
+- Since all I/O streams implement Closeable, the best way to do this is with a try-with-resources statement, which you 
+  saw in Chapter 5, "Exception, Assertions, and Localization". 
+- We will close stream resources using the try-with-resources syntax since this is the preferred way of closing 
+  resources in Java.
 
-What about if you need to pass a stream to a method? That's fine, but the stream should be closed in the method that 
-created it. (More example: StreamToMethod.java)
+- What about if you need to pass a stream to a method? 
+- That's fine, but the stream should be closed in the method that created it. (More example: StreamToMethod.java)
+
+```java
+
+/**
+ * In this example, the stream is created and closed in the readFile() method, with the printData() processing the
+ * contents.
+ */
+public class StreamToMethod {
+
+    public static void main(String[] args) throws IOException {
+        StreamToMethod streamToMethod = new StreamToMethod();
+        streamToMethod.readFile("pom.xml");
+    }
+
+    public void readFile(String fileName) throws IOException {
+        try (var fis = new FileInputStream(fileName)) {
+            printData(fis);
+        }
+    }
+
+    private void printData(FileInputStream fis) throws IOException {
+        int b;
+        while((b = fis.read()) != -1){
+            System.out.println(b);
+        }
+    }
+}
+```
 
 
 ## Closing Wrapped Stream
 
-When working with a wrapped stream, you only need to use close() on the topmost object.
+- When working with a wrapped stream, you only need to use close() on the topmost object.
 
 
 ## Manipulating Input Stream
 
-All input stream classes include the following method to manipulate the order in which data is read from a stream:
+- All input stream classes include the following method to manipulate the order in which data is read from a stream:
 
 // InputStream and Read
 public boolean markSupported()
@@ -772,59 +802,3 @@ or other high-level stream to filter data, convert data, or improve performance.
 All streams include a close() method, which can be invoked automatically with a try-with-resources.
 
 Remember to call markSupported() before using mark() and reset(), as some streams do not support this operation.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
