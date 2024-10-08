@@ -359,111 +359,250 @@ public class StreamToMethod {
 - All input stream classes include the following method to manipulate the order in which data is read from a stream:
 
 // InputStream and Read
-public boolean markSupported()
-public void mark(int readLimit)
+```java
+public boolean markSupported();
+public void mark(int readLimit);
+```
 
-The mark() and reset() methods return a stream to an earlier position. Before calling either of these methods, you 
-should call the markSupported() methods, which returns true only if mark() is supported. The skip() method is pretty
-simple; it basically reads data from the stream and discard the contents.
+- The mark() and reset() methods return a stream to an earlier position. 
+- Before calling either of these methods, you should call the markSupported() methods, which returns *true* only if 
+  mark() is supported. 
+- The skip() method is pretty simple; it basically reads data from the stream and discard the contents.
 
-Note: Not all input stream classes support mark() and reset(). Make sure to call markSupported() on the stream before
-calling these methods or an exception will be thrown at runtime.
+Note: 
+- Not all input stream classes support mark() and reset(). 
+- Make sure to call markSupported() on the stream before calling these methods or an exception will be thrown at runtime.
 
-Example: MarkMethodExample.java
+```java
+public class MarkMethodExample {
+
+    public static void main(String[] args) throws IOException {
+
+        String str = "LION";
+        InputStream is = new ByteArrayInputStream(str.getBytes(StandardCharsets.US_ASCII));
+        readData(is);
+    }
+
+    private static void readData(InputStream is) throws IOException {
+        System.out.print((char) is.read()); //L
+        if(is.markSupported()){
+            is.mark(100); //Marks up to 100 bytes
+            System.out.print((char) is.read()); // I
+            System.out.print((char) is.read()); // O
+            is.reset(); //Resets stream to position before I
+        }
+        System.out.print((char) is.read()); // I
+        System.out.print((char) is.read()); // O
+        System.out.print((char) is.read()); // N
+    }
+
+
+}
+```
 
 ## skip()
-Example: SkipMethodExample.java
+
+```java
+public class SkipMethodExample {
+
+    public static void main(String[] args) throws IOException {
+        String str = "TIGERS";
+        InputStream is = new ByteArrayInputStream(str.getBytes(StandardCharsets.US_ASCII));
+        readData(is);
+    }
+
+    private static void readData(InputStream is) throws IOException {
+
+        System.out.print( (char) is.read()); // T
+        is.skip(2); // Skip I and G
+        is.read(); // Reads E but doesn't output it
+        System.out.print( (char) is.read()); // R
+        System.out.print( (char) is.read()); // S
+
+    }
+}
+```
 
 ## Flushing Output Stream
 
-When data is written to an output stream, the underlying operating system does not guarantee that the data will make it
-to the file system immediately. In many operating system, the data may be cached in memory, with write occurring only
-after a temporary cache is filled or after some amount of time has passed.
-If the data is cached in memory and the application terminates unexpectedly, the data would be lost, because it was 
-never written to the file system.
+- When data is written to an output stream, the underlying operating system does not guarantee that the data will make 
+  it to the file system immediately. 
+- In many operating system, the data may be cached in memory, with write occurring only after a temporary cache is 
+  filled or after some amount of time has passed.
+- If the data is cached in memory and the application terminates unexpectedly, the data would be lost, because it was 
+  never written to the file system.
 
 // OutputStream and Writer
-public void flush() throws IOException
+```java
+public void flush() throws IOException;
+```
 
-example: FlushMethodExample.java
+```java
+package chapter_8.stream;
 
-The flush() method helps reduce the amount of data lost if the application terminates unexpectedly.
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
-Note1 : Each time it is used, it may cause a noticeable delay in the application, especially for large files.
-Note 2: You don't need to call flush() method when you have finished writing data, since the close() method will automatically
-do this.
+public class FlushMethodExample {
+
+    public static void main(String[] args) {
+
+        try (var fos = new FileOutputStream("alex.txt")) {
+            for (int i = 0; i < 1000; i++) {
+                fos.write('a');
+                if (i % 100 == 0) {
+                    fos.flush();
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+}
+```
+
+- Note 1: ***The flush() method helps reduce the amount of data lost if the application terminates unexpectedly.***
+- Note 2: ***Each time it is used, it may cause a noticeable delay in the application, especially for large files.***
+- Note 3: ***You don't need to call flush() method when you have finished writing data, since the close() method will 
+        automatically do this.***
 
 ## Reviewing Common I/O Stream Methods
 
-| Stream Classes    | Method Name
-| All Stream        | void close() |
-| All input Stream  | int read()   | 
-InputStream       | int read(byte[] b)
-Reader            | int read(char[] c)
-InputStream       | int read(byte[] b, int offset, int length)
-Reader            | int read(char[] c, int offset, int length)
-All output stream | void write(int)
-OutputStream      | void write(byte[] b)
-Write             | void write(char[] c)
-OutputStream      | void write(byte[] b, int offset, int length)
-Write             | void write(char[] c, int offset, int length)
-All input stream  | boolean markSupport()
-All input stream  | mark(int readLimit)
-All input stream  | void reset()
-All input stream  | long skip(long n)
-All output stream | void flush()
+| Stream Classes    | Method Name                                  |
+|-------------------|----------------------------------------------|
+| All Stream        | void close()                                 |
+| All input Stream  | int read()                                   | 
+| InputStream       | int read(byte[] b)                           |
+| Reader            | int read(char[] c)                           |
+| InputStream       | int read(byte[] b, int offset, int length)   |
+| Reader            | int read(char[] c, int offset, int length)   |
+| All output stream | void write(int)                              |
+| OutputStream      | void write(byte[] b)                         |
+| Write             | void write(char[] c)                         |
+| OutputStream      | void write(byte[] b, int offset, int length) |
+| Write             | void write(char[] c, int offset, int length) |
+| All input stream  | boolean markSupport()                        |
+| All input stream  | mark(int readLimit)                          |
+| All input stream  | void reset()                                 |
+| All input stream  | long skip(long n)                            |
+| All output stream | void flush()                                 |
+
+
 
 ## Reading and Writing Binary Data
 
-The most basic file stream classes, FileInputStream and FileOutputStream. They are used reading bytes from a file or 
-write bytes to a file.
+- The most basic file stream classes, ***FileInputStream*** and ***FileOutputStream***. 
+- They are used reading bytes from a file or write bytes to a file.
 
-public FileInputStream(File file) throws FileNotFoundException
-public FileInputStream(String name) throws FileNotFoundException
-public FileOutputStream(File file) throws FileNotFoundException
-public FileOutputStream(String file) throws FileNotFoundException
+```java
+public FileInputStream(File file) throws FileNotFoundException;
+public FileInputStream(String name) throws FileNotFoundException;
+public FileOutputStream(File file) throws FileNotFoundException;
+public FileOutputStream(String file) throws FileNotFoundException;
+```
 
-Tip: If you need to append to an existing file, there's a constructor for that. The FileOutputStream class includes 
-overloaded constructor that take a boolean append flag. When set to true, the output stream will append to the end of a
-file if it already exists. This is useful for writing to the end of log files, for example.
+
+- If you need to append to an existing file, there's a constructor for that. 
+- The ***FileOutputStream*** class includes overloaded constructor that take a *boolean* append flag. 
+- When set to *true*, the output stream will append to the end of a file if it already exists. 
+- This is useful for writing to the end of log files, for example.
 
 
 ## Buffering Binary Data
-We can easily enhance our implementation using BufferedInputStream and BufferOutputStream. As high-level stream,
-these classes include constructor that take other streams as input.
 
-public BufferedInputStream(InputStream in)
-public BufferedOutputStream(OutputStream out)
+- We can easily enhance our implementation using ***BufferedInputStream*** and ***BufferOutputStream***. 
+- As high-level stream, these classes include constructor that take other streams as input.
 
-Why Use the Buffered Classes?
+```java
+public BufferedInputStream(InputStream in);
+public BufferedOutputStream(OutputStream out);
+```
 
-Put simply, the Buffered classes contain a number of performance improvements for managing data in memory.
-For example, the BufferedInputStream class is capable of retrieving and storing in memory more data than you might 
-request with a single read(byte[]) call.
 
-The following shows how to apply these streams:
+- Why Use the Buffered Classes?
 
-example: CopyFileWithBufferExample
+- Put simply, the Buffered classes contain a number of performance improvements for managing data in memory.
+- For example, the BufferedInputStream class is capable of retrieving and storing in memory more data than you might 
+- request with a single read(byte[]) call.
+
+- The following shows how to apply these streams:
+
+```java
+public class CopyFileWithBufferExample {
+
+    private void copyFileWithBuffer(File src, File dest) {
+        try (var in = new BufferedInputStream(
+                new FileInputStream(src));
+             var out = new BufferedOutputStream(
+                     new FileOutputStream(dest))) {
+            var buffer = new byte[1024];
+            int lengthRead;
+            while ((lengthRead = in.read(buffer)) > 0) {
+                out.write(buffer, 0, lengthRead);
+                out.flush();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```
 
 ## Choosing a Buffer Size
 
-Given the way computers organize data, it is often appropriate to choose a buffer size that is a power of 2, such as
-1,024. Performance tuning often involves determining what buffer size is most appropriate for your application.
+- Given the way computers organize data, it is often appropriate to choose a buffer size that is a power of 2, such as
+  *1,024*. 
+- Performance tuning often involves determining what buffer size is most appropriate for your application.
 What buffer size should you use? Any buffer size that is power of 2 from 1,024 to 65,536 is a good choice in practice.
 
 ## Reading and Writing Characters Data
 
-The FileReader and FileWriter classes, along with their associated buffer classes, are among the most convenient I/O 
-classes of their built-in support for text data. They include constructors that take the same input as binary file
-classes.
+- The ***FileReader*** and ***FileWriter*** classes, along with their associated buffer classes, are among the most 
+   convenient ***I/O classes*** of their ***built-in*** support for ***text data***. 
+- They include constructors that take the same input as binary file classes.
 
-public FileReader(File file) throws FileNotFoundException
-public FileReader(String name) throws FileNotFoundException
+```java
+public FileReader(File file) throws FileNotFoundException;
+public FileReader(String name) throws FileNotFoundException;
 
-public FileWriter(File file) throws FileNotFoundException
-public FileWriter(String file) throws FileNotFoundException
+public FileWriter(File file) throws FileNotFoundException;
+public FileWriter(String file) throws FileNotFoundException;
+```
 
-example: CopyTextFileExample.java
+```java
+package chapter_8.stream;
+
+import java.io.*;
+
+public class CopyTextFileExample {
+
+    public static void main(String[] args) {
+        CopyTextFileExample copyTextFileExample = new CopyTextFileExample();
+        copyTextFileExample.copyTextFile(new File(""),new File(""));
+    }
+
+    private void copyTextFile(File src, File dest){
+        try(var reader = new FileReader(src);
+            var writer = new FileWriter(dest)) {
+            int b;
+            while((b = reader.read()) != -1){
+                writer.write(b);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
 
 ## Buffering Characters Data
 
