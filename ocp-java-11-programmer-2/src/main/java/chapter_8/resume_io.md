@@ -606,110 +606,467 @@ public class CopyTextFileExample {
 
 ## Buffering Characters Data
 
-Like we saw with byte streams, Java includes high-level buffered characters streams that improve performance.
+- Like we saw with byte streams, Java includes high-level buffered characters streams that improve performance.
 
-public BufferedReader(Reader in)
-public BufferedWriter(Writer out)
+```java
+public BufferedReader(Reader in);
+public BufferedWriter(Writer out);
+```
 
-They add two new methods, readLine() and newLine(), that are particularly useful when working with String values.
+- They add two new methods:
+  - readLine() 
+  - newLine()
+- That are particularly useful when working with String values.
 
-example: CopyTextFileWithBufferExample.java
+```java
+package chapter_8.stream;
+
+import java.io.*;
+
+/**
+ * We are checking for the end of stream with a null value instead of -1. Finally, we are inserting a newLine() on every
+ * iteration of the loop. This is because readLine() strips out the line break character. Without the call to newLine(),
+ * the copied file would have all of its line breaks removed.
+ */
+public class CopyTextFileWithBufferExample {
+
+    public static void main(String[] args) {
+        CopyTextFileWithBufferExample copyTextFileWithBufferExample = new CopyTextFileWithBufferExample();
+        copyTextFileWithBufferExample.copyTextFileWithBuffer(new File(""), new File(""));
+    }
+
+    private void copyTextFileWithBuffer(File src, File dest) {
+        try (var reader = new BufferedReader(new FileReader(src));
+             var write = new BufferedWriter(new FileWriter(dest))) {
+            String s;
+            while ((s = reader.readLine()) != null) {
+                write.write(s);
+                write.newLine();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
 
 ## Serializing Data
 
-Serialization is the process of converting an in-memory object to a byte stream. Likewise, deserialization is the 
-process of converting from a byte stream into an object. Serialization often involves writing an object to a stored or
-transmittable format, while deserialization is the reciprocal process.
+- **Serialization** is the **process** of **converting** an **in-memory object** to a **byte stream**. 
+- Likewise, **deserialization** is the **process** of converting from a **byte stream** into an **object**. 
+- **Serialization** often involves writing an object to a **stored** or **transmittable format**, 
+  while **deserialization** is the **reciprocal process**.
 
 ## Applying the Serialization Interface
 
-To serialize an object using the I/O API, the object must implement the java.io.Serializable interface. The Serializable
-interface is a maker interface. By marker interface, it means the interface does not have any methods. Any class can
-implement the Serializable interface since there are no required methods to implement.
+- To serialize an object using the I/O API, the object must implement the **java.io.Serializable interface**. 
+- The Serializable interface is a maker interface. 
+- By **marker interface**, it means the **interface does not have any methods**. 
+- Any class can implement the Serializable interface since there are no required methods to implement.
 
-Note: Generally speaking, you should only mark data-oriented classes serializable.
+- Note: Generally speaking, you should only mark **data-oriented classes** serializable.
 
-The purpose of using the Serializable interface is to inform any process attempting to serialize the object that you
-have taken the proper steps to make the object serializable.
+- The purpose of using the Serializable interface is to inform any process attempting to serialize the object that you
+  have taken the proper steps to make the object serializable.
 
-example: Gorilla.java
+```java
+package chapter_8.serializable.domain;
+
+import java.io.Serializable;
+
+/**
+ * In this example, the Gorilla class contains three instance members (name, age, friendly) that will be saved to a
+ * stream if the class is serialized.
+ *
+ * What about the favoriteFood field that is market transient? Any field that is marked transient will not be saved
+ * to a stream when the class is serialized.
+ */
+public class Gorilla implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    private String name;
+    private int age;
+    private Boolean friendly;
+    private transient String favoriteFood;
+
+    public Gorilla(String name, int age, Boolean friendly) {
+        this.name = name;
+        this.age = age;
+        this.friendly = friendly;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public Boolean getFriendly() {
+        return friendly;
+    }
+
+    public void setFriendly(Boolean friendly) {
+        this.friendly = friendly;
+    }
+
+    public String getFavoriteFood() {
+        return favoriteFood;
+    }
+
+    public void setFavoriteFood(String favoriteFood) {
+        this.favoriteFood = favoriteFood;
+    }
+
+    @Override
+    public String toString() {
+        return "Gorilla{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", friendly=" + friendly +
+                ", favoriteFood='" + favoriteFood + '\'' +
+                '}';
+    }
+}
+
+```
 
 ## Maintaining a serialVersionUID
 
-It's good practice declaring a static serialVersionUID variable in every class that implements Serializable. The version
-is stored with each object as part of serialization. Then, every time the class structure changes, this value is updated
-or incremented.
+- It's good practice declaring a *static serialVersionUID* variable in every class that implements *Serializable*. 
+- The *version* is stored with each object as part of serialization. 
+- Then, every time the class structure changes, this value is updated or incremented.
 
-The serialVersionUID helps inform the JVM that the stored data may not match the new class definition. If an older 
-version of class is encountered during deserialization, a java.io.InvalidClassException may be thrown. Alternatively,
-some APIs support converting data between versions.
+- The *serialVersionUID* helps inform the JVM that the stored data may not match the new class definition. 
+- If an older version of class is encountered during *deserialization*, a **java.io.InvalidClassException** may be thrown. 
+- Alternatively, some APIs support converting data between versions.
 
 
 ## Marketing Data transient
 
-Oftentimes, the transient modifier is used for sensitive data of the class, like a password.
-What happens to data marked transient on deserialization? It reverts to its default Java values, such as 0.0 for double,
-or null for an object. 
+- Oftentimes, the **transient** modifier is used for sensitive data of the class, like a password.
+- What happens to data marked **transient** on deserialization? 
+- It reverts to its default Java values, such as **0.0 for double**, or **null for an object**. 
 
-Note: Other than the serialVersionUID, only the instance members of a class are serialized.
+- Note: Other than the *serialVersionUID*, only the instance members of a class are *serialized*.
 
 ## Ensuring a Class Is Serializable
 
-Any process attempting to serialize an object will throw a NotSerializableException if the class does not implement the
-Serializable interface properly.
+- Any process attempting to **serialize** an object will throw a **NotSerializableException** if the class does not 
+  implement the **Serializable** interface properly.
 
-How to Make a Class Serializable
+## How to Make a Class Serializable
 
-- The class must be marked Serializable
-- Every instance member of the class is serializable, marked transient, or has a null value at the time of serialization.
+1. The class must be marked **Serializable**
+2. Every instance member of the class is *serializable*, marked *transient*, or has a *null* value at the time of serialization.
 
-Be careful with the second rule. For a class to be serializable, we must apply the second rule recursively.
+- Be careful with the second rule. 
+- For a **class to be serializable**, we must apply the second rule recursively.
 
 ## Storing Data with ObjectOutputStream and ObjectInputStream
 
-The ObjectInputStream class is used to deserialize an object from a stream, while the ObjectOutputStream is used to 
-serialize an Object to a stream. They are high-level stream that operate on existing streams.
+- The **ObjectInputStream** class is used to *deserialize* an object from a *stream*, while the **ObjectOutputStream** 
+  is used to *serialize* an Object to a *stream*. They are *high-level stream* that operate on existing streams.
 
-public ObjectInputStream(InputStream in) throws IOException
-public ObjectOutputStream(OutputStream out) throws IOException
+```java
+public ObjectInputStream(InputStream in) throws IOException;
+public ObjectOutputStream(OutputStream out) throws IOException;
+```
 
-Two methods you need to know for the exam are the ones related to working with objects.
+- Two **methods** you need to know for the **exam** are the ones related to working with **objects**.
 
+```java
 // ObjectInputStream
-public Object readObject() throws IOException, ClassNotFoundException
+public Object readObject() throws IOException, ClassNotFoundException;
 
 // ObjectOutputStream
-public void writeObject(Object obj) throws IOException
+public void writeObject(Object obj) throws IOException;
+```
 
-We now provide a sample method that serializes a List of Gorilla objects to a file.
+- We now provide a sample method that serializes a List of Gorilla objects to a file.
 
-example: SerializeGorillaSample.java
+```java
+package chapter_8.serializable;
+
+import chapter_8.serializable.domain.Gorilla;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * A sample method that serializes a List of Gorilla object to a file.
+ */
+public class SerializeGorillaSample {
+
+    /**
+     * The following code snippet shows how to call the serialization methods.
+     * @param args
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        var gorillas = new ArrayList<Gorilla>();
+        gorillas.add(new Gorilla("Alex", 5, false));
+        gorillas.add(new Gorilla("Ishmael", 8, true));
+        File dataFile = new File("gorilla.data");
+
+        SerializeGorillaSample sample = new SerializeGorillaSample();
+        sample.saveToFile(gorillas, dataFile);
+
+        var gorillasFromDisk = sample.readFromFile(dataFile);
+        System.out.println(gorillasFromDisk);
+    }
+
+    /**
+     * Serialize a List of Gorillas
+     *
+     * @param gorillas
+     * @param dataFile
+     * @throws IOException
+     */
+    private void saveToFile(List<Gorilla> gorillas, File dataFile) throws IOException {
+        try (var out = new ObjectOutputStream(
+                new BufferedOutputStream(
+                        new FileOutputStream(dataFile)))) {
+            for (Gorilla gorilla : gorillas) {
+                out.writeObject(gorilla);
+            }
+        }
+    }
+
+    /**
+     * When calling readObject, null and -1 do not have any special meaning, as someone might have serialized objects
+     * with those values. Unlike our earlier techniques for reading methods from an input stream, we need to use an
+     * infinite loop to process the data, which throws an EOFException when the end of the stream is reached.
+     *
+     * Tip: If your program happens to know the number of objects in the stream, then you can call readObject() a fixed
+     * number of times, rather than using an infinite loop.
+     *
+     * Notice that readObject() declares a checked ClassNotFoundException since the class might not be available on
+     * deserialization.
+     *
+     * Note: ObjectInputStream inherits an available() method from InputStream that you might think can be used to
+     * check for the end of stream rather than throwing an EOFException. Unfortunately, this only tells you the number
+     * of blocks that can be read without blocking another thread. In other words, it can return 0 even if there are
+     * more bytes to be read.
+     *
+     * @param dataFile
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private List<Gorilla> readFromFile(File dataFile) throws IOException, ClassNotFoundException {
+
+        var gorillas = new ArrayList<Gorilla>();
+
+        try (var in = new ObjectInputStream(
+                new BufferedInputStream(
+                        new FileInputStream(dataFile)))) {
+            while (true) {
+                var object = in.readObject();
+                if (object instanceof Gorilla)
+                    gorillas.add((Gorilla) object);
+            }
+        } catch (EOFException e) {
+            // File and reached
+        }
+        return gorillas;
+    }
+}
+
+```
 
 ## Understand the Deserialization Creating Process
 
-When you deserialize an object, the constructor of the serialized class, along with any instance initializers, is not
-called when the object is created. Java will call the no-arg constructor of the first nonserializable parent class it
-can find in the class hierarchy. In our Gorilla example, this would just be the no-arg constructor of Object.
+- When you deserialize an object, the constructor of the serialized class, along with any instance initializers, is not
+  called when the object is created. 
+- Java will call the **no-arg constructor** of the first **nonserializable parent class** it can find in the **class hierarchy**. 
+- In our **Gorilla** example, this would just be the **no-arg constructor of Object**.
 
-As we stated earlier, any static or transient fields are ignored. Values that are not provided will be given their 
-default Java value, such as null for String, or 0 for int values.
+- As we stated earlier, **any static** or **transient fields** are **ignored**. 
+- Values that are not provided will be given their **default Java value**, such as **null for String**, or **0** for **int values**.
 
-example: SerializeGorillaSample.java
+```java
+package chapter_8.serializable.domain;
 
-example 2: SerializeChimpanzeeSample.java
+import java.io.Serializable;
+
+public class Chimpanzee implements Serializable {
+
+    private static final long serialVersionUID = 2L;
+
+    private transient String name;
+    private transient int age = 10;
+    private static char type = 'C';
+
+    {
+        this.age = 14;
+    }
+
+    public Chimpanzee(){
+        this.name = "Unknown";
+        this.age = 12;
+        this.type = 'Q';
+    }
+
+    public Chimpanzee(String name, int age, char type){
+        this.name = name;
+        this.age = age;
+        this.type = type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public static char getType() {
+        return type;
+    }
+
+    public static void setType(char type) {
+        Chimpanzee.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "Chimpanzee{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", type=" + type +
+                '}';
+    }
+}
+
+```
+
+```java
+package chapter_8.serializable;
+
+import chapter_8.serializable.domain.Chimpanzee;
+import chapter_8.serializable.domain.Gorilla;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * A sample method that serializes a List of Chimpanzee object to a file.
+ *
+ * Explanation:  Well, for starters, none of the instance members would be serializable to a file. The name and age
+ * variables are both market transient, while the type variable are both market transient, while the type variable
+ * is static. We purposely accessed the type variable using this to see whether you were paying attention.
+ * Upon deserialization, none of the constructor in Chimpanzee is called. Even the no-arg constructor that sets the
+ * value [ name=Unknown, age=12, type=Q ] is ignored. The instance initializer that sets age to 14 is also not executed.
+ *
+ * In this case, the name variable is initialized to null since that's the default value for String in Java.
+ * Likewise, the age variable is initialized to 0. The program prints the following, assuming the toString() methods is
+ * implemented.
+ *
+ * [Chimpanzee{name='null', age=0, type=B},
+ *  Chimpanzee{name='null', age=0, type=B}]
+ *
+ *  What about the type variable? Since it's static, it will actually display whatever value was set last. If the data
+ *  is serialized and deserialized within the same execution, then it will display B, since that was the last
+ *  Chimpanzee we created. On the other hand, if the program performs the deserialization and print  on startup, then
+ *  it will be C, since that is the value the class is initialized with.
+ */
+public class SerializeChimpanzeeSample {
+
+    /**
+     * The following code snippet shows how to call the serialization methods.
+     * @param args
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        var chimpanzee = new ArrayList<Chimpanzee>();
+        chimpanzee.add(new Chimpanzee("Ham", 2, 'A'));
+        chimpanzee.add(new Chimpanzee("Enos", 4, 'B'));
+        File dataFile = new File("chimpanzee.data");
+
+        SerializeChimpanzeeSample sample = new SerializeChimpanzeeSample();
+        sample.saveToFile(chimpanzee, dataFile);
+
+        var chimpanzeesFromDisk = sample.readFromFile(dataFile);
+        System.out.println(chimpanzeesFromDisk);
+    }
+
+    /**
+     * Serialize a List of Chimpanzees
+     *
+     * @param chimpanzees
+     * @param dataFile
+     * @throws IOException
+     */
+    private void saveToFile(List<Chimpanzee> chimpanzees, File dataFile) throws IOException {
+        try (var out = new ObjectOutputStream(
+                new BufferedOutputStream(
+                        new FileOutputStream(dataFile)))) {
+            for (Chimpanzee chimpanzee : chimpanzees) {
+                out.writeObject(chimpanzee);
+            }
+        }
+    }
+
+
+    private List<Chimpanzee> readFromFile(File dataFile) throws IOException, ClassNotFoundException {
+
+        var chimpanzees = new ArrayList<Chimpanzee>();
+
+        try (var in = new ObjectInputStream(
+                new BufferedInputStream(
+                        new FileInputStream(dataFile)))) {
+            while (true) {
+                var object = in.readObject();
+                if (object instanceof Chimpanzee)
+                    chimpanzees.add((Chimpanzee) object);
+            }
+        } catch (EOFException e) {
+            // File and reached
+        }
+        return chimpanzees;
+    }
+}
+
+```
 
 ## Real World Scenario
 
-We focus on serialization using the I/O streams, such as ObjectInputStream and ObjectOutputStream. You should be aware
-there are many others APIs to serialize data to JSON or encrypted data files.
-While these APIs might not use I/O stream classes, many make use of built-in Serializable interface and transient 
-modifier. Some of these APIs also include annotation to customize the serialization and deserialization of objects,
-such as what to do when are missing or need to be translated.
+- We focus on serialization using the **I/O streams**, such as **ObjectInputStream** and **ObjectOutputStream**. 
+- You should be **aware** there are many others **APIs to serialize data** to **JSON** or **encrypted data files**.
+- While these APIs might not use **I/O stream classes**, many make use of **built-in Serializable interface** and 
+  **transient modifier**. 
+- Some of these APIs also include annotation to customize the serialization and deserialization of objects,
+  such as what to do when are missing or need to be translated.
 
 
 ## Printing Data
 
-PrintStream and PrintWriter are high-level output print streams classes that are useful for writing text data to a 
+- PrintStream and PrintWriter are high-level output print streams classes that are useful for writing text data to a 
 stream. PrintStream and PrintWriter include many of the same methods. Just remember that one operates on an OutputStream
 and the other a Writer.
 
