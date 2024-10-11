@@ -4,9 +4,9 @@ public class FormatSample {
 
     public static void main(String[] args) {
         //format();
-        //format2();
+        format2();
         //printException();
-        format3();
+        //format3();
     }
 
 
@@ -54,13 +54,5 @@ public class FormatSample {
         System.out.format("[%012f]", pi);  // [00003.141593]
         System.out.format("[%12.2f]", pi);  // [        3.14]
         System.out.format("[%.3f]", pi);  // [3.142]
-
-
-
-
-
-
-
-
     }
 }

@@ -22,9 +22,6 @@ public class PrintWriteSample {
             out.format("It has rained %5.2f inches this year %d", 10.2, 2021);
             out.println();
             out.printf("It may rain %s more inches this year", 1.2);
-
-
-
         }
     }
 }

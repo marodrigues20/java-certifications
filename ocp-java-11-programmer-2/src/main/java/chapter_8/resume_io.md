@@ -1066,96 +1066,220 @@ public class SerializeChimpanzeeSample {
 
 ## Printing Data
 
-- PrintStream and PrintWriter are high-level output print streams classes that are useful for writing text data to a 
-stream. PrintStream and PrintWriter include many of the same methods. Just remember that one operates on an OutputStream
-and the other a Writer.
+- **PrintStream** and **PrintWriter** are **high-level output print streams classes** that are useful for writing 
+  text data to a stream. **PrintStream** and **PrintWriter** include many of the same methods. Just remember that one 
+  operates on an **OutputStream** and the other a **Writer**.
 
-The PrintStream classes have the distinction of being the only I/O stream classes we cover that do not have corresponding
-input stream classes. And unlike other OutputStream classes, PrintStream does not have Output in its name.
+- The **PrintStream** classes have the *distinction* of being the **only I/O stream classes** we cover that **do not have**
+  corresponding **input stream classes**. 
+- And unlike other **OutputStream classes**, **PrintStream** does not have **Output** in its name.
 
-Following constructors:
+- Following constructors:
 
-public PrintStream(OutputStream out)
-public PrintWriter(Writer out)
+```java
+public PrintStream(OutputStream out);
+public PrintWriter(Writer out);
+```
 
-For convenience, these classes also include constructors that automatically wrap the print stream around a low-level
-file stream class, such as FileOutputStream and FileWriter.
 
-public PrintStream(File file) throws FileNotFoundException
-public PrintStream(String file) throws FileNotFoundException
+- For convenience, **these classes** also include **constructors that automatically wrap** the print stream around a 
+  low-level **file stream** class, such as **FileOutputStream** and **FileWriter**.
 
-public PrintWriter(File file) throws FileNotFoundException
-public PrintWriter(String file) throws FileNotFoundException
+```java
+public PrintStream(File file) throws FileNotFoundException;
+public PrintStream(String file) throws FileNotFoundException;
+```
 
-The PrintWriter class even has a constructor that takes an OutputStream as input. This is one of the few exceptions
-in which we can mix a byte and character stream.
+```java
+public PrintWriter(File file) throws FileNotFoundException;
+public PrintWriter(String file) throws FileNotFoundException;
+```
 
-public PrintWriter(OutputStream out)
+- The **PrintWriter** class even has a constructor that takes an **OutputStream** as input. 
+- This is one of the **few exceptions** in which we can **mix a byte and character stream**.
 
-Note: You've been regularly using a PrintStream throughout this book. Both System.out and System.err are PrintStream
-objects. Likewise, System.in, often useful for reading user input, is an InputStream.
+```java
+public PrintWriter(OutputStream out);
+```
 
-Besides, the inherited write() methods, the print stream classes include numerous methods for writing data including
-print(), println(), and format().
+- Note: You've been regularly using a **PrintStream** throughout this book. 
+- Both **System.out** and **System.err** are **PrintStream** objects. 
+- Likewise, **System.in**, often useful for reading **user input**, is an **InputStream**.
 
-When working with String data, you should use Writer, so our examples in this part of the chapter use PrintWriter.
+- Besides, the inherited **write()** methods, the **print stream classes** include numerous methods for writing data 
+  including **print(), println(), and format()**.
+
+- When working with **String data, you should use Writer**, so our examples in this part of the chapter use **PrintWriter**.
 
 ## print()
 
-The most basic of the print-based methods is print(). The print stream classes include numerous overloaded versions of
-print().
+- The most basic of the print-based methods is **print()**. 
+- The **print stream classes** include numerous overloaded versions of print().
 
 ## println()
 
-The next methods available in the PrintStream and PrintWriter classes are the println() methods, which are virtually
-identical to the print() methods, except that they also print a line break after the String value is written.
-The println() methods are especially helpful, as the line break character is dependent on the operating system. For 
-example, in some system a line feed symbol, \n, signifies a line break, whereas other system use a carriage return
-symbol followed by a line feed symbol, \r\n, to signify a line break.
+- The next methods available in the **PrintStream and PrintWriter** classes are the **println() methods**, which are 
+- virtually identical to the **print() methods**, except that they also print a **line break** after the String value is 
+  written.
+- The **println()** methods are especially helpful, as the **line break character** is dependent on the operating system. 
+- For example, in some system a line feed symbol, **\n**, signifies a **line break**, whereas **other system** use a 
+  **carriage return symbol followed by a line feed symbol, \r\n**, to signify a **line break**.
 
+```java
 System.getProperty("line.separator");
 System.lineSeparator();
+```
+
 
 ## format()
 
-Each, print stream class includes a format() method, which includes an overloaded version that takes a Locale.
+- Each, **print stream** class includes a **format() method**, which includes an overloaded version that takes a Locale.
 
+```java
 // PrintStream
-public PrintStream format(String format, Object args...)
-public PrintStream format(Locale loc, String format, Object ...)
+public PrintStream format(String format, Object args ...);
+public PrintStream format(Locale loc, String format, Object ...);
+```
 
+```java
 // PrintWriter
-public PrintWriter format(String format, Object args...)
-public PrintWriter format(Locale loc, String format, Object args...)
+public PrintWriter format(String format, Object args ...);
+public PrintWriter format(Locale loc, String format, Object args ...);
+```
 
 
-Note: Java includes printf() methods, which function identically to the format() methods. The only thing you need to
-know about these methods is that they are interchangeable with format().
+- Note: Java includes **printf() methods**, which function **identically** to the **format() methods**. 
+- The only thing **you need to know** about these methods is that **they are interchangeable with format()**.
 
-example: FormatSample.java
+```java
+package chapter_8.print;
+
+public class FormatSample {
+
+    public static void main(String[] args) {
+        //format();
+        //format2();
+        //printException();
+        format3();
+    }
 
 
-Symbol | Description
-  %s   | Applies to any type, commonly String values
-  %d   | Applies to integer values like int and long
-  %f   | Applies to floating-point values like float and double
-  %n   | Inserts a line break using the system-dependent line separator.
+    /**
+     * In the second format() operation, the parameters are inserted and formatted via symbols in the order that
+     * they are provided in the vararg.
+     */
+    static void format(){
+        String name = "Lindsey";
+        int orderId = 5;
+
+        // Both print: Hello Lindsey, order 5 is ready
+        System.out.format("Hello " + name + ", order " + orderId + " is ready. ");
+        System.out.format("Hello %s, order %d is ready.", name, orderId);
+    }
+
+    /**
+     * The following example uses all four symbols.
+     */
+    static void format2(){
+        String name = "James";
+        double score = 90.25;
+        int total = 100;
+
+        System.out.format("%s:%nScore: %f out of %d", name, score, total);
+    }
+
+    /**
+     * Mixing data type may cause exceptions at runtime. For example, the following throws an exception because a
+     * floating-point number is used when an integer value is expected.
+     */
+    static void printException() {
+        System.out.format("Food: %d tons", 2.0); // IllegalFormatConversionException
+    }
+
+    /**
+     * The format() method supports a lot of other symbols and flags. You don't need to know any of them for the
+     * exam beyond what we've discussed already.
+     */
+    static void format3(){
+
+        var pi = 3.14159265359;
+        System.out.format("[%f]", pi);  // [3.141593]
+        System.out.format("[%12.8f]", pi);  // [  3.14159265]
+        System.out.format("[%012f]", pi);  // [00003.141593]
+        System.out.format("[%12.2f]", pi);  // [        3.14]
+        System.out.format("[%.3f]", pi);  // [3.142]
+    }
+}
+
+```
+
+
+| Symbol | Description                                                     |
+|:------:|-----------------------------------------------------------------|
+|   %s   | Applies to any type, commonly String values                     |
+|   %d   | Applies to integer values like int and long                     |
+|   %f   | Applies to floating-point values like float and double          |
+|   %n   | Inserts a line break using the system-dependent line separator. |
 
 ## Using format() with Flags
 
-By default, %f display six digits past the decimal. If you want to display only one digit after the decimal, you could
-use %.1f instead %f. The format() method relies on rounding, rather than truncating when shortening numbers. For example,
-90.250000 will be displayed as 90.3 (not 90.2) when passed to format() with %.1f
+- By default, %f display six digits past the decimal. 
+- If you want to display only one digit after the decimal, you could use %.1f instead %f. 
+- The format() method relies on rounding, rather than truncating when shortening numbers. 
+- For example, 90.250000 will be displayed as 90.3 (not 90.2) when passed to format() with %.1f
 
-You can specify the total length of output by using a number before the decimal symbol. By default, the method will fill
-the empty space with black spaces. You can also fill the empty space with zeros, by placing a single zero before the 
-decimal symbol. The following examples use brackets, [], to show the start/end of the formatted value:
+- You can specify the total length of output by using a number before the decimal symbol. 
+- By default, the method will fill the empty space with black spaces. 
+- You can also fill the empty space with zeros, by placing a single zero before the decimal symbol. 
+- The following examples use brackets, [], to show the start/end of the formatted value:
 
-example: FormatSample.format3 java class
+```java
+/**
+     * The format() method supports a lot of other symbols and flags. You don't need to know any of them for the
+     * exam beyond what we've discussed already.
+     */
+    static void format3(){
+        var pi = 3.14159265359;
+        System.out.format("[%f]", pi);  // [3.141593]
+        System.out.format("[%12.8f]", pi);  // [  3.14159265]
+        System.out.format("[%012f]", pi);  // [00003.141593]
+        System.out.format("[%12.2f]", pi);  // [        3.14]
+        System.out.format("[%.3f]", pi);  // [3.142]
+    }
+```
 
 ## Sample PrintWriter Program
 
-Example: PrintWriteSample.java
+```java
+package chapter_8.print;
+
+import java.io.*;
+
+/**
+ * You should pay close attention to the line breaks in the sample. For example, we called println() after our format(),
+ * since format() does not automatically insert a line break after next text. One of the most common bugs with printing
+ * data in practice is failing to account for line breaks properly.
+ */
+public class PrintWriteSample {
+
+    public static void main(String[] args) throws IOException {
+        File source = new File("zoo.log");
+        try(var out = new PrintWriter(
+                new BufferedWriter(new FileWriter(source)))){
+
+            out.print("Today's weather is: ");
+            out.println("Sunny");
+            out.print("Today's temperature at the zoo is:");
+            out.print(1 / 3.0);
+            out.println('C');
+            out.format("It has rained %5.2f inches this year %d", 10.2, 2021);
+            out.println();
+            out.printf("It may rain %s more inches this year", 1.2);
+        }
+    }
+}
+
+```
 
 ## Review of Stream Classes
 
