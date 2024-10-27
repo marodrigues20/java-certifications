@@ -1283,142 +1283,342 @@ public class PrintWriteSample {
 
 ## Review of Stream Classes
 
-FilterInputStream and FilterOutputStream are high-level superclass that filter or transform data. They are rarely used
-directly.
+- FilterInputStream and FilterOutputStream are high-level superclass that filter or transform data. 
+- They are rarely used directly.
 
 ## InputStreamReader and OutputStreamWriter
 
-Most of the time, you can't wrap byte and character stream with each other, although as we mentioned, there are exceptions.
+- Most of the time, you can't wrap byte and character stream with each other, although as we mentioned, there are exceptions.
 
-example: ByteAndCharTogetherSample.java
+```java
+package chapter_8.stream;
+
+import java.io.*;
+
+/**
+ * The InputStreamReader class wraps an InputStream with a Reader, while the OutputStreamWriter class wraps an
+ * OutputStream with a Writer.
+ *
+ * These classes are incredibly convenient and are also unique in that they are the only I/O stream classes to have
+ * both InputStream / OutputStream and Reader / Writer in their name.
+ */
+public class ByteAndCharTogetherSample {
+
+    public static void main(String[] args) throws IOException {
+        try(Reader r = new InputStreamReader(System.in);
+            Writer w = new OutputStreamWriter(System.out)){
+
+        }
+    }
+}
+```
 
 ## Interacting with Users
 
-The java.io API includes numerous classes for interacting with the user.
+- The java.io API includes numerous classes for interacting with the user.
 
 ### Printing Data to the User
 
-The syntax for calling and using System.err is the same as System.out but is used to report errors to the user in a 
-separate stream from the regular output information.
+- The syntax for calling and using **System.err** is the same as **System.out** but is used to report errors to the user 
+  in a separate stream from the regular output information.
 
-Example: SystemPrintExample.java
+```java
+package chapter_8.stream;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+/**
+ * If you are running from a command prompt, they will likely print text in the same format. On the other hand,
+ * if you are working in an integrated development environment (IDE), they might print  the System.err  text in a different
+ * color. 
+ * Finally, if the code is being run on another server, the System.err stream might write to a different log file.
+ */
+public class SystemPrintExample {
+
+    public static void main(String[] args) throws IOException {
+        try(var in = new FileInputStream("zoo.txt")){
+            System.out.println("Found file!");
+        }catch (FileNotFoundException e){
+            System.err.println("File not Found!");
+        }
+    }
+}
+```
 
 ## Reading Input as a Stream
 
-The System.in returns an InputStream and is used to retrieve text input from the user. It is commonly wrapped with a
-BufferedReader via an InputStreamReader to use the readLine() method.
+- The **System.in** returns an **InputStream** and is used to retrieve text input from the user. 
+- It is commonly wrapped with a **BufferedReader** via an **InputStreamReader** to use the **readLine()** method.
 
-example: ReadInputAsStreamSample.java
+```java
+package chapter_8.stream;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+/**
+ * When executed, this application first fetches text from the user until the user presses the Enter key. 
+ * It then outputs the text the user entered to the screen.
+ */
+public class ReadInputAsStreamSample {
+
+    public static void main(String[] args) throws IOException {
+        var reader = new BufferedReader( new InputStreamReader(System.in));
+        String userInput = reader.readLine();
+        System.out.println("You entered: " + userInput);
+    }
+}
+```
 
 ## Closing System Streams
 
-You might have noticed that we never created or closed System.out, System.err, and System.in when we used them.
-Because these are static objects, the System stream are shared by the entire application. The JVM creates and opens
-them for us.
+- You might have noticed that we never created or closed **System.out**, **System.err**, and **System.in** when we used them.
+- Because these are static objects, the **System stream** are shared by the entire application. 
+- The *JVM* **creates and opens** them for us.
 
 
 What do you think the following code snippet prints?
 
+```
 try(var out = System.out){}
 System.out.println("Hello");
+```
 
-Nothing. It prints nothing. Remember, the method of PrintStream do not throw any checked exceptions and rely on the 
-checkError() to report errors. so they fail silently.
+- Nothing. It prints nothing. 
+- Remember, the method of **PrintStream** do not throw any **checked exceptions** and rely on the **checkError()**
+  to report errors. so they **fail silently**.
 
-What about this example?
+- What about this example?
 
+```
 try(var err = System.err){}
 System.err.println("Hello);
+```
 
-Nothing. Like System.out, System.err is a PrintStream. Even if it did throw an exception, though, we'd have a hard time
-seeing it since our stream for reporting errors is closed! Closing System.err is a particularly bad idea, since the 
-stack traces from all exceptions will be hidden.
+- Nothing. Like **System.out**, **System.err** is a **PrintStream**. 
+- Even if it did throw an exception, though, we'd have a hard time seeing it since our stream for reporting errors is closed! 
+- Closing System.err is a particularly bad idea, since the stack traces from all exceptions will be hidden.
 
-What about this example?
+- What about this example?
 
+```
 var reader = new BufferedReader( new InputStreamReader(System.in));
 try (reader){}
 String data = reader.readline(); //IOException
+```
 
-It prints an exception at runtime. Unlike the PrintStream class, most InputStream implementations will throw exception
-if you try to operate on a closed stream.
+- It prints an exception at runtime. 
+- Unlike the **PrintStream** class, most **InputStream** implementations will **throw exception** if you try to operate 
+- on a closed stream.
 
 
 ## Acquiring Input with Console
 
-The java.io.Console class is specifically designed to handle user interactions. After all, System.in and System.out 
-are just raw stream, whereas Console is a class with numerous methods centered around user input.
-The Console class is a singleton because it is accessible only from a factory method and only one instance of it is 
-created by the JVM.
+- The **java.io.Console** class is specifically designed to **handle user interactions**. 
+- After all, **System.in** and **System.out** are just raw stream, whereas **Console** is a class with numerous methods 
+  centered around user input.
+- The **Console** class is a singleton because it is accessible only from a factory method and only one instance of 
+  it is created by the JVM.
 
-example: ConsoleSample.java
+```java
+package chapter_8.stream;
+
+import java.io.Console;
+import java.util.Arrays;
+import java.util.Locale;
+
+/**
+ * The Console object may not be available, depending on where the code is being called. If it is not available, then
+ * System.console() return null. It is imperative that you check for a null value before attempting to use a Console
+ * object
+ */
+public class ConsoleSample {
+
+    public static void main(String[] args) {
+
+        console();
+        consoleFormat();
+        consoleWithLocale();
+        consolePasswordMethod();
+    }
+
+
+
+    private static void consoleFormat() {
+        Console console = System.console();
+        if(console == null){
+            throw new RuntimeException("Console not available");
+        }else {
+            console.writer().println("Welcome to Our Zoo!");
+            console.format("It has %d animals and employs %d people", 391, 25);
+            console.writer().println();
+            console.printf("The zoo spans %5.1f acres", 128.91);
+        }
+    }
+
+    private static void console() {
+        Console console = System.console();
+        if(console != null){
+            String userInput = console.readLine();
+            console.writer().println("You entered: " + userInput);
+        }else {
+            System.err.println("Console not available");
+        }
+    }
+
+    private static void consoleWithLocale() {
+        Console console = System.console();
+        console.writer().format(new Locale("fr", "CA"), "Hello World");
+    }
+
+    private static void consolePasswordMethod(){
+
+        Console console = System.console();
+        if(console == null){
+            throw new RuntimeException("Console not available");
+        }else {
+            String name = console.readLine("Please enter your name: ");
+            console.writer().format("Hi %s", name);
+            console.writer().println();
+
+            console.format("What is your address? ");
+            String address = console.readLine();
+
+            char[] password = console.readPassword("Enter a password " + "between %d and %d characters ", 5, 10);
+
+            char[] verify = console.readPassword("Enter your password again: ");
+
+            console.printf("Passwords " + ((Arrays.equals(password, verify)) ? "match" : "do not match"));
+        }
+
+    }
+}
+```
 
 ## reader() and writer()
 
-The Console class includes access to two streams for reading and writing data.
+- The Console class includes access to two streams for reading and writing data.
 
-public Reader reader()
-public PrintWriter writer()
+```java
+public Reader reader();
+public PrintWriter writer();
+```
 
-Accessing these classes is analogous to calling System.in and System.out directly, although they use characters streams
-rather than byte stream. In this manner, they are more appropriate for handling text data.
+- Accessing these classes is analogous to calling **System.in** and **System.out** directly, although they use 
+  characters streams rather than byte stream. 
+- In this manner, they are more appropriate for handling text data.
 
 ## format()
 
-For printing data with a Console, you can skip calling the writer().format() and output the data directly to stream in a
-single call.
+- For printing data with a Console, you can skip calling the **writer().format()** and output the data directly 
+  to stream in a single call.
 
-public Console format(String format, Object args...)
+```
+public Console format(String format, Object args...);
+```
 
-The format() method behaves the same as the format() method on the stream classes, formatting and printing a String
-while applying various arguments.
+- The **format() method** behaves the same as the **format() method** on the **stream classes**, formatting and 
+  printing a String while applying various arguments.
 
-example: ConsoleSample.java
+```java
+private static void consoleFormat() {
+        Console console = System.console();
+        if(console == null){
+            throw new RuntimeException("Console not available");
+        }else {
+            console.writer().println("Welcome to Our Zoo!");
+            console.format("It has %d animals and employs %d people", 391, 25);
+            console.writer().println();
+            console.printf("The zoo spans %5.1f acres", 128.91);
+        }
+    }
+```
 
 ## Using Console with a Locale
 
-Unlike the print stream, Console does not include an overloaded format() method that takes a Locale instance. Instead,
-Console relies on the system locale. Of course, you could always use a specific Locale by retrieving the Writer object
-and passing your own Locale instance, such as in the following example:
+- Unlike the **print stream**, **Console** does not include an overloaded **format()** method that takes a 
+  **Locale** instance. 
+- Instead, **Console** relies on the **system locale**. Of course, you could always use a specific Locale by retrieving 
+  the **Writer** object and passing your own **Locale** instance, such as in the following example:
 
-example: ConsoleSample.java
+```java
+private static void consoleWithLocale() {
+        Console console = System.console();
+        console.writer().format(new Locale("fr", "CA"), "Hello World");
+    }
+```
 
+```
 readLine() and realPassword()
+```
 
-The Console class includes four methods for retrieving regular text data from user.
 
-public String readLine()
-public String readLine(String fmt, Object... args)
+- The Console class includes four methods for retrieving regular text data from user.
 
-public char[] readPassword()
-public char[] readPassword(String fmt, Object... args)
+```java
+public String readLine();
+public String readLine(String fmt, Object... args);
+```
 
-Like using System.in with a BufferedReader, the Console readLine() methods reads input until the user presses the Enter
-key. The overloaded version of readLine() displays a formatted message prompt prior to requesting input.
+```java
+public char[] readPassword();
+public char[] readPassword(String fmt, Object... args);
+```
 
-The readPassword() methods are similar to the readLine() method with two important differences.
+
+
+- Like using **System.in** with a **BufferedReader**, the Console **readLine()** methods reads input until the user 
+- presses the Enter key. 
+- The overloaded version of readLine() displays a formatted message prompt prior to requesting input.
+
+- The readPassword() methods are similar to the readLine() method with two important differences.
 
 1) The text the user types is not echoed back and displayed on the screen as they are typing.
 2) The data is returned as a char[] instead of a String.
 
-The first feature improves security by no showing the password on the screen if someone happens to be next to you. The
+- The first feature improves security by no showing the password on the screen if someone happens to be next to you. The
 second feature  involves preventing passwords from entering the String pool discussed in Chapter 11.
 
-example: ConsoleSample.java
+```java
+private static void consolePasswordMethod(){
+
+        Console console = System.console();
+        if(console == null){
+            throw new RuntimeException("Console not available");
+        }else {
+            String name = console.readLine("Please enter your name: ");
+            console.writer().format("Hi %s", name);
+            console.writer().println();
+
+            console.format("What is your address? ");
+            String address = console.readLine();
+
+            char[] password = console.readPassword("Enter a password " + "between %d and %d characters ", 5, 10);
+
+            char[] verify = console.readPassword("Enter your password again: ");
+
+            console.printf("Passwords " + ((Arrays.equals(password, verify)) ? "match" : "do not match"));
+        }
+
+    }
+```
 
 
 ## Summary
 
-A common practice is to start with a low-level resource or file stream and wrap it in a buffered stream to improve
+- A common practice is to start with a low-level resource or file stream and wrap it in a buffered stream to improve
 performance.
 
-Byte streams operate on binary data and have names that end with Stream, while characters stream operate on text data
+- Byte streams operate on binary data and have names that end with Stream, while characters stream operate on text data
 and have names that end in Reader or Writer.
 
-Distinguish between low-level and high-level streams. A low-level stream is one that operates directly on the 
-underlying resources, such as file or network connections. A high-level stream is one that operates on a low-level 
-or other high-level stream to filter data, convert data, or improve performance.
+- Distinguish between low-level and high-level streams. 
+- A low-level stream is one that operates directly on the underlying resources, such as file or network connections. 
+- A high-level stream is one that operates on a low-level or other high-level stream to filter data, convert data, or improve performance.
 
-All streams include a close() method, which can be invoked automatically with a try-with-resources.
+- All streams include a **close()** method, which can be invoked automatically with a **try-with-resources**.
 
-Remember to call markSupported() before using mark() and reset(), as some streams do not support this operation.
+- Remember to call **markSupported()** before using **mark()** and **reset()**, as some streams do not support this operation.
