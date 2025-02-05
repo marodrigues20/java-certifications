@@ -43,3 +43,56 @@
 
 
 <img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_1.png?raw=true" width="350" />
+
+- In Figure above, the lion folder an its elements can be accessed directory or via the symbolic.
+- For example, the following paths reference the same file:
+
+```
+/zoo/cats/lion/Cubs.java
+/zoo/favorite/Cubs.java
+```
+
+```
+Note:
+You might wonder, why is Path an interface?
+When a Path is created, the JVM returns a file system-specific implementation, such as a Windows or Unix Path class.
+In the vas majority of circumstances, we want to perform the same operations on the Path, regardless of the file system.
+By providing Path as an interface using the factory pattern, we avoid having to write complex or custom code for each 
+type of file system.
+```
+
+
+## Obtain a Path with the Path Interface
+
+- The simplest and most straightforward way to obtain a Path object is to use the static factory method defined within 
+  Path interface.
+
+// Path factory method
+```
+public static Path of (String first, String ... more)
+```
+
+```java
+package chapter_9.path;
+
+import java.nio.file.Path;
+
+public class PathExample {
+
+    public static void main(String[] args) {
+
+        Path path1 = Path.of("pandas/cuddly.png");
+        Path path2 = Path.of("c:\\zooinfo\\November\\employees.txt");
+        Path path3 = Path.of("/home/zoodirectory");
+    }
+}
+```
+
+- The first example creates a reference to a relative path in the current working directory.
+- The second example creates a reference to an absolute file path in a Windows-based system.
+- The third example creates a reference to an absolute directory path in a Linux or Mac-based system.
+
+
+## Absolute vs. Relative Paths
+
+- Determining whether a path is relative or absolute is actually file-system dependent.
