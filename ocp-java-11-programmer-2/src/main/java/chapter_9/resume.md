@@ -310,3 +310,10 @@ Note:
 ```
 
 <img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_3.png?raw=true" width="500" />
+
+
+## Providing Optional Arguments
+
+- Many of the methods in this chapter include a varargs that takes an optional list of values.
+
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/Table_9_2.png?raw=true" width="500" />
