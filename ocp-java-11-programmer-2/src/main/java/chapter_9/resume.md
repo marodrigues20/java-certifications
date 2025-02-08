@@ -282,7 +282,7 @@ public class FileAndPathIntegrationExample {
 - By now, you should realize that NIO.2 makes extensive use of the factory pattern.
 
 
-<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_2.png?raw=true" width="350" />
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_2.png?raw=true" width="500" />
 
 
 
