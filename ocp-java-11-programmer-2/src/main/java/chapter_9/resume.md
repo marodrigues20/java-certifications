@@ -285,4 +285,28 @@ public class FileAndPathIntegrationExample {
 <img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_2.png?raw=true" width="500" />
 
 
+```markdown
+Note: 
+- The java.io.File is the I/O class you worked with in Chapter 8, while **Files** is an NIO.2 helper class.
+- ** Files ** operates on *Path* instances, not *java.io.File* instances.
+- We know this is confusing, but they are from completely different APIs!
+```
 
+## Understanding Common NIO.2 Features
+
+- Throughout this chapter, we introduce numerous methods you should know for the exam.
+- Before getting into the specifics of each method, we present many of these common features in this section so you are
+  not surprised when you see them.
+
+## Applying Path Symbols
+
+- Absolute and relative paths can contain path symbols.
+- For the exam, there are two path symbols you need to know, as listed below:
+
+```markdown
+| Symbol | Description                                          |
+| .      | A reference to the current directory                 |
+| ..     | A reference to the parent of the current directory   |
+```
+
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_3.png?raw=true" width="500" />
