@@ -95,4 +95,187 @@ public class PathExample {
 
 ## Absolute vs. Relative Paths
 
+```
 - Determining whether a path is relative or absolute is actually file-system dependent.
+- If a path starts with a forward slash (/), it is absolute, with / as the root directory.
+  Examples: /bird/parrot.png and /bird/../data/./info
+- If a path starts with a driver letter (c:), it is absolute, with the drive letter as the root directory. 
+  Examples: c:/bird/parrot.png and d:/bird/../data/./info
+```
+
+- The **Path.of()** method also includes a varargs to pass additional path elements.
+- The values will be combined and automatically separated by the operational system dependent file separator you leraned 
+  Chapter 8.
+
+```java
+package chapter_9.path;
+
+import java.nio.file.Path;
+
+public class PathExample_2 {
+
+  public static void main(String[] args) {
+    Path path1 = Path.of("pandas", "cuddly.png");
+    Path path2 = Path.of("c:", "zooinfo", "November", "employees.txt");
+    Path path3 = Path.of("/", "home", "zoodirectory");
+  }
+}
+```
+Note: These examples are just rewrites of our previous set of *Path* examples, using the parameter list of *String*
+      values instead of a single *String* value. The advantage of the varargs is that it is more roboust, as it inserts
+      the proper operating system path separator for you.
+
+## Obtaining a Path with the Paths Class
+
+- Another way to obtain a *Path* instance is from the *java.nio.file*Paths* factory class.
+- Note the *s* at the end of the *Paths* to distinguish it from the *Path* interface.
+
+// Paths factory method
+```
+public static Path get(String first, String ... more)
+```
+
+- Rewriting our previous examples is easy.
+
+```java
+package chapter_9.path;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class PathExample_3 {
+    
+    Path path1 = Paths.get("pandas/cuddly.png");
+    Path path2 = Paths.get("c:\\zooinfo\\November\\employees.txt");
+    Path path3 = Paths.get("/", "home", "zoodirectory");
+}
+
+```
+
+## Obtaining a Path with a URI Class
+
+- Another way to construct a **Path** using the *Paths* class is with URI value.
+- A *uniform resource identifier (URI)* is a string of characters that identify a resource.
+- It begins with a schema values include *file://* for local file system, and *http://*, *https://*, and *ftp://* for 
+  remote file systems.
+
+- The *java.net.URI* class is used to create URI values.
+
+// URI Constructor <br>
+```java
+public URI(String str) throws URISyntaxException;
+```
+
+- Java includes multiples methods to convert between *Path* and URI objects.
+
+// URI to Path, using Path factory method <br>
+```java
+public static Path of(URI uri);
+```
+
+// URI to Path, using Paths factory method
+```java
+public static Path get(URI uri);
+```
+
+// Path to URI, using Path instance method
+```java
+public URI toURI();
+```
+
+
+- The following examples all reference the same file:
+
+```java
+package chapter_9.path;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class PathExample_4 {
+
+    public static void main(String[] args) throws URISyntaxException {
+     
+        URI a = new URI("file://icecream.txt");
+        Path b = Path.of(a);
+        Path c = Paths.get(a);
+        URI d = b.toUri();
+    }
+}
+
+```
+
+- Some of these examples may actually throw an *IllegalArgumentException* at runtime, as some system 
+  require URIs to be absolute.
+
+
+## Connecting to Remote File Systems
+
+- The *FileSystems* class does give us the freedom to connect to a remote file system, as follows:
+
+// FileSystem factory method
+public static FileSystem getFileSystem(URI uri)
+
+The following shows how such a method can be used:
+
+```java
+package chapter_9.path;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+
+public class FileSystemExample {
+
+    public static void main(String[] args) throws URISyntaxException {
+        FileSystem fileSystem = FileSystems.getFileSystem(new URI("http://wwww.selikoff.net"));
+        Path path = fileSystem.getPath("duck.txt");
+    }
+}
+
+```
+
+- This code is useful when we need to construct *Path* objects frequently for a remote file system.
+- NIO.2 gives us the power to connect to both local and remote file systems, which is a major improvements over the 
+  legacy *java.io.File* class.
+
+
+## Obtain a Path from the java.io.File Class
+
+// Path to File, using Path instance method
+```java
+public default File toFile();
+```
+
+// File to Path, using java.io.File instance method
+```java
+public Path toPath();
+```
+
+These methods are available for convenience and also to help facilitate integration between older and newer APIs.
+
+```java
+package chapter_9.path;
+
+import java.io.File;
+import java.nio.file.Path;
+
+public class FileAndPathIntegrationExample {
+
+    public static void main(String[] args) {
+        File file = new File("husky.png");
+        Path path = file.toPath();
+        File backToFile = path.toFile();
+    }
+}
+```
+
+- NIO.2 Path interface contains a lot more features.
+
+
+
+
