@@ -544,3 +544,50 @@ Filename is: shells.txt
  Current parent is: .
 ```
 
+## Checking Path Type with isAbsolute() and toAbsolutePath()
+
+- The Path interface contains two methods for assisting with relative and absolute paths:
+
+```java
+public boolean isAbsolute(); // Returns true if the path the object references is absolute and false if it is relative
+public Path toAbsoutePath(); // Converts a relative Path object to an absolute Path object by joining it to the current working directory.
+```
+
+```markdown
+Tip: The current working directory can be selected from System.getProperty("user.dir").
+     This is the value that toAbsolutePath() will use when applied to a relative path.
+```
+
+- The following code snippet shows usage of both of these methods when run on a Windows and Linux system, respectively:
+
+```java
+package chapter_9.path.methods;
+
+import java.nio.file.Paths;
+
+public class AbsolutePathExample {
+
+    public static void main(String[] args) {
+
+        var path1 = Paths.get("C:\\birds\\egret.txt");
+        System.out.println("Path1 is Absolute? " + path1.isAbsolute());
+        System.out.println("Absolute Path1: " + path1.toAbsolutePath());
+
+        var path2 = Paths.get("birds/condor.txt");
+        System.out.println("Path2 is Absolute? " + path2.isAbsolute());
+        System.out.println("Absolute Path2 " + path2.toAbsolutePath());
+    }
+}
+```
+- For the second example, assume the current working directory is /home/work.
+
+```
+Path1 is Absolute? true
+Absolute Path1: C:\birds\agret.txt
+Path2 is Absolute? false
+Absolute Path2 /home/work/birds/condor.txt
+```
+
+## Joining Paths with resolve()
+
+- 
