@@ -317,3 +317,230 @@ Note:
 - Many of the methods in this chapter include a varargs that takes an optional list of values.
 
 <img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/Table_9_2.png?raw=true" width="500" />
+
+
+- Note that some of the enums Table 9.2 inherit an interface. That means some methods accept a variety of enums types.
+- For example, the *File.move()* method takes a *CopyOption* varargs so it can take enums of different types.
+
+```java
+package chapter_9.path;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+
+public class Table9_2_Example {
+
+    void copy(Path source, Path target) throws IOException {
+        Files.move(source, target, LinkOption.NOFOLLOW_LINKS, StandardCopyOption.ATOMIC_MOVE);
+    }
+}
+
+```
+
+
+```markdown
+Note: Many of the NIO.2 methods use a varargs for passing options, even when there is only one enum value available.
+The advantage of this approach, as opposed to say just passing a boolean argument, is future-proofing.
+These method signatures are insulated from changes in the Java language down the road when future options are available.
+```
+
+## Handling Methods That Declare IOException
+
+- Many of the methods presented in this chapter declare IOException.
+- Common causes of a method throwing this exception include the following:
+
+```markdown
+- Loss of communication to underlying file system.
+- File or directory exist but cannot be accessed or modified.
+- File exists but cannot be overwritten.
+- File or directory is required but does not exist.
+```
+
+- In general, methods that operate on abstract *Path* values, such as those in the *Path* interface or *Paths* class,
+  often do not throw any checked exceptions.
+- Methods that operate or change files and directories, such as those in the *Files* class, often declare *IOException*.
+
+
+## Interacting with Paths
+
+- NIO.2 provides a *rich plethora* of methods and classes that operate on *Path* objects - far more than were available
+  in the *java.io* API.
+- Just like *String* values, *Path* instances are immutable.
+
+```java
+Path p = Path.of("whale");
+p.resolve("krill");
+System.out.println(p);
+```
+
+- Many of the methods available in the *Path* interface transform the path value in some way and return a new *Path* 
+  object, allowing the methods to be chained.
+
+```java
+Path.of("/zoo/../home").getParent().normalize().toAbsolutePath();
+```
+
+## Viewing the Path with toString(), getNameCount(), and getName()
+
+- The *Path* interface contains three methods to retrieve basic information about the path representation.
+
+```java
+public String toString();
+public int getNameCount();
+public Path getName(int index);
+```
+
+
+
+```java
+package chapter_9.path.methods;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class BasicMethodPathExample {
+
+  public static void main(String[] args) {
+    Path path = Paths.get("/land/hippo/harry.happy");
+    for (int i = 0; i < path.getNameCount(); i ++){
+      System.out.println(" Element " + i + " is: " + path.getName(i));
+    }
+  }
+}
+
+```
+
+- Output
+```
+ Element 0 is: land
+ Element 1 is: hippo
+ Element 2 is: harry.happy
+```
+
+- Even though this is an absolute path, the root element is not included in the list of names.
+- As we said, these methods do not consider the root as part of the path.
+
+
+```
+var p = Path.of("/");
+System.out.print(p.getNameCount()); // 0
+System.out.println(p.getName(0)); // IllegalArgumentException
+```
+
+- Notice that if you try to call getName() with an invalid index, it will throw an exception at runtime.
+
+
+## Creating a New Path with subpath()
+
+- The *Path* interface includes a method to select portions of a path.
+
+```java
+public Path subpath(int beginIndex, int endIndex);
+```
+
+- The following code snippet shows how *subpath()* works. We also print the elements of the *Path* using *getName()* 
+  so that you can see how the indices are used.
+
+```java
+package chapter_9.path.methods;
+
+import java.nio.file.Paths;
+
+public class SubPathExample {
+
+    public static void main(String[] args) {
+
+        var p = Paths.get("/mammal/omnivore/raccoon.image");
+        System.out.println("Path is: " + p);
+        for(int i = 0; i < p.getNameCount(); i++){
+            System.out.println(" Element " + i + " is: " + p.getName(i));
+        }
+
+        System.out.println();
+        System.out.println("subpath(0,3): " + p.subpath(0,3));
+        System.out.println("subpath(1,2): " + p.subpath(1,2));
+        System.out.println("subpath(1,3): " + p.subpath(1,3));
+    }
+}
+```
+
+```
+Path is: /mammal/omnivore/raccoon.image
+Element 0 is: mammal
+Element 1 is: omnivore
+Element 2 is: raccoon.image
+
+subpath(0,3): mammal/omnivore/raccoon.image
+subpath(1,2): omnivore
+subpath(1,3): omnivore/raccoon.image
+```
+
+- Like getNameCount() and getName(), subpath() is 0-indexed and does not include the root.
+- Also like getName(), subpath() throws an exception if invalid indices are provided.
+
+```java
+var q = p.subpath(0,4);  //IllegalArgumentException
+var q = p.subpath(1,1);  //IllegalArgumentException
+```
+
+- The first example throws an exception at runtime, since the maximum index value allowed is 3.
+- The second example throws an exception since the start and end indexes are the same, leading to an empty path value.
+
+
+## Accessing Path Elements with getFileName(), getParent(), and getRoot()
+
+- The *Path* interface contains numerous methods for retrieving particular elements of a *Path*, returned as *Path*
+  objects themselves.
+
+```java
+public Path getFileName(); // Returns teh Path Element of the current file or directory
+public Path getParent(); // Returns the full path of the containing directory. Returns null if it is root path
+public Path getRoot(); //Returns the root element of the file within the fily system, or null if the path is a relative path
+```
+
+```java
+package chapter_9.path.methods;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class PrintPathInformationExample {
+
+    public static void main(String[] args) {
+        PrintPathInformationExample printPathInformationExample = new PrintPathInformationExample();
+        printPathInformation(Paths.get("zoo"));
+        printPathInformation(Paths.get("/zoo/armadillo/shells.txt"));
+        printPathInformation(Paths.get("./armadillo/../shells.txt"));
+    }
+
+    public static void printPathInformation(Path path) {
+        System.out.println("Filename is: " + path.getFileName());
+        System.out.println(" Root is: " + path.getRoot());
+        Path currentParent = path;
+        while ((currentParent = currentParent.getParent()) != null) {
+            System.out.println(" Current parent is: " + currentParent);
+        }
+    }
+}
+```
+
+- This sample application produces the following output:
+
+```
+Filename is: zoo
+ Root is: null
+Filename is: shells.txt
+ Root is: /
+ Current parent is: /zoo/armadillo
+ Current parent is: /zoo
+ Current parent is: /
+Filename is: shells.txt
+ Root is: null
+ Current parent is: ./armadillo/..
+ Current parent is: ./armadillo
+ Current parent is: .
+```
+
