@@ -590,4 +590,67 @@ Absolute Path2 /home/work/birds/condor.txt
 
 ## Joining Paths with resolve()
 
+- Suppose you want to concatenate paths in similar manner as we concatenate string. The *Path* interface provides two 
+  *resolve()* methods for doing just that.
+
+```java
+public Path resolve(Path other);
+public Path resolve(String other);
+```
+
+- The first method takes a *Path* parameter, while the overloaded version is a shorthand form of the first that takes a 
+  String (and constructs the Path for you). The object on which the resolve() method is invoked becomes the basis of the 
+  Path object, with the input being appended onto the Path.
+
+
+```java
+package chapter_9.path.methods;
+
+import java.nio.file.Path;
+
+public class ResolveExample {
+
+    public static void main(String[] args) {
+        Path path1 = Path.of("/cats/../panther");
+        Path path2 = Path.of("food");
+        System.out.println(path1.resolve(path2));
+    }
+}
+```
+- The code snippet generates the following output:
+
+```markdown
+/cats/../panther/food
+```
+
+- In this example, the input argument to the *resolve()* method was a relative path, but what if it had been an absolute
+  path?
+
+```java
+package chapter_9.path.methods;
+
+import java.nio.file.Path;
+
+public class ResolveExample {
+
+    public static void main(String[] args) {
+        Path path3 = Path.of("/turkey/food");
+        System.out.println(path3.resolve("/tiger/cage"));
+    }
+}
+
+```
+
+- Since the input parameter path3 is an absolute path, the output would be the following:
+
+```markdown
+/tiger/cage
+```
+
+```markdown
+Tip: On the exam, when you see Files.resolve(), think concatenation.
+```
+
+## Deriving a Path with relativize()
+
 - 
