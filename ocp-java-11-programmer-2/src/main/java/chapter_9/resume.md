@@ -878,3 +878,65 @@ System.out.println(Paths.get(".").toRealPath());
 
 ## Operating on File and Directories
 
+- If you want to rename a directory, copy a file, or read the contents of a file.
+- Enter the NIO.2 File class. 
+- The *Files* helper class is capable of interacting with real files and directories within the system.
+- Because of this, most of the methods in this part of the chapter take optional parameters and throw an *IOException* 
+  if the path does not exist. 
+- The *Files* class also duplicates numerous methods found in the *java.io.File* class, albeit often with a different 
+  name or list of parameters.
+
+## Checking for Existence with exists()
+
+```java
+public static boolean exists(Path path, LinkOption... options);
+```
+
+```java
+package chapter_9.files;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class ExistsExample {
+
+  public static void main(String[] args) {
+
+    var b1 = Files.exists(Paths.get("/ostrich/feathers.png"));
+    System.out.println("Path " + (b1 ? "Exists" : "Missing"));
+
+    var b2 = Files.exists(Paths.get("/ostrich"));
+    System.out.println("Path " + (b2 ? "Exists" : "Missing"));
+  }
+}
+```
+
+- The first example checks whether a file exits.
+- The Second example checks whether a directory exists.
+
+```
+Tip: File and Directory can contain extension. Unless the exam tells you whether the path refers to a file or directory,
+do not assume either.
+```
+
+
+## Testing Uniqueness with isSameFile()
+
+- This method checks whether the file is the same or not. Because the path may include path symbols and symbolic links 
+  within a file system.
+
+```java
+import java.io.IOException;
+
+public static boolean isSameFile(Path path, Path path2) throws IOException;
+```
+
+- This methods resolve all path symbols, and follows symbolic links.
+- Despite the name, the method can also be used to determine whether two Path objects to the same directory.
+- While most usages of *isSameFile()* will trigger an exception if the paths do not exist, there is a special case in
+  which it does not. If the two path objects are equal, in terms of *equals()*, then the method will just return *true* 
+  without checking whether the file exists.
+- Assume the file system as shown in Figure 9.4 with a symbolic link from /animal/snake to /animal/cobra.
+
+
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_4.png?raw=true" width="350" />
