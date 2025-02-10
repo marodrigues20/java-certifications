@@ -370,7 +370,7 @@ These method signatures are insulated from changes in the Java language down the
   in the *java.io* API.
 - Just like *String* values, *Path* instances are immutable.
 
-```java
+```
 Path p = Path.of("whale");
 p.resolve("krill");
 System.out.println(p);
@@ -379,7 +379,7 @@ System.out.println(p);
 - Many of the methods available in the *Path* interface transform the path value in some way and return a new *Path* 
   object, allowing the methods to be chained.
 
-```java
+```
 Path.of("/zoo/../home").getParent().normalize().toAbsolutePath();
 ```
 
@@ -653,4 +653,228 @@ Tip: On the exam, when you see Files.resolve(), think concatenation.
 
 ## Deriving a Path with relativize()
 
-- 
+- The *Path* interface includes a method for constructing the relative path from one *Path* to another, often using path
+  symbols.
+
+```java
+public Path relativeze();
+```
+
+```java
+package chapter_9.path.methods;
+
+import java.nio.file.Path;
+
+public class RelativizeExample {
+
+    public static void main(String[] args) {
+
+        var path1 = Path.of("fish.txt");
+        var path2 = Path.of("friend/birds.txt");
+        System.out.println(path1.relativize(path2));  // ../friend/birds.txt
+        System.out.println(path2.relativize(path1));  // ../../fish.txt
+    }
+}
+```
+
+- The examples print the following:
+
+```markdown
+../friend/birds.txt
+../../fish.txt
+```
+
+- If you are pointed at a path  in the file system, what steps would you need to take to reach the other path?
+- For example, to get to *fish.txt* from *friend/birds.txt* you need to go up two levels (the file itself counts as one
+  one level) and then select *fish.txt*.
+
+- If both path values are relative, then the *relativize()* method computes the paths as if they are in the same current
+  working directory.
+- Alternatively, if both path values are absolute, then the method computes the relative path from one absolute location
+  to another, regardless of the current working directory.
+- The following example demonstrates this property when run on a Windows computer:
+
+
+```java
+private static void example2() {
+    Path path3 = Paths.get("E:\\habitat");
+    Path path4 = Paths.get("E:\\sanctuary\\raven\\poe.txt");
+    System.out.println(path3.relativize(path4));
+    System.out.println(path4.relativize(path3));
+}
+```
+
+- This code snippet produces the following output:
+
+```markdown
+..\sanctuary\raven\poe.txt
+..\..\..\habitat
+```
+- The code snippet works even if you do now have an E: in your system.
+- Remember, most methods defined in the *Path* interface do not require the path to exist.
+
+- The *relativize()* method requires that both paths are absolute or both relative and throws an exception if the types
+  are mixed.
+
+```java
+package chapter_9.path.methods;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class RelativizeExample {
+
+    public static void main(String[] args) {
+        Path path1 = Paths.get("/primate/chimpanzee");
+        Path path2 = Paths.get("bananas.txt");
+        path1.relativize(path2); // java.lang.IllegalArgumentException
+    }
+}
+```
+
+- On Windows-based systems, it also requires that if absolute paths are used, then both paths must have the same root 
+  directory or drive letter. 
+- For example, the following would also throw an *IllegalArgumentException* on a Windows-based system:
+
+
+```java
+package chapter_9.path.methods;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class RelativizeExample {
+
+    public static void main(String[] args) {
+        Path path3 = Paths.get("c:\\primate\\chimpanzee");
+        Path path4 = Paths.get("d:\\storage\\bananas.txt");
+        path3.relativize(path4); // java.lang.IllegalArgumentException
+    }
+}
+```
+
+## Cleaning Up a Path with normalize()
+
+- So far, we've presented a number of examples that included path symbols that were unnecessary.
+- Luckly, Java provides a method to eliminate unnecessary redundancies in a path.
+
+```java
+public Path normalize();
+```
+
+- We can apply *normalize()* to some of our previous paths.
+
+```java
+package chapter_9.path.methods;
+
+import java.nio.file.Path;
+
+public class NormalizeExample {
+
+  public static void main(String[] args) {
+
+    var p1 = Path.of("./armadillo/../shells.txt");
+    System.out.println(p1.normalize()); // shells.txt
+
+    var p2 = Path.of("/cats/../panther/food");
+    System.out.println(p2.normalize()); // /panther/food
+
+    var p3 = Path.of("../../fish.txt");
+    System.out.println(p3.normalize()); // ../../fish.txt
+  }
+}
+```
+
+- The first two above examples, remove the redundancies.
+- The last one, simplified as it can be.
+- The *normalize()* method does not remove all of the path symbols; only the ones that can be reduced.
+
+- The *normalize()* method also allows us to compare equivalent paths. Consider the following example:
+
+```java
+package chapter_9.path.methods;
+
+import java.nio.file.Paths;
+
+public class NormalizeExample2 {
+
+  public static void main(String[] args) {
+    var p1 = Paths.get("/pony/../weather.txt");
+    var p2 = Paths.get("/weather.txt");
+    System.out.println(p1.equals(p2));                          // false
+    System.out.println(p1.normalize().equals(p2.normalize()));  // true
+  }
+}
+```
+
+- The *equals()* method returns true if two paths represent the same value.
+- In the second comparasion, the path values have both been reduced to the same normalized value, /weather.txt.
+
+
+## Retrieving the File System Path with toRealPath()
+
+- While working with theorical paths is useful, sometimes you want to verify the path actually exists within the 
+  file system.
+
+```java
+import java.io.IOException;
+public Path toRealPath(LinkOption... options) throws IOException;
+```
+
+- This method is similar to *normalize(), in that it eliminates any redundant path symbols.
+- It is also similar to *toAbsolutePath()*, in that it will join the path with the current working directory if the path 
+  is relative.
+
+- Let's say that we have a file system in which we have a symbolic link from /zebra to /horse.
+- What do you think the following will print, given a current working directory of /horse/schedule?
+
+```java
+package chapter_9.path.methods;
+
+import java.io.IOException;
+import java.nio.file.Paths;
+
+public class ToRealPathExample {
+
+  public static void main(String[] args) throws IOException {
+
+    System.out.println(Paths.get("/zebra/food.txt").toRealPath());
+    System.out.println(Paths.get(".././food.txt").toRealPath());
+
+  }
+}
+```
+
+- The output of both lines is the following:
+
+```markdown
+/horse/food.txt
+```
+
+- We can also use the *toRealPath()* method to gain access to the current working directory as a *Path* object.
+
+```java
+System.out.println(Paths.get(".").toRealPath());
+```
+
+## Reviewing Path Methods
+
+- Table 9.3 Path methods
+
+```markdown
+|------------------------------|--------------------------------|
+| Path of(String, String...)   | Path getParent()               |
+| URI toURI()                  | Path getRoot()                 |
+| File toFile()                | boolean isAbsolutePath()       |
+| String toString()            | Path toAbsolutePath()          |
+| int getNameCount()           | Path relativize()              |
+| Path getName(int)            | Path resolve(Path)             |
+| Path subpath(int, int)       | Path normalize()               |
+| Path getFileName()           | Path toRealPath(LinkOption...) |
+```
+
+- Other than the *static* method *Path.of()*, all the methods in Table 9.3 are instance methods that can be called on
+  any *Path* instance. In addition, only *toRealPath()* declares an IOException.
+
+## Operating on File and Directories
+
