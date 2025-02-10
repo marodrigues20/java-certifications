@@ -940,3 +940,43 @@ public static boolean isSameFile(Path path, Path path2) throws IOException;
 
 
 <img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_4.png?raw=true" width="350" />
+
+
+- Given the structure defined in Figure 9.4, what does the following output?
+
+```java
+package chapter_9.files;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class IsSameFileExample {
+
+    public static void main(String[] args) throws IOException {
+
+        System.out.println(Files.isSameFile(
+                Path.of("/animals/cobra"),
+                Path.of("/animal/snake")));
+
+        System.out.println(Files.isSameFile(
+                Path.of("/animals/monkey/ears.png"),
+                Path.of("/animal/wolf/ears.png")));
+    }
+}
+```
+
+- Since cobra is a symbolic link to snake, the first example outputs true.
+- In the second example, the paths refer to different files, so false is printed.
+
+
+```markdown
+Note: This isSameFile() method does not compare the contents of the files.
+      Two files may have identical names, content, and attributes, but if they are in different locations, then this 
+      method will return false.
+```
+
+
+## Making Directories with createDirectory() and createDirectories()
+
+- To create a directory, we use these *Files* methods:
