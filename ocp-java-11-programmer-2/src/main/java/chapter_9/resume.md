@@ -980,3 +980,54 @@ Note: This isSameFile() method does not compare the contents of the files.
 ## Making Directories with createDirectory() and createDirectories()
 
 - To create a directory, we use these *Files* methods:
+
+```
+public static Path createDirectory(Path dir, FileAttribute<?>... attrs) throws IOException;
+
+public static Path createDirectories(Path dir, FileAttribute<?>... attrs) throws IOException;
+```
+
+- The **createDirectory()** will create a directory and throw and exception if it already exists or the paths leading up
+to the directory do not exist.
+
+- The **createDirectories()**. If all of the directories already exist, *createDirectories()* will simply complete 
+  without doing anything.
+
+- The following shows how to create directories in NIO.2:
+
+```markdown
+Files.createDirectory(Path.of("/bison/field"));
+Files.createDirectories(Path.of("/bison/field/pasture/green"));
+```
+
+- The first example creates a new directory, *field*, in the directory */bison*, assuming */bison* exists; or else an 
+  exception is thrown. Contrast this with the second example, which creates the directory *green* along with any of the
+  following parent directories if they do not already exist, including *bison*, *field*, and *pasture*.
+
+## Copying Files with copy()
+
+- The NIO.2 *Files* class provides a method for copying files and directories within the file system.
+
+```markdown
+public static Path copy(Path source, Path target, CopyOption... options) throws IOException
+```
+
+- The method copies a file or directory from one location to another using *Path* objects. 
+- The following shows an example of copying a file and a directory:
+
+```markdown
+Files.copy(Paths.get("/panda/bamboo.txt"),
+   Paths.get("/panda-save/bamboo.txt"));
+```
+
+```markdown
+Files.copy(Paths.get("/turtle"), Paths.get("/turtleCopy"));
+```
+
+- When directories are copied, the copy is shallow.
+- A *shallow copy* means that the files and subdirectories within the directory are not copied.
+- A *deep copy* means that the entire tree is copied, including all of its content and subdirectories.
+
+
+## Copying and Replacing Files
+
