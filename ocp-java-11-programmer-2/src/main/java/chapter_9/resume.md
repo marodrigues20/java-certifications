@@ -1031,3 +1031,156 @@ Files.copy(Paths.get("/turtle"), Paths.get("/turtleCopy"));
 
 ## Copying and Replacing Files
 
+- By default, if the target already exits, the *copy()* method will throw an exception.
+- You can change this behaviour by providing the *StandardCopyOption* enum value *REPLACE_EXISTING* to the method.
+
+```markdown
+Files.copy(Paths.get("book.txt"), Paths.get("movie.txt"),
+    StandardCopyOption.REPLACE_EXISTING);
+```
+
+
+## Copying Files with I/O Streams
+
+- The *Files* class includes two *copy()* methods that operate with I/O streams.
+
+```markdown
+public static long copy(InputStream in, Path target, 
+    CopyOption... options) throws IOException
+
+public static long copy(Path source, OutputStream out)
+    throws IOException
+```
+
+- The first method reads the contents of a stream and writes the output to a file.
+- The second method reads the contents of a file and writes the output to a stream.
+
+
+```java
+package chapter_9.files;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class CopyFileExample {
+
+    public static void main(String[] args) throws IOException {
+
+        try (var is = new FileInputStream("source-data.txt")) {
+            // Write stream data to a file
+            Files.copy(is, Paths.get("/mammals/wolf.txt"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Files.copy(Paths.get("/fish/clown.xsl"), System.out);
+    }
+}
+
+```
+
+## Copying Files into a Directory
+
+- Let's say we have a file, *food.txt*, and a directory, */enclosure*. 
+- Both the file and directory exist.
+- What do you think is the result of executing the following process?
+
+```
+import java.nio.file.Paths;
+
+var file = Paths.get("food.txt");
+var directory = Paths.get("enclosure");
+Files.copy(file, directory);
+```
+
+- The code above throws an exception. The command tries to create a new file, named */enclosure*.
+- Since the path */enclosure* already exists, an exception is thrown at runtime.
+- On the other hand, if the directory did not exist, then it would create a new file with contents of *food.txt*, but 
+  it would be called */enclosure*.
+- Remember, files not need to have extensions, and in this example, it matters.
+- This behaviour applies to both the copy() and the *move()* methods.
+<br>
+- This is the correct way to copy the file into a directory.
+
+```
+import java.nio.file.Paths;
+
+var file = Paths.get("food.txt");
+var directory = Paths.get("/enclosure/food.txt");
+Files.copy(file, directory);
+```
+
+- You also define *directory* using the *resolve()* method we saw earlier. which saves you from having to write the 
+  filename twice.
+
+```java
+var directory = Paths.get("/enclosure").resolve(file.getFileName());
+```
+
+## Moving or Renaming Paths with move()
+
+- The *Files* class provides a useful method for moving or renaming files and directories.
+
+```java
+import java.io.IOException;
+import java.nio.file.CopyOption;
+
+public static Path move(Path source, Path target,
+    CopyOption... options) throws IOException;
+```
+
+- The following is some sample code that uses the *move()* method:
+
+```java
+package chapter_9.files;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class MoveRenameExample {
+
+    public static void main(String[] args) throws IOException {
+        
+        Files.move(Path.of("c:\\zoo"), Path.of("c:\\zoo-new"));
+        
+        Files.move(Path.of("c:\\user\\addresses.txt"),
+                Path.of("c:\\zoo-new\\addresses2.txt"));
+    }
+}
+```
+
+- The first example renames the *zoo* directory to a *zoo-new* directory, keeping all of the original contents from the
+  source directory.
+- The second example moves the *addresses.txt* file from the directory *user* to the directory *zoo-new*, and it renames
+  it to *address2.txt*.
+
+
+## Similarities between move() and copy()
+
+```markdown
+- Like copy(), move() requires REPLACE_EXISTING to overwrite the target if it exists, else it will throw an exception.
+  Also like copy(), move() will not put a file in a directory if the source is a file and the target is a directory. 
+  Instead, it will create a new file with the name of the directory.
+```
+
+## Performing an Atomic Move
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
