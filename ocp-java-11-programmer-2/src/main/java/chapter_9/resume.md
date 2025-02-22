@@ -1372,6 +1372,33 @@ public static boolean isRegularFile(Path path, LinkOption... options)
 - Let's take a look at some sample code.
 
 ```java
+package chapter_9.files;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class CommonAttributeExample {
+
+    public static void main(String[] args) {
+        System.out.println(Files.isDirectory(Paths.get("/canine/fur.jpg")));
+        System.out.println(Files.isSymbolicLink(Paths.get("/canine/coyote")));
+        System.out.println(Files.isRegularFile(Paths.get("/canine/types.txt")));
+    }
+}
 ```
+
+- The first example prints *true* if *fur.jpg* is a directory or a symbolic link to a directory and *false* otherwise.
+- The second example prints *true* if */canine/coyote* is a symbolic link, regardless of whether the file or directory 
+  it points to exists.
+- The third example prints *true* if *types.txt* points to a regular file or alternatively a symbolic link that points 
+  to a regular file.
+
+```markdown
+- These 3 methods do not throw IOException. They return *false* if the path does not exist.
+```
+
+## Checking File Accessibility with isHidden(), isReadable(), isWritable(), and isExecutable()
+
+- In many file systems, it is possible to set a *boolean* attribute to a file that marks it hidden, readable, or 
+  executable. The *Files* class includes methods that expose this information.
 
