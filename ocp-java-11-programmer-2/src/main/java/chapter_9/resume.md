@@ -1168,19 +1168,210 @@ public class MoveRenameExample {
 
 ## Performing an Atomic Move
 
+```markdown
+Files.move(Path.of("move.txt"), Path.of("gerbil.txt"), StandardCopyOption.ATOMIC_MOVE);
+```
+
+- Remember the atomic from Chapter 7, "Concurrency", and the principal of an atomic move is similar.
+- An atomic move is one in which a file is moved within the file system never sees an incomplete or partially written 
+  file. If the file system does not support this feature, an *AtomicMoveNotSupportedException" will be thrown.
+
+## Deleting a File with delete() and deleteIfExists()
+
+- The *Files* class includes two methods that delete a file or empty directory within a file system.
+
+```markdown
+public static void delete(Path path) throws IOException
+public static boolean deleteIfExists(Path path) throws IOException
+```
+
+- To delete a directory, it must be empty.
+- Both of these methods throw an exception if operated on a noneempty directory.
+- If the path is a symbolic link, then the symbolic link will be deleted, not the path that the symbolic link points so.
 
 
+```java
+package chapter_9.files;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class DeleteExample {
+
+    public static void main(String[] args) throws IOException {
+        Files.delete(Paths.get("/vulture/feathers.txt"));
+        Files.deleteIfExists(Paths.get("/pigeon"));
+    }
+}
+
+```
+
+- The first example deletes a *feather.txt* file in the *vulture* directory, and it throws a *NoSuchFileException* if 
+the file or directory does not exist. 
+- The second example deletes the *pigeon* directory, assuming it is empty. If the *pigeon* directory does not exit, then
+  the second line will not throw an exception.
 
 
+## Reading and Writing Data with newBufferedReader() and new BufferedWriter()
+
+- NIO.2 includes two convenient methods for working with I/O streams.
+
+```markdown
+public static BufferedReader newBufferedReader(Path path) throws IOException
+
+public static BufferedWriter newBufferedWriter(Path path, OpenOption... options) throws IOException
+```
 
 
+- You can wrap I/O stream constructors to produce the same effect, although it's a lot easier to use the factory method.
+
+```markdown
+Note:
+- There are overloaded versions of these methods that take a Charset. You may remember that we briefly discussed
+  character encoding and Charset in Chapter 8. 
+- For this chapter, you just need to know that characters can be encoded in bytes in a variety of ways.
+```
+
+- The first method, *newBufferedReader()* reads the file specified at the *Path* location using a *BufferedReader* object.
+
+```java
+package chapter_9.files;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class NewBufferedReaderExample {
+
+    public static void main(String[] args) throws IOException {
+        var path = Path.of("/animals/gopher.txt");
+        try(var reader = Files.newBufferedReader(path)){
+            String currentLine = null;
+            while((currentLine = reader.readLine()) != null){
+                System.out.println(currentLine);
+            }
+        }
+    }
+}
+```
+
+- This example reads the lines of the files using a *BufferedReader* and outputs the contents to the screen.
+- As you shall see shortly, there are other methods that do this without having to use an I/O stream. \
 
 
+- The second method, *newBufferedWriter(), writes to a file specified at the *Path* location using a *BufferedWriter*.
+
+```java
+package chapter_9.files;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+
+public class NewBufferedWriterExample {
+
+  public static void main(String[] args) {
+    var list = new ArrayList<String>();
+    list.add("Smokey");
+    list.add("Yogi");
+
+    var path = Path.of("animals/bear");
+    try (var writer = Files.newBufferedWriter(path)) {
+      for (var line : list) {
+        writer.write(line);
+        writer.newLine();
+        ;
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+}
+```
+
+## Reading a File with readAllLines
+
+- The *Files* class includes a convenient method for turning the lines of a file into a *List*.
+
+```markdown
+public static List<String> readAllLines(Path path( throws IOException
+```
+
+- The following sample code reads the lines of the file and outputs them to the user:
+
+```java
+package chapter_9.files;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
+public class ReadAllLinesExamples {
+
+    public static void main(String[] args) throws IOException {
+
+        var path = Path.of("animals/gopher.txt");
+        final List<String> lines = Files.readAllLines(path);
+        lines.forEach(System.out::println);
+    }
+}
+```
+
+## Reviewing Files Methods
+
+- Table 9.4 shows the *static* methods in the methods in the *Files* class you should be familiar with for the exam.
 
 
+```
+| Methods                                           | Methods
+|---------------------------------------------------|----------------------------------------|
+| boolean exists(Path, LinkOption...)               | Path move(Path, Path, CopyOption...)   |
+| boolean isSameFile(Path, Path)                    | void delete(Path)                      |
+| Path createDirectory(Path, FileAttribute<?>...)   | boolean deleteIfExists(Path)           |
+| Path createDirectories(Path, FileAttribute<?>...) | BufferedReader newBufferedReader(Path) |
+| Path copy(Path, Path, CopyOption...)              | List<String> readAllLines(Path)        | 
+| long copy(Path, OutputStream)                     |                                        |   
+
+```
+
+- All of these methods except *exists()* declare *IOException*
 
 
+## Managing File Attributes
 
+- The *Files* class also provides numerous methods for accessing file and directory metadata, referred to as
+  *file attributes*. A file attribute is data about about a file within the system, such as its size and visibility, 
+  that is not part of the file contents. In this section, we'll show how to read file attributes individually or as a
+  single.
 
+## Discovering File Attributes
 
+- These methods are usable within any file system although they may have limited meaning in some file systems.
+
+## Reading Common Attributes with isDirectory, isSymbolicLink(), and isRegularFile()
+
+- The *Files* class includes three methods for determining type of a *Path*.
+
+```markdown
+public static boolean isDirectory(Path path, LinkOption... options)
+
+public static boolean isSymbolicLink(Path path)
+
+public static boolean isRegularFile(Path path, LinkOption... options)
+```
+
+- Java defines a *regular file* as one that can contain content, as opposed to a symbolic link, directory, resource, 
+  or other non regular file that may be present in some operating systems.
+- If the symbolic link points to an actual file, Java will perform the check on the target of the symbolic link.
+- In other words, it is possible for *isRegularFile()* to return *true* for a symbolic link, as long as the link
+  resolves to a regular file.
+
+- Let's take a look at some sample code.
+
+```java
+
+```
 
