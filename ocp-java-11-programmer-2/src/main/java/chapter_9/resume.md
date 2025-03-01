@@ -1402,3 +1402,179 @@ public class CommonAttributeExample {
 - In many file systems, it is possible to set a *boolean* attribute to a file that marks it hidden, readable, or 
   executable. The *Files* class includes methods that expose this information.
 
+```markdown
+public static boolean isHidden(Path path) throws IOException
+
+public static boolean isReadable(Path path)
+
+public static boolean isWritable(Path path)
+
+public static boolean isExecutable(Path path)
+```
+
+Here we present sample usage of each method:
+
+```java
+package chapter_9.files;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class FileAccessibleExamples {
+
+    public static void main(String[] args) throws IOException {
+
+        System.out.println(Files.isHidden(Paths.get("/walrus.txt")));
+        System.out.println(Files.isReadable(Paths.get("/seal/baby.png")));
+        System.out.println(Files.isWritable(Paths.get("dolphin.txt")));
+        System.out.println(Files.isExecutable(Paths.get("whales.png")));
+    }
+}
+```
+
+- Note that the file extension does not necessarily determine whether a file is executable.
+- For example, an image file that ends in .png could be marked executable in some file system.
+- With the exception of isHidden(), these methods do not declare any checked exceptions and return *false* if the file 
+  does not exist.
+
+
+## Reading File Size with size()
+
+- The *Files* class includes a method to determine the size of the file in bytes.
+
+```markdown
+public static long size(Path path) throws IOException
+```
+
+- The size returned by this method represents the conceptual size of the data, and this may differ from the actual size 
+  on the persistent storage device.
+
+- A sample call to the *size()* method.
+
+```java
+package chapter_9.files;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class SizeExample {
+
+    public static void main(String[] args) throws IOException {
+        System.out.println(Files.size(Paths.get("/zoo/animals.txt")));
+    }
+}
+```
+
+
+```markdown
+Note: The *Files.size()* method is defined only on files.
+      Calling *Files.size()* on a directory is undefined, and the result depends on the file system.
+      If you need to determine the size of a directory and its contents, you'll need to talk the directory tree.
+      We'll show you how to do this later in the chapter.
+```
+
+
+## Checking for File Changes with getLastModifiedTime()
+
+- The *Files* class provides the following method to retrieve the last time a file was modified:
+
+```
+public static FileTime getLastModifiedTime(Path path, LinkOption... options) throws IOException
+```
+
+
+- The method returns a *FileTime* object, which represents a timestamp.
+- For convenience, it has a *toMillis()* method that returns the epoch time, which is the number of milliseconds since 
+  12 a.m. UTC on January 1, 1970.
+
+```java
+package chapter_9.files;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class LastModifiedTimeExample {
+
+    public static void main(String[] args) throws IOException {
+        final Path path = Paths.get("animals/bear");
+        System.out.println(Files.getLastModifiedTime(path).toMillis());
+    }
+}
+```
+
+
+## Improve Attribute Access
+
+- Up until now, we have been accessing individual file attributes with multiple method calls.
+- While this is functionally correct, there is often a cost each time one of these methods is called.
+- Put simply, it is far more efficient to ask the file system for all of the attributes at once rather than performing
+  multiple round-trips to the file system.
+
+## Understanding Attribute and View Types
+
+- NIO.2 includes two methods for working with attributes in a single method call:
+- a read-only attribute method and an updatable view method.
+- For each method, you need to provide a file system type object, which tells the NIO.2 method which type of view 
+  you are requesting. By updatable view, we mean that we can both read and write attribute with the same object.
+
+
+Table 9.5 The attributes and view types
+
+```markdown
+| Attributes interface |     View interface     |                       Description                                                                  |
+| ---------------------|------------------------|----------------------------------------------------------------------------------------------------|
+| BasicFileAttributes  | BasicFileAttributeView | Basic set of attributes supported by all file systems                                              |
+| DosFileAttributes    | DosFileAttributeView   | Basic set of attributes along with those supported by DOS/Windows-based systems                    |
+| PosixFileAttributes  | PosixFileAttributeView | Basic set of attributes along with those supported by POSIX systems, such as UNIX, LINUX, Mac, etc |
+```
+
+## Retrieving Attributes with readAttributes()
+
+- The *Files* class includes the following method to read attributes of a class in a read-only capacity.
+
+```markdown
+public static <A extends BasicFileAttributes> A readAttributes(
+    Path path, 
+    Class<A> type, 
+    LinkOption... options) throws IOException
+```
+
+- Applying it requires specifying the *Path* and *BasicFileAttributes.class* parameters.
+
+```java
+package chapter_9.files;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+
+public class BasicFileAttributesExample {
+
+    public static void main(String[] args) throws IOException {
+
+
+        var path = Paths.get("animals/bear");
+        BasicFileAttributes data = Files.readAttributes(path, BasicFileAttributes.class);
+
+        System.out.println("Is a directory? " + data.isDirectory());
+        System.out.println("Is a regular file? " + data.isRegularFile());
+        System.out.println("Is a symbolic link? " + data.isSymbolicLink());
+        System.out.println("Size (in bytes): " + data.size());
+        System.out.println("Last modified: " + data.lastModifiedTime());
+
+    }
+}
+```
+
+- The *BasicFileAttributes* class includes many values with the same name as the attributes methods in the *Files* class.
+- The advantage of using this method, though, is that all of the attributes are retrieved at once.
+
+## Modifying Attributes with getFileAttributeView()
+
+- The following *Files* method returns an updatable view:
+
