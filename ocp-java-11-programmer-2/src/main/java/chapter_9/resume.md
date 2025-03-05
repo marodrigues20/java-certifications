@@ -1578,3 +1578,63 @@ public class BasicFileAttributesExample {
 
 - The following *Files* method returns an updatable view:
 
+```markdown
+public static <V extends FileAttributeView> V getFileAttributeView(
+    Path path,
+    Class<V> type,
+    LinkOption... options)
+```
+
+- We can use the updatable view to increment a file's last modified date/time value by 10,000 milliseconds, or 10 seconds.
+
+```java
+package chapter_9.files;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+
+public class FileAttributeViewExample {
+
+    public static void main(String[] args) throws IOException {
+
+        // Read file attributes
+        var path = Paths.get("chapter_9/resources/turtles/sea.txt");
+        BasicFileAttributeView view = Files.getFileAttributeView(path,
+                BasicFileAttributeView.class);
+        BasicFileAttributes attributes = view.readAttributes();
+
+        // Modify file last modified time
+        FileTime lastModifiedTime = FileTime.fromMillis(
+                attributes.lastModifiedTime().toMillis() + 10_000);
+        view.setTimes(lastModifiedTime, null, null);
+        
+    }
+}
+```
+
+- After the updatable view is retrieved, we need to call *readAttributes()* on the view to obtain the file metadata.
+- From there, we create a new *FileTime* value and set it using the setTimes() method.
+
+```markdown
+// BasicFileAttributeView instance method
+public void setTimes(FileTime lastModifiedTime, 
+    FileTime lastAccessTime, FileTime createTime)
+```
+
+- This method allows to pass *null* for any date/time value that we do not want to modify.
+- In our sample code, only the last modified date/time is changed.
+
+```markdown
+Note: Not all file attributes can be modified with a view. For example, you cannot set a property that changes a file 
+      a directory. Likewise, you cannot change the size of the object without modifying its contents.
+```
+
+## Applying Functional Programming
+
+- In this part of the chapter, we'll combine everything we've presented so far with functional programming to perform 
+  extremely powerful file operations, often with only a few lines of code. The *Files* class includes some incredibly 
+  useful Stream API methods that operate on files, directories, and directory trees.
