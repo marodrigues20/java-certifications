@@ -1638,3 +1638,89 @@ Note: Not all file attributes can be modified with a view. For example, you cann
 - In this part of the chapter, we'll combine everything we've presented so far with functional programming to perform 
   extremely powerful file operations, often with only a few lines of code. The *Files* class includes some incredibly 
   useful Stream API methods that operate on files, directories, and directory trees.
+
+
+## Listing Directory Contents
+
+- Let's start with a simple Stream API method. The following *Files* method lists the contents of a directory:
+
+```markdown
+public static Stream<Path> list(Path dir) throws IOException
+```
+
+```java
+package chapter_9.streams;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Stream;
+
+public class ListDirectoryContentExample {
+
+    public static void main(String[] args) throws IOException {
+        try(Stream<Path> s = Files.list(Path.of("src/main/resources"))){
+            s.forEach(System.out::println);
+        }
+    }
+}
+```
+
+- Earlier, we presented the *Files.copy()* method and showed that it only performed a shallow copy of a directory.
+- We can use the *Files.list()* to perform a deep copy.
+
+```java
+package chapter_9.streams;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Stream;
+
+public class DeepCopyExample {
+
+  public static void main(String[] args) {
+
+  }
+
+  public void copyPath(Path source, Path target){
+
+    try{
+      Files.copy(source, target);
+      if(Files.isDirectory(source))
+        try(Stream<Path> s = Files.list(source)){
+          s.forEach(p -> copyPath(p,
+                  target.resolve(p.getFileName())));
+        }
+    }catch (IOException e){
+      //Handle exception
+    }
+  }
+}
+```
+
+- For now, you just need to know the JVM will not follow symbolic links when using this stream method.
+
+```markdown
+Closing the Stream
+
+- The NIO.2 stream-based methods open a connection to the *file system that must be properly closed*, else a resource
+  leak could ensue. A resource leak within the file system means the path may be locked from modification long after the
+  process that used it completed.
+
+- If you assumed a stream's terminal operation would automatically close the unerlying file resources, you'd be wrong.
+- There was a lot of debate about this behaviour when it was first presented, but in short, requiring developers to close
+  the stream won out.
+
+- On the plus side, not all streams need to be closed, only those that open resources, like the ones found in NIO.2.
+- For instance, you didn't need to close any of the streams you worked with in Chapter 4.
+
+- Finally, the exam doesn't always propertly close NIO.2 resources. To match the exam, we will sometimes skip closing 
+  NIO.2 resources in review and practice questions. 
+- **PLEASE**, in your own code, always use try-with-resources statements with these NIO.2 methods.
+```
+
+## Traversing a Directory Tree
+
+- While the *Files.list()* method is useful, it traverses the contents of only a single directory.
+- What if we ...
