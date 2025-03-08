@@ -1723,4 +1723,37 @@ Closing the Stream
 ## Traversing a Directory Tree
 
 - While the *Files.list()* method is useful, it traverses the contents of only a single directory.
-- What if we ...
+- What if we want to visit all the paths within a directory tree?
+- *Traversing a directory*, also referred to as walking a directory tree, is the process by which you start with a 
+  parent directory and iterate over all of its descendants until some conditions is met or there are no more elements
+  over which to iterate. For example, if we're searching for a single file, we can end the search when the file is found
+  or when we've checked all files and come up empty. The starting path is usually a specific directory; after all, it 
+  would be time-consuming to search the entire file system on every request!
+
+```markdown
+Don't use DirectoryStream and FileVisitor
+
+- While browsing the NIO.2 Javadocs, you may come across methods that use the *DirectoryStream* and *FileVisitor* classes
+  to traverse a directory. These methods predate the existence of the Stream API and were even required knowledge for 
+  older Java certifications exams. Even worse, despite its name, *DirectoryStream* is not a Stream API class.
+  
+  The best advice we can give you is to not use them. The newer Stream API-based methods are superior and accomplish the 
+  same thing often with much less code.
+```
+
+## Selecting a Search Strategy
+
+- There are two common strategies associated with walking a directory tree:
+- a depth-first search and a breadth-first search.
+- A *depth-first search* traverses the structure from the root to an arbitrary leaf and then navigates back up towards
+  the root, traversing fully down any paths is skipped along the way.
+- The *search-depth* is the distance from the root to current node. To prevent endless searching, Java includes a search
+  depth that is used to limit how many levels (or hops) from the root the search is allowed to go.
+<br><br>
+- Alternatively, a *breadth-first search* starts at the root and processes all elements of each particular depth, before
+  proceeding to the next depth level. The result are ordered by depth, with all nodes at depth 1 read before all nodes at 
+  depth 2, and so on. While a *breadth-first* tends to be balanced and predictable, it also requires more memory since a 
+  a list of visited nodes must be maintained.
+<br><br>
+- For the exam, you don't have to understand the details of each search strategy that Java employs; you just need to be 
+  aware that the NIO.2 Streams API methods use depth-first searching with a depth limit, which can be optionally changed.
