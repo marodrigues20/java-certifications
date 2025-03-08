@@ -1757,3 +1757,73 @@ Don't use DirectoryStream and FileVisitor
 <br><br>
 - For the exam, you don't have to understand the details of each search strategy that Java employs; you just need to be 
   aware that the NIO.2 Streams API methods use depth-first searching with a depth limit, which can be optionally changed.
+
+
+## Walking a Directory with walk()
+
+- Let's get to more Stream API methods.
+- The *Files* class includes two methods for walking the directory tree using a depth-first search.
+
+```markdown
+public static Stream<Path> walk(Path start, 
+    FileVisitOption... options) throws IOException
+
+public static Stream<Path> walk(Path start, int maxDepth,
+    FileVisitOption) thows IOException
+```
+
+- Like our other stream methods, *walk()* uses lazy evaluation and evaluates a *Path* only as it gets to it.
+- This means that even if the directory tree includes hundreds or thousands of files, the memory required to process a 
+  directory tree includes hundreds or thousands of files, the memory required to process a directory tree is low.
+- The first *walk()* method relies on a default maximum depth of *Integer.MAX_VALUE*, while  the overloaded version 
+  allows the user to set a maximum depth. This is useful in cases where the file system might be large, and we know the 
+  information we are looking for is near the root.
+
+```java
+package chapter_9.streams;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class SizeExample {
+
+  private long getSize(Path p) {
+    try {
+      return Files.size(p);
+    } catch (IOException e) {
+      // Handle exception
+    }
+
+    return 0L;
+  }
+
+  public long getPathSize(Path source) throws IOException {
+    try (var s = Files.walk(source)) {
+      return s.parallel()
+              .filter(p -> !Files.isDirectory(p))
+              .mapToLong(this::getSize)
+              .sum();
+    }
+  }
+
+}
+```
+
+## Applying a Depth Limit
+
+- Let's say our directory tree was quite deep, so we apply a depth limit by changing one line of code in our *getPathSize()*
+  method.
+
+```markdown
+try (var s = Files.walk(source, 5)) {
+```
+
+- This new version checks for files only within 5 steps of the starting node.
+- A depth value of 0 indicates the current path itself.
+- Since the method calculates values only on files, you'd have to set a depth limit of at least 1 to get a nonzero result
+  when this method is applied to a directory tree.
+
+## Avoiding Circular Paths
+
+- 
