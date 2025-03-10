@@ -1,11 +1,12 @@
 # Chapter 9
+
 # NIO.2
 
 ## I/O (Fundamentals and NIO2)
+
 - Use the Path interface to operate on file and directory paths
 - Use the Files class to check, delete, copy or move a file or directory
 - Use the Stream API with Files
-
 
 # In this Chapter
 
@@ -17,13 +18,12 @@
 - We'll also show you how to apply the Streams API to perform complex file and directory operations.
 - We'll conclude this chapter by showing the various file attribute can be read and written using NIO.2.
 
-
 ## Introduction NIO.2
 
 - At its core, NIO.2 is a replacement for the legacy *java.io.File* class you learned about in Chapter 8.
-- By *legacy*, we mean that the preferred approach for working with files and directories with newer software applications
+- By *legacy*, we mean that the preferred approach for working with files and directories with newer software
+  applications
   is to use NIO.2, provides many features and performance improvements than the legacy class supported.
-
 
 ## What About NIO?
 
@@ -35,12 +35,12 @@
 
 - The cornerstone of NIO.2 is the *java.nio.file.Path* interface.
 - A *Path* instance represents a hierarchical path on the storage system to a file or directory.
-- You can think of a Path as the NIO.2 replacement for the *java.io.File* class, although how you use it is a bit different.
+- You can think of a Path as the NIO.2 replacement for the *java.io.File* class, although how you use it is a bit
+  different.
 - Both *java.io.File* and *Path* objects may refer to an absolute path or relative path within the file system.
 - In addition, both may refer to a file or a directory.
-- Unlike the *java.io.File* class, the *Path* interface contains support for symbolic links. A *symbolic links* is a 
+- Unlike the *java.io.File* class, the *Path* interface contains support for symbolic links. A *symbolic links* is a
   a special file within a file system that servers as a reference or pointer to another file or directory.
-
 
 <img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_1.png?raw=true" width="350" />
 
@@ -61,13 +61,13 @@ By providing Path as an interface using the factory pattern, we avoid having to 
 type of file system.
 ```
 
-
 ## Obtain a Path with the Path Interface
 
-- The simplest and most straightforward way to obtain a Path object is to use the static factory method defined within 
+- The simplest and most straightforward way to obtain a Path object is to use the static factory method defined within
   Path interface.
 
 // Path factory method
+
 ```
 public static Path of (String first, String ... more)
 ```
@@ -92,7 +92,6 @@ public class PathExample {
 - The second example creates a reference to an absolute file path in a Windows-based system.
 - The third example creates a reference to an absolute directory path in a Linux or Mac-based system.
 
-
 ## Absolute vs. Relative Paths
 
 ```
@@ -104,7 +103,7 @@ public class PathExample {
 ```
 
 - The **Path.of()** method also includes a varargs to pass additional path elements.
-- The values will be combined and automatically separated by the operational system dependent file separator you leraned 
+- The values will be combined and automatically separated by the operational system dependent file separator you leraned
   Chapter 8.
 
 ```java
@@ -114,16 +113,17 @@ import java.nio.file.Path;
 
 public class PathExample_2 {
 
-  public static void main(String[] args) {
-    Path path1 = Path.of("pandas", "cuddly.png");
-    Path path2 = Path.of("c:", "zooinfo", "November", "employees.txt");
-    Path path3 = Path.of("/", "home", "zoodirectory");
-  }
+    public static void main(String[] args) {
+        Path path1 = Path.of("pandas", "cuddly.png");
+        Path path2 = Path.of("c:", "zooinfo", "November", "employees.txt");
+        Path path3 = Path.of("/", "home", "zoodirectory");
+    }
 }
 ```
+
 Note: These examples are just rewrites of our previous set of *Path* examples, using the parameter list of *String*
-      values instead of a single *String* value. The advantage of the varargs is that it is more roboust, as it inserts
-      the proper operating system path separator for you.
+values instead of a single *String* value. The advantage of the varargs is that it is more roboust, as it inserts
+the proper operating system path separator for you.
 
 ## Obtaining a Path with the Paths Class
 
@@ -131,6 +131,7 @@ Note: These examples are just rewrites of our previous set of *Path* examples, u
 - Note the *s* at the end of the *Paths* to distinguish it from the *Path* interface.
 
 // Paths factory method
+
 ```
 public static Path get(String first, String ... more)
 ```
@@ -144,7 +145,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class PathExample_3 {
-    
+
     Path path1 = Paths.get("pandas/cuddly.png");
     Path path2 = Paths.get("c:\\zooinfo\\November\\employees.txt");
     Path path3 = Paths.get("/", "home", "zoodirectory");
@@ -156,12 +157,13 @@ public class PathExample_3 {
 
 - Another way to construct a **Path** using the *Paths* class is with URI value.
 - A *uniform resource identifier (URI)* is a string of characters that identify a resource.
-- It begins with a schema values include *file://* for local file system, and *http://*, *https://*, and *ftp://* for 
+- It begins with a schema values include *file://* for local file system, and *http://*, *https://*, and *ftp://* for
   remote file systems.
 
 - The *java.net.URI* class is used to create URI values.
 
 // URI Constructor <br>
+
 ```java
 public URI(String str) throws URISyntaxException;
 ```
@@ -169,20 +171,22 @@ public URI(String str) throws URISyntaxException;
 - Java includes multiples methods to convert between *Path* and URI objects.
 
 // URI to Path, using Path factory method <br>
+
 ```java
 public static Path of(URI uri);
 ```
 
 // URI to Path, using Paths factory method
+
 ```java
 public static Path get(URI uri);
 ```
 
 // Path to URI, using Path instance method
+
 ```java
 public URI toURI();
 ```
-
 
 - The following examples all reference the same file:
 
@@ -197,7 +201,7 @@ import java.nio.file.Paths;
 public class PathExample_4 {
 
     public static void main(String[] args) throws URISyntaxException {
-     
+
         URI a = new URI("file://icecream.txt");
         Path b = Path.of(a);
         Path c = Paths.get(a);
@@ -207,9 +211,8 @@ public class PathExample_4 {
 
 ```
 
-- Some of these examples may actually throw an *IllegalArgumentException* at runtime, as some system 
+- Some of these examples may actually throw an *IllegalArgumentException* at runtime, as some system
   require URIs to be absolute.
-
 
 ## Connecting to Remote File Systems
 
@@ -240,18 +243,19 @@ public class FileSystemExample {
 ```
 
 - This code is useful when we need to construct *Path* objects frequently for a remote file system.
-- NIO.2 gives us the power to connect to both local and remote file systems, which is a major improvements over the 
+- NIO.2 gives us the power to connect to both local and remote file systems, which is a major improvements over the
   legacy *java.io.File* class.
-
 
 ## Obtain a Path from the java.io.File Class
 
 // Path to File, using Path instance method
+
 ```java
 public default File toFile();
 ```
 
 // File to Path, using java.io.File instance method
+
 ```java
 public Path toPath();
 ```
@@ -276,17 +280,15 @@ public class FileAndPathIntegrationExample {
 
 - NIO.2 Path interface contains a lot more features.
 
-
 ## Reviewing NIO.2 Relationships
 
 - By now, you should realize that NIO.2 makes extensive use of the factory pattern.
 
-
 <img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_2.png?raw=true" width="500" />
 
-
 ```markdown
-Note: 
+Note:
+
 - The java.io.File is the I/O class you worked with in Chapter 8, while **Files** is an NIO.2 helper class.
 - ** Files ** operates on *Path* instances, not *java.io.File* instances.
 - We know this is confusing, but they are from completely different APIs!
@@ -304,20 +306,18 @@ Note:
 - For the exam, there are two path symbols you need to know, as listed below:
 
 ```markdown
-| Symbol | Description                                          |
-| .      | A reference to the current directory                 |
-| ..     | A reference to the parent of the current directory   |
+| Symbol | Description |
+| . | A reference to the current directory |
+| .. | A reference to the parent of the current directory |
 ```
 
 <img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_3.png?raw=true" width="500" />
-
 
 ## Providing Optional Arguments
 
 - Many of the methods in this chapter include a varargs that takes an optional list of values.
 
 <img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/Table_9_2.png?raw=true" width="500" />
-
 
 - Note that some of the enums Table 9.2 inherit an interface. That means some methods accept a variety of enums types.
 - For example, the *File.move()* method takes a *CopyOption* varargs so it can take enums of different types.
@@ -339,7 +339,6 @@ public class Table9_2_Example {
 }
 
 ```
-
 
 ```markdown
 Note: Many of the NIO.2 methods use a varargs for passing options, even when there is only one enum value available.
@@ -363,7 +362,6 @@ These method signatures are insulated from changes in the Java language down the
   often do not throw any checked exceptions.
 - Methods that operate or change files and directories, such as those in the *Files* class, often declare *IOException*.
 
-
 ## Interacting with Paths
 
 - NIO.2 provides a *rich plethora* of methods and classes that operate on *Path* objects - far more than were available
@@ -376,7 +374,7 @@ p.resolve("krill");
 System.out.println(p);
 ```
 
-- Many of the methods available in the *Path* interface transform the path value in some way and return a new *Path* 
+- Many of the methods available in the *Path* interface transform the path value in some way and return a new *Path*
   object, allowing the methods to be chained.
 
 ```
@@ -389,11 +387,11 @@ Path.of("/zoo/../home").getParent().normalize().toAbsolutePath();
 
 ```java
 public String toString();
+
 public int getNameCount();
+
 public Path getName(int index);
 ```
-
-
 
 ```java
 package chapter_9.path.methods;
@@ -403,17 +401,18 @@ import java.nio.file.Paths;
 
 public class BasicMethodPathExample {
 
-  public static void main(String[] args) {
-    Path path = Paths.get("/land/hippo/harry.happy");
-    for (int i = 0; i < path.getNameCount(); i ++){
-      System.out.println(" Element " + i + " is: " + path.getName(i));
+    public static void main(String[] args) {
+        Path path = Paths.get("/land/hippo/harry.happy");
+        for (int i = 0; i < path.getNameCount(); i++) {
+            System.out.println(" Element " + i + " is: " + path.getName(i));
+        }
     }
-  }
 }
 
 ```
 
 - Output
+
 ```
  Element 0 is: land
  Element 1 is: hippo
@@ -423,7 +422,6 @@ public class BasicMethodPathExample {
 - Even though this is an absolute path, the root element is not included in the list of names.
 - As we said, these methods do not consider the root as part of the path.
 
-
 ```
 var p = Path.of("/");
 System.out.print(p.getNameCount()); // 0
@@ -431,7 +429,6 @@ System.out.println(p.getName(0)); // IllegalArgumentException
 ```
 
 - Notice that if you try to call getName() with an invalid index, it will throw an exception at runtime.
-
 
 ## Creating a New Path with subpath()
 
@@ -441,7 +438,7 @@ System.out.println(p.getName(0)); // IllegalArgumentException
 public Path subpath(int beginIndex, int endIndex);
 ```
 
-- The following code snippet shows how *subpath()* works. We also print the elements of the *Path* using *getName()* 
+- The following code snippet shows how *subpath()* works. We also print the elements of the *Path* using *getName()*
   so that you can see how the indices are used.
 
 ```java
@@ -455,14 +452,14 @@ public class SubPathExample {
 
         var p = Paths.get("/mammal/omnivore/raccoon.image");
         System.out.println("Path is: " + p);
-        for(int i = 0; i < p.getNameCount(); i++){
+        for (int i = 0; i < p.getNameCount(); i++) {
             System.out.println(" Element " + i + " is: " + p.getName(i));
         }
 
         System.out.println();
-        System.out.println("subpath(0,3): " + p.subpath(0,3));
-        System.out.println("subpath(1,2): " + p.subpath(1,2));
-        System.out.println("subpath(1,3): " + p.subpath(1,3));
+        System.out.println("subpath(0,3): " + p.subpath(0, 3));
+        System.out.println("subpath(1,2): " + p.subpath(1, 2));
+        System.out.println("subpath(1,3): " + p.subpath(1, 3));
     }
 }
 ```
@@ -482,13 +479,12 @@ subpath(1,3): omnivore/raccoon.image
 - Also like getName(), subpath() throws an exception if invalid indices are provided.
 
 ```java
-var q = p.subpath(0,4);  //IllegalArgumentException
-var q = p.subpath(1,1);  //IllegalArgumentException
+var q = p.subpath(0, 4);  //IllegalArgumentException
+var q = p.subpath(1, 1);  //IllegalArgumentException
 ```
 
 - The first example throws an exception at runtime, since the maximum index value allowed is 3.
 - The second example throws an exception since the start and end indexes are the same, leading to an empty path value.
-
 
 ## Accessing Path Elements with getFileName(), getParent(), and getRoot()
 
@@ -497,7 +493,9 @@ var q = p.subpath(1,1);  //IllegalArgumentException
 
 ```java
 public Path getFileName(); // Returns teh Path Element of the current file or directory
+
 public Path getParent(); // Returns the full path of the containing directory. Returns null if it is root path
+
 public Path getRoot(); //Returns the root element of the file within the fily system, or null if the path is a relative path
 ```
 
@@ -550,12 +548,13 @@ Filename is: shells.txt
 
 ```java
 public boolean isAbsolute(); // Returns true if the path the object references is absolute and false if it is relative
+
 public Path toAbsoutePath(); // Converts a relative Path object to an absolute Path object by joining it to the current working directory.
 ```
 
 ```markdown
 Tip: The current working directory can be selected from System.getProperty("user.dir").
-     This is the value that toAbsolutePath() will use when applied to a relative path.
+This is the value that toAbsolutePath() will use when applied to a relative path.
 ```
 
 - The following code snippet shows usage of both of these methods when run on a Windows and Linux system, respectively:
@@ -579,6 +578,7 @@ public class AbsolutePathExample {
     }
 }
 ```
+
 - For the second example, assume the current working directory is /home/work.
 
 ```
@@ -590,18 +590,18 @@ Absolute Path2 /home/work/birds/condor.txt
 
 ## Joining Paths with resolve()
 
-- Suppose you want to concatenate paths in similar manner as we concatenate string. The *Path* interface provides two 
+- Suppose you want to concatenate paths in similar manner as we concatenate string. The *Path* interface provides two
   *resolve()* methods for doing just that.
 
 ```java
 public Path resolve(Path other);
+
 public Path resolve(String other);
 ```
 
-- The first method takes a *Path* parameter, while the overloaded version is a shorthand form of the first that takes a 
-  String (and constructs the Path for you). The object on which the resolve() method is invoked becomes the basis of the 
+- The first method takes a *Path* parameter, while the overloaded version is a shorthand form of the first that takes a
+  String (and constructs the Path for you). The object on which the resolve() method is invoked becomes the basis of the
   Path object, with the input being appended onto the Path.
-
 
 ```java
 package chapter_9.path.methods;
@@ -617,6 +617,7 @@ public class ResolveExample {
     }
 }
 ```
+
 - The code snippet generates the following output:
 
 ```markdown
@@ -684,7 +685,7 @@ public class RelativizeExample {
 ../../fish.txt
 ```
 
-- If you are pointed at a path  in the file system, what steps would you need to take to reach the other path?
+- If you are pointed at a path in the file system, what steps would you need to take to reach the other path?
 - For example, to get to *fish.txt* from *friend/birds.txt* you need to go up two levels (the file itself counts as one
   one level) and then select *fish.txt*.
 
@@ -693,7 +694,6 @@ public class RelativizeExample {
 - Alternatively, if both path values are absolute, then the method computes the relative path from one absolute location
   to another, regardless of the current working directory.
 - The following example demonstrates this property when run on a Windows computer:
-
 
 ```java
 private static void example2() {
@@ -710,6 +710,7 @@ private static void example2() {
 ..\sanctuary\raven\poe.txt
 ..\..\..\habitat
 ```
+
 - The code snippet works even if you do now have an E: in your system.
 - Remember, most methods defined in the *Path* interface do not require the path to exist.
 
@@ -732,10 +733,9 @@ public class RelativizeExample {
 }
 ```
 
-- On Windows-based systems, it also requires that if absolute paths are used, then both paths must have the same root 
-  directory or drive letter. 
+- On Windows-based systems, it also requires that if absolute paths are used, then both paths must have the same root
+  directory or drive letter.
 - For example, the following would also throw an *IllegalArgumentException* on a Windows-based system:
-
 
 ```java
 package chapter_9.path.methods;
@@ -771,17 +771,17 @@ import java.nio.file.Path;
 
 public class NormalizeExample {
 
-  public static void main(String[] args) {
+    public static void main(String[] args) {
 
-    var p1 = Path.of("./armadillo/../shells.txt");
-    System.out.println(p1.normalize()); // shells.txt
+        var p1 = Path.of("./armadillo/../shells.txt");
+        System.out.println(p1.normalize()); // shells.txt
 
-    var p2 = Path.of("/cats/../panther/food");
-    System.out.println(p2.normalize()); // /panther/food
+        var p2 = Path.of("/cats/../panther/food");
+        System.out.println(p2.normalize()); // /panther/food
 
-    var p3 = Path.of("../../fish.txt");
-    System.out.println(p3.normalize()); // ../../fish.txt
-  }
+        var p3 = Path.of("../../fish.txt");
+        System.out.println(p3.normalize()); // ../../fish.txt
+    }
 }
 ```
 
@@ -798,31 +798,31 @@ import java.nio.file.Paths;
 
 public class NormalizeExample2 {
 
-  public static void main(String[] args) {
-    var p1 = Paths.get("/pony/../weather.txt");
-    var p2 = Paths.get("/weather.txt");
-    System.out.println(p1.equals(p2));                          // false
-    System.out.println(p1.normalize().equals(p2.normalize()));  // true
-  }
+    public static void main(String[] args) {
+        var p1 = Paths.get("/pony/../weather.txt");
+        var p2 = Paths.get("/weather.txt");
+        System.out.println(p1.equals(p2));                          // false
+        System.out.println(p1.normalize().equals(p2.normalize()));  // true
+    }
 }
 ```
 
 - The *equals()* method returns true if two paths represent the same value.
 - In the second comparasion, the path values have both been reduced to the same normalized value, /weather.txt.
 
-
 ## Retrieving the File System Path with toRealPath()
 
-- While working with theorical paths is useful, sometimes you want to verify the path actually exists within the 
+- While working with theorical paths is useful, sometimes you want to verify the path actually exists within the
   file system.
 
 ```java
 import java.io.IOException;
+
 public Path toRealPath(LinkOption... options) throws IOException;
 ```
 
 - This method is similar to *normalize(), in that it eliminates any redundant path symbols.
-- It is also similar to *toAbsolutePath()*, in that it will join the path with the current working directory if the path 
+- It is also similar to *toAbsolutePath()*, in that it will join the path with the current working directory if the path
   is relative.
 
 - Let's say that we have a file system in which we have a symbolic link from /zebra to /horse.
@@ -836,12 +836,12 @@ import java.nio.file.Paths;
 
 public class ToRealPathExample {
 
-  public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
-    System.out.println(Paths.get("/zebra/food.txt").toRealPath());
-    System.out.println(Paths.get(".././food.txt").toRealPath());
+        System.out.println(Paths.get("/zebra/food.txt").toRealPath());
+        System.out.println(Paths.get(".././food.txt").toRealPath());
 
-  }
+    }
 }
 ```
 
@@ -853,8 +853,10 @@ public class ToRealPathExample {
 
 - We can also use the *toRealPath()* method to gain access to the current working directory as a *Path* object.
 
-```java
-System.out.println(Paths.get(".").toRealPath());
+```markdown
+System.out.println(Paths.get(".").
+
+toRealPath());
 ```
 
 ## Reviewing Path Methods
@@ -879,11 +881,11 @@ System.out.println(Paths.get(".").toRealPath());
 ## Operating on File and Directories
 
 - If you want to rename a directory, copy a file, or read the contents of a file.
-- Enter the NIO.2 File class. 
+- Enter the NIO.2 File class.
 - The *Files* helper class is capable of interacting with real files and directories within the system.
-- Because of this, most of the methods in this part of the chapter take optional parameters and throw an *IOException* 
-  if the path does not exist. 
-- The *Files* class also duplicates numerous methods found in the *java.io.File* class, albeit often with a different 
+- Because of this, most of the methods in this part of the chapter take optional parameters and throw an *IOException*
+  if the path does not exist.
+- The *Files* class also duplicates numerous methods found in the *java.io.File* class, albeit often with a different
   name or list of parameters.
 
 ## Checking for Existence with exists()
@@ -900,14 +902,14 @@ import java.nio.file.Paths;
 
 public class ExistsExample {
 
-  public static void main(String[] args) {
+    public static void main(String[] args) {
 
-    var b1 = Files.exists(Paths.get("/ostrich/feathers.png"));
-    System.out.println("Path " + (b1 ? "Exists" : "Missing"));
+        var b1 = Files.exists(Paths.get("/ostrich/feathers.png"));
+        System.out.println("Path " + (b1 ? "Exists" : "Missing"));
 
-    var b2 = Files.exists(Paths.get("/ostrich"));
-    System.out.println("Path " + (b2 ? "Exists" : "Missing"));
-  }
+        var b2 = Files.exists(Paths.get("/ostrich"));
+        System.out.println("Path " + (b2 ? "Exists" : "Missing"));
+    }
 }
 ```
 
@@ -919,10 +921,9 @@ Tip: File and Directory can contain extension. Unless the exam tells you whether
 do not assume either.
 ```
 
-
 ## Testing Uniqueness with isSameFile()
 
-- This method checks whether the file is the same or not. Because the path may include path symbols and symbolic links 
+- This method checks whether the file is the same or not. Because the path may include path symbols and symbolic links
   within a file system.
 
 ```java
@@ -934,13 +935,11 @@ public static boolean isSameFile(Path path, Path path2) throws IOException;
 - This methods resolve all path symbols, and follows symbolic links.
 - Despite the name, the method can also be used to determine whether two Path objects to the same directory.
 - While most usages of *isSameFile()* will trigger an exception if the paths do not exist, there is a special case in
-  which it does not. If the two path objects are equal, in terms of *equals()*, then the method will just return *true* 
+  which it does not. If the two path objects are equal, in terms of *equals()*, then the method will just return *true*
   without checking whether the file exists.
 - Assume the file system as shown in Figure 9.4 with a symbolic link from /animal/snake to /animal/cobra.
 
-
 <img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_4.png?raw=true" width="350" />
-
 
 - Given the structure defined in Figure 9.4, what does the following output?
 
@@ -969,13 +968,11 @@ public class IsSameFileExample {
 - Since cobra is a symbolic link to snake, the first example outputs true.
 - In the second example, the paths refer to different files, so false is printed.
 
-
 ```markdown
 Note: This isSameFile() method does not compare the contents of the files.
-      Two files may have identical names, content, and attributes, but if they are in different locations, then this 
-      method will return false.
+Two files may have identical names, content, and attributes, but if they are in different locations, then this
+method will return false.
 ```
-
 
 ## Making Directories with createDirectory() and createDirectories()
 
@@ -988,9 +985,9 @@ public static Path createDirectories(Path dir, FileAttribute<?>... attrs) throws
 ```
 
 - The **createDirectory()** will create a directory and throw and exception if it already exists or the paths leading up
-to the directory do not exist.
+  to the directory do not exist.
 
-- The **createDirectories()**. If all of the directories already exist, *createDirectories()* will simply complete 
+- The **createDirectories()**. If all of the directories already exist, *createDirectories()* will simply complete
   without doing anything.
 
 - The following shows how to create directories in NIO.2:
@@ -1000,7 +997,7 @@ Files.createDirectory(Path.of("/bison/field"));
 Files.createDirectories(Path.of("/bison/field/pasture/green"));
 ```
 
-- The first example creates a new directory, *field*, in the directory */bison*, assuming */bison* exists; or else an 
+- The first example creates a new directory, *field*, in the directory */bison*, assuming */bison* exists; or else an
   exception is thrown. Contrast this with the second example, which creates the directory *green* along with any of the
   following parent directories if they do not already exist, including *bison*, *field*, and *pasture*.
 
@@ -1012,12 +1009,12 @@ Files.createDirectories(Path.of("/bison/field/pasture/green"));
 public static Path copy(Path source, Path target, CopyOption... options) throws IOException
 ```
 
-- The method copies a file or directory from one location to another using *Path* objects. 
+- The method copies a file or directory from one location to another using *Path* objects.
 - The following shows an example of copying a file and a directory:
 
 ```markdown
 Files.copy(Paths.get("/panda/bamboo.txt"),
-   Paths.get("/panda-save/bamboo.txt"));
+Paths.get("/panda-save/bamboo.txt"));
 ```
 
 ```markdown
@@ -1028,7 +1025,6 @@ Files.copy(Paths.get("/turtle"), Paths.get("/turtleCopy"));
 - A *shallow copy* means that the files and subdirectories within the directory are not copied.
 - A *deep copy* means that the entire tree is copied, including all of its content and subdirectories.
 
-
 ## Copying and Replacing Files
 
 - By default, if the target already exits, the *copy()* method will throw an exception.
@@ -1036,25 +1032,23 @@ Files.copy(Paths.get("/turtle"), Paths.get("/turtleCopy"));
 
 ```markdown
 Files.copy(Paths.get("book.txt"), Paths.get("movie.txt"),
-    StandardCopyOption.REPLACE_EXISTING);
+StandardCopyOption.REPLACE_EXISTING);
 ```
-
 
 ## Copying Files with I/O Streams
 
 - The *Files* class includes two *copy()* methods that operate with I/O streams.
 
 ```markdown
-public static long copy(InputStream in, Path target, 
-    CopyOption... options) throws IOException
+public static long copy(InputStream in, Path target,
+CopyOption... options) throws IOException
 
 public static long copy(Path source, OutputStream out)
-    throws IOException
+throws IOException
 ```
 
 - The first method reads the contents of a stream and writes the output to a file.
 - The second method reads the contents of a file and writes the output to a stream.
-
 
 ```java
 package chapter_9.files;
@@ -1083,7 +1077,7 @@ public class CopyFileExample {
 
 ## Copying Files into a Directory
 
-- Let's say we have a file, *food.txt*, and a directory, */enclosure*. 
+- Let's say we have a file, *food.txt*, and a directory, */enclosure*.
 - Both the file and directory exist.
 - What do you think is the result of executing the following process?
 
@@ -1097,11 +1091,11 @@ Files.copy(file, directory);
 
 - The code above throws an exception. The command tries to create a new file, named */enclosure*.
 - Since the path */enclosure* already exists, an exception is thrown at runtime.
-- On the other hand, if the directory did not exist, then it would create a new file with contents of *food.txt*, but 
+- On the other hand, if the directory did not exist, then it would create a new file with contents of *food.txt*, but
   it would be called */enclosure*.
 - Remember, files not need to have extensions, and in this example, it matters.
 - This behaviour applies to both the copy() and the *move()* methods.
-<br>
+  <br>
 - This is the correct way to copy the file into a directory.
 
 ```
@@ -1112,7 +1106,7 @@ var directory = Paths.get("/enclosure/food.txt");
 Files.copy(file, directory);
 ```
 
-- You also define *directory* using the *resolve()* method we saw earlier. which saves you from having to write the 
+- You also define *directory* using the *resolve()* method we saw earlier. which saves you from having to write the
   filename twice.
 
 ```java
@@ -1128,7 +1122,7 @@ import java.io.IOException;
 import java.nio.file.CopyOption;
 
 public static Path move(Path source, Path target,
-    CopyOption... options) throws IOException;
+                        CopyOption... options) throws IOException;
 ```
 
 - The following is some sample code that uses the *move()* method:
@@ -1143,9 +1137,9 @@ import java.nio.file.Path;
 public class MoveRenameExample {
 
     public static void main(String[] args) throws IOException {
-        
+
         Files.move(Path.of("c:\\zoo"), Path.of("c:\\zoo-new"));
-        
+
         Files.move(Path.of("c:\\user\\addresses.txt"),
                 Path.of("c:\\zoo-new\\addresses2.txt"));
     }
@@ -1157,12 +1151,11 @@ public class MoveRenameExample {
 - The second example moves the *addresses.txt* file from the directory *user* to the directory *zoo-new*, and it renames
   it to *address2.txt*.
 
-
 ## Similarities between move() and copy()
 
 ```markdown
 - Like copy(), move() requires REPLACE_EXISTING to overwrite the target if it exists, else it will throw an exception.
-  Also like copy(), move() will not put a file in a directory if the source is a file and the target is a directory. 
+  Also like copy(), move() will not put a file in a directory if the source is a file and the target is a directory.
   Instead, it will create a new file with the name of the directory.
 ```
 
@@ -1173,7 +1166,7 @@ Files.move(Path.of("move.txt"), Path.of("gerbil.txt"), StandardCopyOption.ATOMIC
 ```
 
 - Remember the atomic from Chapter 7, "Concurrency", and the principal of an atomic move is similar.
-- An atomic move is one in which a file is moved within the file system never sees an incomplete or partially written 
+- An atomic move is one in which a file is moved within the file system never sees an incomplete or partially written
   file. If the file system does not support this feature, an *AtomicMoveNotSupportedException" will be thrown.
 
 ## Deleting a File with delete() and deleteIfExists()
@@ -1188,7 +1181,6 @@ public static boolean deleteIfExists(Path path) throws IOException
 - To delete a directory, it must be empty.
 - Both of these methods throw an exception if operated on a noneempty directory.
 - If the path is a symbolic link, then the symbolic link will be deleted, not the path that the symbolic link points so.
-
 
 ```java
 package chapter_9.files;
@@ -1207,11 +1199,10 @@ public class DeleteExample {
 
 ```
 
-- The first example deletes a *feather.txt* file in the *vulture* directory, and it throws a *NoSuchFileException* if 
-the file or directory does not exist. 
+- The first example deletes a *feather.txt* file in the *vulture* directory, and it throws a *NoSuchFileException* if
+  the file or directory does not exist.
 - The second example deletes the *pigeon* directory, assuming it is empty. If the *pigeon* directory does not exit, then
   the second line will not throw an exception.
-
 
 ## Reading and Writing Data with newBufferedReader() and new BufferedWriter()
 
@@ -1223,17 +1214,18 @@ public static BufferedReader newBufferedReader(Path path) throws IOException
 public static BufferedWriter newBufferedWriter(Path path, OpenOption... options) throws IOException
 ```
 
-
 - You can wrap I/O stream constructors to produce the same effect, although it's a lot easier to use the factory method.
 
 ```markdown
 Note:
+
 - There are overloaded versions of these methods that take a Charset. You may remember that we briefly discussed
-  character encoding and Charset in Chapter 8. 
+  character encoding and Charset in Chapter 8.
 - For this chapter, you just need to know that characters can be encoded in bytes in a variety of ways.
 ```
 
-- The first method, *newBufferedReader()* reads the file specified at the *Path* location using a *BufferedReader* object.
+- The first method, *newBufferedReader()* reads the file specified at the *Path* location using a *BufferedReader*
+  object.
 
 ```java
 package chapter_9.files;
@@ -1246,9 +1238,9 @@ public class NewBufferedReaderExample {
 
     public static void main(String[] args) throws IOException {
         var path = Path.of("/animals/gopher.txt");
-        try(var reader = Files.newBufferedReader(path)){
+        try (var reader = Files.newBufferedReader(path)) {
             String currentLine = null;
-            while((currentLine = reader.readLine()) != null){
+            while ((currentLine = reader.readLine()) != null) {
                 System.out.println(currentLine);
             }
         }
@@ -1272,22 +1264,22 @@ import java.util.ArrayList;
 
 public class NewBufferedWriterExample {
 
-  public static void main(String[] args) {
-    var list = new ArrayList<String>();
-    list.add("Smokey");
-    list.add("Yogi");
+    public static void main(String[] args) {
+        var list = new ArrayList<String>();
+        list.add("Smokey");
+        list.add("Yogi");
 
-    var path = Path.of("animals/bear");
-    try (var writer = Files.newBufferedWriter(path)) {
-      for (var line : list) {
-        writer.write(line);
-        writer.newLine();
-        ;
-      }
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+        var path = Path.of("animals/bear");
+        try (var writer = Files.newBufferedWriter(path)) {
+            for (var line : list) {
+                writer.write(line);
+                writer.newLine();
+                ;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
-  }
 }
 ```
 
@@ -1324,7 +1316,6 @@ public class ReadAllLinesExamples {
 
 - Table 9.4 shows the *static* methods in the methods in the *Files* class you should be familiar with for the exam.
 
-
 ```
 | Methods                                           | Methods
 |---------------------------------------------------|----------------------------------------|
@@ -1339,11 +1330,10 @@ public class ReadAllLinesExamples {
 
 - All of these methods except *exists()* declare *IOException*
 
-
 ## Managing File Attributes
 
 - The *Files* class also provides numerous methods for accessing file and directory metadata, referred to as
-  *file attributes*. A file attribute is data about about a file within the system, such as its size and visibility, 
+  *file attributes*. A file attribute is data about about a file within the system, such as its size and visibility,
   that is not part of the file contents. In this section, we'll show how to read file attributes individually or as a
   single.
 
@@ -1363,7 +1353,7 @@ public static boolean isSymbolicLink(Path path)
 public static boolean isRegularFile(Path path, LinkOption... options)
 ```
 
-- Java defines a *regular file* as one that can contain content, as opposed to a symbolic link, directory, resource, 
+- Java defines a *regular file* as one that can contain content, as opposed to a symbolic link, directory, resource,
   or other non regular file that may be present in some operating systems.
 - If the symbolic link points to an actual file, Java will perform the check on the target of the symbolic link.
 - In other words, it is possible for *isRegularFile()* to return *true* for a symbolic link, as long as the link
@@ -1388,9 +1378,9 @@ public class CommonAttributeExample {
 ```
 
 - The first example prints *true* if *fur.jpg* is a directory or a symbolic link to a directory and *false* otherwise.
-- The second example prints *true* if */canine/coyote* is a symbolic link, regardless of whether the file or directory 
+- The second example prints *true* if */canine/coyote* is a symbolic link, regardless of whether the file or directory
   it points to exists.
-- The third example prints *true* if *types.txt* points to a regular file or alternatively a symbolic link that points 
+- The third example prints *true* if *types.txt* points to a regular file or alternatively a symbolic link that points
   to a regular file.
 
 ```markdown
@@ -1399,7 +1389,7 @@ public class CommonAttributeExample {
 
 ## Checking File Accessibility with isHidden(), isReadable(), isWritable(), and isExecutable()
 
-- In many file systems, it is possible to set a *boolean* attribute to a file that marks it hidden, readable, or 
+- In many file systems, it is possible to set a *boolean* attribute to a file that marks it hidden, readable, or
   executable. The *Files* class includes methods that expose this information.
 
 ```markdown
@@ -1435,9 +1425,8 @@ public class FileAccessibleExamples {
 
 - Note that the file extension does not necessarily determine whether a file is executable.
 - For example, an image file that ends in .png could be marked executable in some file system.
-- With the exception of isHidden(), these methods do not declare any checked exceptions and return *false* if the file 
+- With the exception of isHidden(), these methods do not declare any checked exceptions and return *false* if the file
   does not exist.
-
 
 ## Reading File Size with size()
 
@@ -1447,7 +1436,7 @@ public class FileAccessibleExamples {
 public static long size(Path path) throws IOException
 ```
 
-- The size returned by this method represents the conceptual size of the data, and this may differ from the actual size 
+- The size returned by this method represents the conceptual size of the data, and this may differ from the actual size
   on the persistent storage device.
 
 - A sample call to the *size()* method.
@@ -1467,14 +1456,12 @@ public class SizeExample {
 }
 ```
 
-
 ```markdown
 Note: The *Files.size()* method is defined only on files.
-      Calling *Files.size()* on a directory is undefined, and the result depends on the file system.
-      If you need to determine the size of a directory and its contents, you'll need to talk the directory tree.
-      We'll show you how to do this later in the chapter.
+Calling *Files.size()* on a directory is undefined, and the result depends on the file system.
+If you need to determine the size of a directory and its contents, you'll need to talk the directory tree.
+We'll show you how to do this later in the chapter.
 ```
-
 
 ## Checking for File Changes with getLastModifiedTime()
 
@@ -1484,9 +1471,8 @@ Note: The *Files.size()* method is defined only on files.
 public static FileTime getLastModifiedTime(Path path, LinkOption... options) throws IOException
 ```
 
-
 - The method returns a *FileTime* object, which represents a timestamp.
-- For convenience, it has a *toMillis()* method that returns the epoch time, which is the number of milliseconds since 
+- For convenience, it has a *toMillis()* method that returns the epoch time, which is the number of milliseconds since
   12 a.m. UTC on January 1, 1970.
 
 ```java
@@ -1506,7 +1492,6 @@ public class LastModifiedTimeExample {
 }
 ```
 
-
 ## Improve Attribute Access
 
 - Up until now, we have been accessing individual file attributes with multiple method calls.
@@ -1518,9 +1503,8 @@ public class LastModifiedTimeExample {
 
 - NIO.2 includes two methods for working with attributes in a single method call:
 - a read-only attribute method and an updatable view method.
-- For each method, you need to provide a file system type object, which tells the NIO.2 method which type of view 
+- For each method, you need to provide a file system type object, which tells the NIO.2 method which type of view
   you are requesting. By updatable view, we mean that we can both read and write attribute with the same object.
-
 
 Table 9.5 The attributes and view types
 
@@ -1538,9 +1522,9 @@ Table 9.5 The attributes and view types
 
 ```markdown
 public static <A extends BasicFileAttributes> A readAttributes(
-    Path path, 
-    Class<A> type, 
-    LinkOption... options) throws IOException
+Path path,
+Class<A> type,
+LinkOption... options) throws IOException
 ```
 
 - Applying it requires specifying the *Path* and *BasicFileAttributes.class* parameters.
@@ -1571,7 +1555,8 @@ public class BasicFileAttributesExample {
 }
 ```
 
-- The *BasicFileAttributes* class includes many values with the same name as the attributes methods in the *Files* class.
+- The *BasicFileAttributes* class includes many values with the same name as the attributes methods in the *Files*
+  class.
 - The advantage of using this method, though, is that all of the attributes are retrieved at once.
 
 ## Modifying Attributes with getFileAttributeView()
@@ -1580,12 +1565,13 @@ public class BasicFileAttributesExample {
 
 ```markdown
 public static <V extends FileAttributeView> V getFileAttributeView(
-    Path path,
-    Class<V> type,
-    LinkOption... options)
+Path path,
+Class<V> type,
+LinkOption... options)
 ```
 
-- We can use the updatable view to increment a file's last modified date/time value by 10,000 milliseconds, or 10 seconds.
+- We can use the updatable view to increment a file's last modified date/time value by 10,000 milliseconds, or 10
+  seconds.
 
 ```java
 package chapter_9.files;
@@ -1611,7 +1597,7 @@ public class FileAttributeViewExample {
         FileTime lastModifiedTime = FileTime.fromMillis(
                 attributes.lastModifiedTime().toMillis() + 10_000);
         view.setTimes(lastModifiedTime, null, null);
-        
+
     }
 }
 ```
@@ -1621,24 +1607,23 @@ public class FileAttributeViewExample {
 
 ```markdown
 // BasicFileAttributeView instance method
-public void setTimes(FileTime lastModifiedTime, 
-    FileTime lastAccessTime, FileTime createTime)
+public void setTimes(FileTime lastModifiedTime,
+FileTime lastAccessTime, FileTime createTime)
 ```
 
 - This method allows to pass *null* for any date/time value that we do not want to modify.
 - In our sample code, only the last modified date/time is changed.
 
 ```markdown
-Note: Not all file attributes can be modified with a view. For example, you cannot set a property that changes a file 
-      a directory. Likewise, you cannot change the size of the object without modifying its contents.
+Note: Not all file attributes can be modified with a view. For example, you cannot set a property that changes a file
+a directory. Likewise, you cannot change the size of the object without modifying its contents.
 ```
 
 ## Applying Functional Programming
 
-- In this part of the chapter, we'll combine everything we've presented so far with functional programming to perform 
-  extremely powerful file operations, often with only a few lines of code. The *Files* class includes some incredibly 
+- In this part of the chapter, we'll combine everything we've presented so far with functional programming to perform
+  extremely powerful file operations, often with only a few lines of code. The *Files* class includes some incredibly
   useful Stream API methods that operate on files, directories, and directory trees.
-
 
 ## Listing Directory Contents
 
@@ -1659,7 +1644,7 @@ import java.util.stream.Stream;
 public class ListDirectoryContentExample {
 
     public static void main(String[] args) throws IOException {
-        try(Stream<Path> s = Files.list(Path.of("src/main/resources"))){
+        try (Stream<Path> s = Files.list(Path.of("src/main/resources"))) {
             s.forEach(System.out::println);
         }
     }
@@ -1679,23 +1664,23 @@ import java.util.stream.Stream;
 
 public class DeepCopyExample {
 
-  public static void main(String[] args) {
+    public static void main(String[] args) {
 
-  }
-
-  public void copyPath(Path source, Path target){
-
-    try{
-      Files.copy(source, target);
-      if(Files.isDirectory(source))
-        try(Stream<Path> s = Files.list(source)){
-          s.forEach(p -> copyPath(p,
-                  target.resolve(p.getFileName())));
-        }
-    }catch (IOException e){
-      //Handle exception
     }
-  }
+
+    public void copyPath(Path source, Path target) {
+
+        try {
+            Files.copy(source, target);
+            if (Files.isDirectory(source))
+                try (Stream<Path> s = Files.list(source)) {
+                    s.forEach(p -> copyPath(p,
+                            target.resolve(p.getFileName())));
+                }
+        } catch (IOException e) {
+            //Handle exception
+        }
+    }
 }
 ```
 
@@ -1709,14 +1694,15 @@ Closing the Stream
   process that used it completed.
 
 - If you assumed a stream's terminal operation would automatically close the unerlying file resources, you'd be wrong.
-- There was a lot of debate about this behaviour when it was first presented, but in short, requiring developers to close
+- There was a lot of debate about this behaviour when it was first presented, but in short, requiring developers to
+  close
   the stream won out.
 
 - On the plus side, not all streams need to be closed, only those that open resources, like the ones found in NIO.2.
 - For instance, you didn't need to close any of the streams you worked with in Chapter 4.
 
-- Finally, the exam doesn't always propertly close NIO.2 resources. To match the exam, we will sometimes skip closing 
-  NIO.2 resources in review and practice questions. 
+- Finally, the exam doesn't always propertly close NIO.2 resources. To match the exam, we will sometimes skip closing
+  NIO.2 resources in review and practice questions.
 - **PLEASE**, in your own code, always use try-with-resources statements with these NIO.2 methods.
 ```
 
@@ -1724,20 +1710,21 @@ Closing the Stream
 
 - While the *Files.list()* method is useful, it traverses the contents of only a single directory.
 - What if we want to visit all the paths within a directory tree?
-- *Traversing a directory*, also referred to as walking a directory tree, is the process by which you start with a 
+- *Traversing a directory*, also referred to as walking a directory tree, is the process by which you start with a
   parent directory and iterate over all of its descendants until some conditions is met or there are no more elements
   over which to iterate. For example, if we're searching for a single file, we can end the search when the file is found
-  or when we've checked all files and come up empty. The starting path is usually a specific directory; after all, it 
+  or when we've checked all files and come up empty. The starting path is usually a specific directory; after all, it
   would be time-consuming to search the entire file system on every request!
 
 ```markdown
 Don't use DirectoryStream and FileVisitor
 
-- While browsing the NIO.2 Javadocs, you may come across methods that use the *DirectoryStream* and *FileVisitor* classes
-  to traverse a directory. These methods predate the existence of the Stream API and were even required knowledge for 
+- While browsing the NIO.2 Javadocs, you may come across methods that use the *DirectoryStream* and *FileVisitor*
+  classes
+  to traverse a directory. These methods predate the existence of the Stream API and were even required knowledge for
   older Java certifications exams. Even worse, despite its name, *DirectoryStream* is not a Stream API class.
-  
-  The best advice we can give you is to not use them. The newer Stream API-based methods are superior and accomplish the 
+
+  The best advice we can give you is to not use them. The newer Stream API-based methods are superior and accomplish the
   same thing often with much less code.
 ```
 
@@ -1749,15 +1736,16 @@ Don't use DirectoryStream and FileVisitor
   the root, traversing fully down any paths is skipped along the way.
 - The *search-depth* is the distance from the root to current node. To prevent endless searching, Java includes a search
   depth that is used to limit how many levels (or hops) from the root the search is allowed to go.
-<br><br>
+  <br><br>
 - Alternatively, a *breadth-first search* starts at the root and processes all elements of each particular depth, before
-  proceeding to the next depth level. The result are ordered by depth, with all nodes at depth 1 read before all nodes at 
-  depth 2, and so on. While a *breadth-first* tends to be balanced and predictable, it also requires more memory since a 
+  proceeding to the next depth level. The result are ordered by depth, with all nodes at depth 1 read before all nodes
+  at
+  depth 2, and so on. While a *breadth-first* tends to be balanced and predictable, it also requires more memory since a
   a list of visited nodes must be maintained.
-<br><br>
-- For the exam, you don't have to understand the details of each search strategy that Java employs; you just need to be 
-  aware that the NIO.2 Streams API methods use depth-first searching with a depth limit, which can be optionally changed.
-
+  <br><br>
+- For the exam, you don't have to understand the details of each search strategy that Java employs; you just need to be
+  aware that the NIO.2 Streams API methods use depth-first searching with a depth limit, which can be optionally
+  changed.
 
 ## Walking a Directory with walk()
 
@@ -1765,18 +1753,18 @@ Don't use DirectoryStream and FileVisitor
 - The *Files* class includes two methods for walking the directory tree using a depth-first search.
 
 ```markdown
-public static Stream<Path> walk(Path start, 
-    FileVisitOption... options) throws IOException
+public static Stream<Path> walk(Path start,
+FileVisitOption... options) throws IOException
 
 public static Stream<Path> walk(Path start, int maxDepth,
-    FileVisitOption) thows IOException
+FileVisitOption) thows IOException
 ```
 
 - Like our other stream methods, *walk()* uses lazy evaluation and evaluates a *Path* only as it gets to it.
-- This means that even if the directory tree includes hundreds or thousands of files, the memory required to process a 
+- This means that even if the directory tree includes hundreds or thousands of files, the memory required to process a
   directory tree includes hundreds or thousands of files, the memory required to process a directory tree is low.
-- The first *walk()* method relies on a default maximum depth of *Integer.MAX_VALUE*, while  the overloaded version 
-  allows the user to set a maximum depth. This is useful in cases where the file system might be large, and we know the 
+- The first *walk()* method relies on a default maximum depth of *Integer.MAX_VALUE*, while the overloaded version
+  allows the user to set a maximum depth. This is useful in cases where the file system might be large, and we know the
   information we are looking for is near the root.
 
 ```java
@@ -1788,31 +1776,32 @@ import java.nio.file.Path;
 
 public class SizeExample {
 
-  private long getSize(Path p) {
-    try {
-      return Files.size(p);
-    } catch (IOException e) {
-      // Handle exception
+    private long getSize(Path p) {
+        try {
+            return Files.size(p);
+        } catch (IOException e) {
+            // Handle exception
+        }
+
+        return 0L;
     }
 
-    return 0L;
-  }
-
-  public long getPathSize(Path source) throws IOException {
-    try (var s = Files.walk(source)) {
-      return s.parallel()
-              .filter(p -> !Files.isDirectory(p))
-              .mapToLong(this::getSize)
-              .sum();
+    public long getPathSize(Path source) throws IOException {
+        try (var s = Files.walk(source)) {
+            return s.parallel()
+                    .filter(p -> !Files.isDirectory(p))
+                    .mapToLong(this::getSize)
+                    .sum();
+        }
     }
-  }
 
 }
 ```
 
 ## Applying a Depth Limit
 
-- Let's say our directory tree was quite deep, so we apply a depth limit by changing one line of code in our *getPathSize()*
+- Let's say our directory tree was quite deep, so we apply a depth limit by changing one line of code in our
+  *getPathSize()*
   method.
 
 ```markdown
@@ -1821,9 +1810,42 @@ try (var s = Files.walk(source, 5)) {
 
 - This new version checks for files only within 5 steps of the starting node.
 - A depth value of 0 indicates the current path itself.
-- Since the method calculates values only on files, you'd have to set a depth limit of at least 1 to get a nonzero result
+- Since the method calculates values only on files, you'd have to set a depth limit of at least 1 to get a nonzero
+  result
   when this method is applied to a directory tree.
 
 ## Avoiding Circular Paths
 
-- 
+- Many of our earlier NIO.2 methods traverse symbolic links by default, with a NOFOLLOW_LINKS used to disable this
+  behavior.
+- The *walk()* method is different in that it does *not follow* symbolic links by default and requires the FOLLOW_LINKS
+  option to be enabled.
+- We can alter our *getPathSize()* method to enable following symbolic links by adding the *FileVisitOption*:
+
+```java
+public long getPathSizeFollowLinks(Path source) throws IOException {
+    try (var s = Files.walk(source,
+            FileVisitOption.FOLLOW_LINKS)) {
+        return s.parallel()
+                .filter(p -> !Files.isDirectory(p))
+                .mapToLong(this::getSize)
+                .sum();
+    }
+}
+```
+
+- When traversing a directory tree, your program needs to be careful of symbolic links if enabled.
+- For example, if our process comes across a symbolic link that points to the root directory of the file system, then 
+  every file in the system would be searched!
+- Worse yet, a symbolic link could lead to a cycle, in which a path is visited repeatedly.
+- A *cycle* is an infinite circular dependency in which an entry in a directory tree points to one of its ancestor 
+  directories.
+- Let's say we had a directory tree as shown in Figure 9.6, with the symbolic link /birds/robin/allBirds that points to 
+  /birds.
+
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_6.png?raw=true" width="350" />
+
+- What happens if we try to traverse this tree and follow all symbolic links, starting with /birds/robin?
+  Table 9.6 shows the paths visitied after walking a depth of 3.
+- For simplicity, we'll walk the tree in a breadth-first ordering, *although a cycle occurs regardless of the search 
+  strategy used.*
