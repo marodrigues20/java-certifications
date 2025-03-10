@@ -1849,3 +1849,23 @@ public long getPathSizeFollowLinks(Path source) throws IOException {
   Table 9.6 shows the paths visitied after walking a depth of 3.
 - For simplicity, we'll walk the tree in a breadth-first ordering, *although a cycle occurs regardless of the search 
   strategy used.*
+
+### Table 9.6 Walking a directory with a cycle using breadth-first search
+
+| Depth | Path reached                                                                                 |
+|-------|----------------------------------------------------------------------------------------------|
+| 0     | /birds/robin                                                                                 |
+| 1     | /birds/robin/pictures                                                                        |
+| 1     | /birds/robin/allBirds <br> -> birds                                                          |
+| 2     | /birds/robin/pictures/nest.png                                                               |
+| 2     | /birds/robin/pictures/nest.gif                                                               |
+| 2     | /birds/robin/allBirds/robin <br> -> /birds/robin                                             |
+| 3     | /birds/robin/allBirds/robin/pictures <br> /birds/robin/pictures                              |
+| 3     | /birds/robin/allBirds/robin/pictures/allBirds <br> -> /birds/robin/allBirds <br> -> /birds   |
+
+
+- After walking a distance of 1 from the start, we hit the symbolic link /birds/robin/allBirds and go back to the top of 
+  the directory tree /birds.
+- That's OK because we haven't visited /birds yet, so there's no cycle yet!
+
+- Unfortunately, at depth 2, we encounter a cycle.
