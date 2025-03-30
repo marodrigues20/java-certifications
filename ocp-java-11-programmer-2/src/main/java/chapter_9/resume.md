@@ -1868,4 +1868,117 @@ public long getPathSizeFollowLinks(Path source) throws IOException {
   the directory tree /birds.
 - That's OK because we haven't visited /birds yet, so there's no cycle yet!
 
-- Unfortunately, at depth 2, we encounter a cycle.
+- Unfortunately, at depth 2, we encounter a cycle. We've already visited the */birds/robin* directory on our first step,
+  and now we're encountering it again. If the process continues, we'll be doomed to visit the directory over and over
+  again.
+- Be aware that wen the FOLLOW_LINKS option is used, the *walk()* method will track all of the paths it has visited,
+  throwing  a *FileSystemLoopException* if a path is visited twice.
+
+## Searching a Directory with find()
+
+- In the previous example, we applied a filter to the *Stream<Path>* object to filter the results, although NIO.2 
+  provides a more convenient method.
+
+```markdown
+public static Stream<Path> find(Path start,
+    int maxDepth,
+    BiPredicate<Path, BasicFileAttribute> matcher,
+    FileVisitOption... options) thorws IOException
+```
+
+- The two parameters of the *BiPredicate* are a **Path** object and a **BasicFileAttribute** object, which you saw
+  earlier in the chapter. In this manner, NIO.2 automatically retrieves the basic file information for you, allowing you 
+  to write complex lambda expression that have direct access to this object.
+- We illustrate this with the following example:
+
+```java
+package chapter_9.streams;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class FindExample {
+
+  public static void main(String[] args) throws IOException {
+    Path path = Paths.get("/bigcats");
+    long minSize = 1_000;
+    try (var s = Files.find(path, 10,
+            (p, a) -> a.isRegularFile()
+                    && p.toString().endsWith(".java")
+                    && a.size() > minSize)) {
+      s.forEach(System.out::println);
+    }
+  }
+}
+```
+
+- This example searches a directory tree and prints all *.java* files with a size of at least 1,000 bytes,
+  using a depth limit of 10. 
+- While we could have accomplished this using the *walk()* method along with a call to *readAttributes()*, this
+  implementation is a lot shorter and more convenient than those would have been. We also don't have to worry about any
+  methods within the lambda expression declaring a checked exception, as we saw in the *getPathSize()* example.
+
+## Reading a File with lines()
+
+- Earlier in the chapter, we presented *Files.readAllLines()* and commented that using it to read a very large file could 
+  result in a *OutOfMemoryError* problem.
+- Luckily, NIO.2 solves this problem witha Stream API method.
+
+```java
+public static Stream<String> lines(Path path) throws IOException;
+```
+
+- The contents of the file are read and processed lazily, which means that only a small portion of the file is stored
+  in memory at any given time.
+
+```java
+package chapter_9.streams;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class ReadLinesLazilyExample {
+
+    public static void main(String[] args) throws IOException {
+        Path path = Paths.get("/fish/sharks.log");
+        try (var s = Files.lines(path)){
+            s.forEach(System.out::println);
+        }
+    }
+}
+```
+
+- Taking things one step further, we can leverage other stream methods for a more powerful example.
+
+```java
+package chapter_9.streams;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class ReadLineStreamExample {
+
+  public static void main(String[] args) throws IOException {
+
+    Path path = Paths.get("/fish/sharks.log");
+    try (var s = Files.lines(path)) {
+      s.filter(f -> f.startsWith("WARN"))
+              .map(f -> f.substring(5))
+              .forEach(System.out::println);
+    }
+  }
+}
+```
+
+- This sample code searches a log for lines that start with WARN:, outputting the text that follows.
+- Assuming that the input file *sharks.log* is a follows:
+
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_7.png?raw=true" width="350" />
+
+
