@@ -1981,4 +1981,46 @@ public class ReadLineStreamExample {
 
 <img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_9/images/figure_9_7.png?raw=true" width="350" />
 
+- Then, the sample output would be the following:
+
+```markdown
+No database could be detected
+Performing manual recovery
+```
+
+- As you can see, functional programming plus NIO.2 give us the ability to manipulate files in complex ways, often with 
+  a few short expressions.
+
+## Comparing Legacy java.io.File and NIO.2 Methods
+
+- Table below shows the comparasion between some of the legacy *java.io.File* methods described in Chapter 8 and the new 
+  NIO.2 methods described in this chapter. 
+- In this table, *file* refers to an instance of the *java.io.File* class, while *path* and *otherPath* refer to instances
+  of the NIO.2 *Path* interface.
+
+  
+
+| Legacy I/O File method    | NIO.2 method                    |
+|---------------------------|---------------------------------|
+| file.delete()             | Files.delete(path)              |
+| file.exists()             | Files.exists(path)              |
+| file.getAbsolutePath()    | path.toAbsolutePath()           |
+| file.getName()            | path.getFileName()              |
+| file.getParent()          | path.getParent()                |
+| file.isDirectory()        | Files.isDirectory(path)         |
+| file.isFile()             | Files.isRegularFile()           |
+| file.lastModified()       | Files.getLastModifiedTime(path) |
+| file.length()             | Files.size(path)                |
+| file.listFiles()          | Files.list(path)                |
+| file.mkdir()              | Files.createDirectory(path)     |
+| file.mkdirs()             | Files.createDirectories(path)   |
+| file.renameTo(otherFile)  | Files.move(path, otherPath)     |
+
+
+- Bear in mind that a number of methods and features are available in NIO.2 that are not available in the legacy API, 
+  such as support for symbolic links, setting file system-specific attributes, and so on.
+- The NIO.2 is a more developed, much more powerful API than the legacy *java.io.File* class.
+
+
+
 
