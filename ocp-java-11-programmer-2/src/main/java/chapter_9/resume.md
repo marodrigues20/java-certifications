@@ -2021,6 +2021,29 @@ Performing manual recovery
   such as support for symbolic links, setting file system-specific attributes, and so on.
 - The NIO.2 is a more developed, much more powerful API than the legacy *java.io.File* class.
 
+## Main Points - Summary
 
+### Be able to manipulate Path objects.
+- Most of the methods defined on *Path* do not require any checked exceptions and do not required the path to exist 
+  within the file system, with system, with the exception of **toRealPath()**.
 
+### Manage file attributes.
+- The NIO.2 *Files* class includes many methods for reading single file attributes such as its size or whether it is a 
+  directory, a symbolic link, hidden, etc. NIO.2 also supports reading all of the attributes in a single call. 
+  An attribute type is used to support operating system-specific views.
+- Finally, NIO.2 support updatable views for modified select attributes.
+
+### Be able to operate on directories using functinal programming.
+- NIO.2 includes the Stream API for manipulating directories. The **Files.list()** method iterates over the contents of 
+  single directory, while the *Files.walk()* method lazily traverse a directory tree in a depth-first manner.
+- The *Files.find()* method also traverses a directory but requires a filter to be applied. Both *File.walk()* and 
+  *Files.find()* support a search depth limit. Both methods will also throw an exception if they are directed to follow 
+  symbolic links and detect a cycle.
+
+### Understand the difference between readAllLines() and lines().
+- *Files.readAllLines()* method reads all the lines of a file into memoery and returns the result as a List<String>.
+- The *Files.lines()* method lazily reads the lines of a file,instead returning a functional programming *Stream<Path> 
+  object.
+- While both methods will correctly read the lines of a file, *lines()* is considered safer for larger files since it 
+  does not require file to be stored in memory.
 
