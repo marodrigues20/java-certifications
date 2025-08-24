@@ -51,7 +51,142 @@
 - Figure 10.2 shows the five key interfaces that you need to know. It also shows that the implementation is provided by 
   an imaginary *Foo* driver JAR. They cleverly stick the name *Foo* in all classes.
 
-<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_10/images/figure_10_2.png?raw=true" width="350" />
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_10/images/figure_10_2.png?raw=true" width="500" />
 
 
+- You shouldn't know what the implementation classes are called in any real database.
+- With JDBC, you use only the interfaces in your code and never the implementation classes directly.
+  In fact, they might not even be *public* classes.
 
+- What do these five interfaces do?
+  - Driver: Establishes a connection to the database
+  - Connection: Sends commands to a database
+  - PreparedStatement: Executes a SQL query
+  - CallableStatement: Executes commands stored in the database
+  - ResultSet: Reads results of a query
+
+Note: All database interfaces are in the package java.sql, so we will often omit the imports
+
+- We show you what JDBC code looks like end to end.
+
+```java
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+
+public class MyFirstDatabaseConnection {
+
+  public static void main(String[] args) throws SQLException {
+
+    String url = "jdbc:derby:zoo";
+    try (Connection conn = DriverManager.getConnection(url);
+         PreparedStatement ps = conn.preparedStatement(
+                 "SELECT name FROM animal" );
+         ResultSet rs = ps.executeQuery()) {
+        while(rs.next())
+          System.out.println(rs.getString(1));
+    }
+  }
+}
+```
+
+## Connecting to a Database
+
+- The first step in doing anything with a database is connecting to it.
+
+### Building a JDBC URL
+
+- Unlike web URLs, a JDBC URL has a variety of formats. They have three parts in common, as shown in 
+  Figure 10.3. The first piece is always the same. It is the protocol *jdbc*. The second part it the *subprotocol*, which
+  is the name of the database such as *derby, mysql*, or *postgres*. The third part is the *subname*, which is a database-specific 
+  format. Colons (:) separate the three parts.
+
+
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_10/images/Figure_10_3.png?raw=true" width="500" />
+
+
+- To make sure you get this, do you see what is wrong with each of the following?
+
+```markdown
+jdbc:postgresql://local/zoo
+jdbc:mysql://123456/zoo
+jdbc;oracle;thin;/localhost/zoo
+```
+
+- This first one *local* instead of *localhost*. The literal *localhost* is a specially defined name.
+- You can't just make up a name. Granted, it is possible for our databas server to named *local*, but the exam won't have 
+  you assume names. If the dtabase server has a special name, the question will let you know it.
+- The second one says that the location of the database is *123456*. This doesn't make any random number. The third one is 
+  no good because it uses semicolons (;) instead of colons(:).
+
+---
+**Real World Scenario**
+
+- Using a DataSource
+
+- In real applications, you should use a *DataSource* rather than *DriveManager* to get a *Connection*. For one thing,
+  there's no reason why you should have to know the database password. It's far better if the database team or another
+  team can set up a data source that you can reference.
+- Another reason is that a *DataSource* maintains a connection pool so that you can keep reusing the same connection
+  rather than needing to get a new one each time. Even the Javadoc says *DataSource* is prefered over *DriverManager*.
+  But *DriverManager* is in the exam objects, so you still have to know it.
+---
+
+
+- The *DriverManager* class is in the JDK, as it is an API that comes with Java. It uses the factory pattern, which means
+  that you call a *static* method to get a *Connection*, rather than calling a constructor.
+- The factory pattern means taht you can get any implementation of the interface when calling the method. The good news 
+  is that the method has an easy-to-remember name - *getConnection()*.
+
+
+- To get *Connection* from the Derby database, you write the following:
+
+
+```java
+import java.sql.*;
+public class TestConnect {
+    public static void main(String[] args) throws SQLException {
+        Connection conn = 
+                DriverManager.getConnection("jdbc:derby:zoo");
+      System.out.println(conn);
+    }
+}
+```
+
+- Running this example as *java TestConnect.java* will give you an error that looks like this:
+
+
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_10/images/error_testconnection.png?raw=true" width="500" />
+
+- Seeing SQLException means "something went wrong when connecting to or accessing the database."
+- You will need to recognize when a *SQLException* is thrown, but not the exact message.
+
+---
+**Note**
+
+- If code snippets aren't in a method, you can assume they are in a context where checked exception are handled or declared.
+---
+
+- In this case, we didn't tell Java where to find the database driver JAR file. 
+- Remember that the implementation class for *Connection* is found inside a driver JAR.
+- We try this again by adding the classpath with the following:
+
+```java
+
+java -cp "<path_to_derby>/derby.jar" TestConnect.java
+```
+
+- Remember to substitute the location of where the Derby JAR is located.
+
+---
+**Note**
+
+- Notice that we are using single-file source execution rather than compiling the code first. This allows us to use a 
+  simpler classpath since it has only one element.
+---
+
+- This time the program runs successfully and prints something like the following:
+
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_10/images/success_testconnection.png?raw=true" width="500" />
+
+- The details of the output aren't important. Just notice that the class is not *Connection*. It is a vendor implementation
+  of *Connection*.
