@@ -580,4 +580,6 @@ register(conn, 100, 1, "Elias", "Ester");
 
 ## Getting Data from a ResultSet
 
-- 
+### Reading a ResultSet
+
+
