@@ -427,5 +427,157 @@ public static void register(Connection conn, int key,
 
 - Remember that JDBC starts counting columns with 1 rather than 0. A common exam (and interview) question tests that you 
   know this!
+---
+
+- In the previous example, we set the paramters out of the order. That's perfectly fine.
+- The rule is only that they are each set before the query is executed.
+- Lest's see what happens if you don't set all the bind variables.
+
+```
+var sql = "INSERT INTO names VALUES(?,?,?)";
+try (var ps = conn.prepareStatement(sql)){
+    ps.setInt(1, key);
+    ps.setInt(2, type);
+    // missing the set for parameter number 3
+    ps.executeUpdate();
+}
 ```
 
+- The code compiles, and you get a SQLException. The message may vary based on your database driver.
+
+```markdown
+At least one parameter to the current statement is uninitialized.
+```
+
+- What about if you try to set more values than you have as bind variables?
+
+```
+var sql = "INSERT INTO names VALUES(?,?)";
+try (var ps = conn.prepareStatement(sql)){
+    ps.setInt(1, key);
+    ps.setInt(2, type);
+    ps.setInt(3, name);
+    ps.executeUpdate();
+}
+```
+
+- Again, you get a SQLException, this time with a different message. On Derby, that message was as follows:
+
+```markdown
+The number of values assigned is not the same as the number of specified or implied columns.
+```
+
+Table 10.4 *PreparedStatement* methods
+
+| Method name  | Parameter type | Example database type |
+|--------------|----------------|-----------------------|
+| setBoolean   | Boolean        | BOOLEAN               |
+| setDouble    | Double         | DOUBLE                |
+| setInt       | Int            | INTEGER               |
+| setLong      | Long           | BIGINT                |
+| setObject    | Object         | Any type              |
+| setString    | String         | CHAR, VARCHAR         |
+
+
+- You need to know only the first two columns for the exam because the third columns depends on the Database.
+- Notice the setObject() method works with any Java type. If you pass a primitive, it will be autoboxed into wrapped type.
+- That means we can rewrite our examples as follows:
+
+```markdown
+String sql = "INSERT INTO names VALUES(?, ?, ?)";
+try (PreparedStatement ps = conn.prepareStatement(sql)) {
+    ps.setObject(1, key);
+    ps.setObject(2, type);
+    ps.setObject(3, name);
+    ps.executeUpdate();
+}
+```
+
+- Java will handle the type conversion for you.
+- It is still better to call the more specific setter methods since that will give you a compile-time error if you pass
+  the wrong type instead of a runtime error.
+
+### Updating Multiple Times
+
+- Suppose we get two new elephants and want to add both. We can use the same *PreparedStatement* object.
+
+```markdown
+var sql = "INSERT INTO names VALUES(?, ?, ?)";
+
+try (var ps = conn.prepareStatement(sql)) {
+    
+    ps.setInt(1, 20);
+    ps.setInt(2, 1);
+    ps.setString(3, "Ester");
+    ps.executeUpdate();
+
+    ps.setInt(1, 21);
+    ps.setString(3, "Elias");
+    ps.executeUpdate();
+
+}
+```
+
+- Note that we set all three parameters when adding *Ester*, but only two for *Elias*.
+- The *PreparedStatement* is smart enough to remember the parameter that were already set and retain them.
+- You only have to set the ones that are different.
+
+
+
+---
+**Real World Scenario**
+
+- Batching Statements
+
+- JDBC supports batching so you can run multiple statements in fewer trips to the database. Often the database is located
+  on a different machine than the Java code runs on. Savings trips to the database saves time because network call can be 
+  expensive. For example, if you need to insert 1,000 records into the database, then inserting them as a single network 
+  call (as opposed to 1,000 network calls) is usually a lot faster.
+
+- You don't need to know the *addBatch()* and *excuteBatch()* methods for the exam, but they are useful in practice.
+
+```java
+
+public static void register(Connection conn, int firstKey, int type, String... names) throws SQLException {
+    
+    var sql = "INSERT INTO names VALUES(?, ?, ?, ?)";
+    var nextIndex = firstKey;
+    
+    try (var ps = conn.prepareStatement(sql)) {
+        ps.setInt(2, type);
+        
+        for(var name: names) {
+            ps.setInt(1, nextIndex);
+            ps.setString(3, name);
+            ps.addBatch();
+            
+            nextIndex++;
+        }
+        int[] result = ps.executeBatch();
+        System.out.println(Arrays.toString(result));
+    }
+}
+```
+
+- Now we call this method with two names:
+
+```markdown
+register(conn, 100, 1, "Elias", "Ester");
+```
+
+- The output shows the array has two elements since there are two different items in the batch.
+- Each one added one row in the database.
+
+```markdown
+  [1, 1]
+```
+
+- When using batching, you should call *executeBatch()* at a set interval, such as every 10,000 records (rather than after ten million).
+- Waiting too long to send the batch to the database could produce operations that are so large that they freeze the client
+  (or even worse the database!).
+---
+
+
+## Getting Data from a ResultSet
+
+- 
