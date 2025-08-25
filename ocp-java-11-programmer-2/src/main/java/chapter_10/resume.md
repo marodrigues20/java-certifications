@@ -281,3 +281,151 @@ public static void main(String[] args) throws SQLException, ClassNotFoundExcepti
 
 
 ## Obtaining a PreparedStatement
+
+- To run SQL, you need to tell a *PreparedStatement* about it. Getting a *PreparedStatement* from a *Connection* is easy.
+
+```
+try ( PreparedStatement ps = conn.prepareStatement(
+        "SELECT * FROM exhibits")) {
+         // work with ps
+        }
+```
+
+- An instance of a *PreparedStatement* represents a SQL statement that you want to run using the *Connection*.
+- It does not actually execute the query yet!
+
+- Passing a SQL statement when creating the object is mandatory. You might see a trick on the exam.
+
+```java
+try (var ps = conn.prepareStatement()) { // DOES NOT COMPILE
+}
+```
+
+- The previous example does not compile, because SQL is not supplied at the time a *PreparedStatement* is requested.
+- There are overloaded signatures that allow you to specify a *ResultSet* type and concurrency mode. On the exam, you 
+  only need to know how to use the default options, which process the result in order.
+
+
+## Executing a PreparedStatement
+
+### Modifying Data with executeUpdate()
+
+- The name is a little tricky because the SQL UPDATE statement is not the only statement that uses this method.
+- The method takes the SQL statement to run as a parameter. It returns the number of rows that were inserted, deleted, or
+  changed. Here's an example of all three update types:
+
+```
+var insertSql = "INSERT INTO exhibits VALUES(10, 'Dear', 3)";
+var updateSql = "UPDATE exhibits SET name = '' " + 
+    "WHERE name = 'None'";
+var deleteSql = "DELETE FROM exhibits WHERE id = 10";
+
+
+try (var ps = conn.prepareStatement(insertSql)) {
+    int result = ps.executeUpdate();
+}
+
+try (var ps = conn.prepareStatement(updateSql)) {
+    int result = ps.executeUpdate();
+    System.out.println(result); // 1
+}
+
+try (var ps = conn.prepareStatement(deleteSql)) {
+    int result = ps.executeUpdate();
+    System.out.println(result); // 1
+}
+```
+
+- For the exam, you don't need to read SQL. The question will tell you how many rows are affected if you need to know.
+- Note how each distinct SQL statement needs its own *prepareStatement()* call.
+
+
+### Reading Data with execute Query()
+
+```
+var sql = "SELECT * FROM exhibits";
+try (var ps = conn.prepareStatement(sql);
+    ResultSet rs = ps.executeQuery() ) {
+    // work with rs
+}
+```
+
+
+### Processing Data with execute()
+
+- There's a third method called *executed()* that can run either a query or an update. It returns a *boolean* so that we
+  know whether there is a *ResultSet*. That way, we can call the proper method to get more detail. The pattern looks like 
+  this:
+
+```
+boolean isResultSet = ps.execute();
+if (isResultSet){
+    try( ResultSet rs = ps.getResultSet()) {
+        System.out.println("ran a query")
+    }
+} else {
+    int result = ps.getUpdateCount();
+    System.out.println("ran an update");
+}
+```
+
+- If the *PreparedStatement* refers to *sql* that is a SELECT, the *boolean* is true and we can get *ResultSet*.
+- If it is not a SELECT, we can get the number of rows updated.
+
+### Reviwing PreparedStatement Methods
+
+TABLE 10.2 SQL runnable by the *execute* method
+
+| Method             | DELETE  | INSERT  | SELECT  | UPDATE  |
+|--------------------|---------|---------|---------|---------|
+| ps.execute()       | Yes     | Yes     | Yes     | Yes     |
+| ps.executeQuery()  | No      | No      | Yes     | No      |
+| ps.executeUpdate() | Yes     | Yes     | No      | Yes     |
+
+
+TABLE 10.3 Return types of *execute* methods
+
+| Method | Return type | What is returned for SELECT | What is returned for DELETE / INSERT / UPDATE |
+| ps.execute() | boolean | true | false| 
+| ps.executeQuery() | ResultSet | The rows and columns returned | n/a |
+| ps.executedUpdate() | int | n/a | Number of rows added / changed / removed |
+
+
+### Working with Parameters
+
+- A *PreparedStatement*  allows to set parameters. Instead of specifying the three values in the SQL, we can use a 
+  question mark(?) instead. A *bind variable* is a placeholder that leds you specify the actual values at runtime.
+  A bind variable is like a parameter, and you will see bind variables referenced as both variables and parameters.
+
+```java
+String sql = "INSERT INTO names VALUES(?,?,?)";
+```
+
+- Bind variables make the SQL easier to read since you no longer need to use quotes around *String* values in the SQL.
+- Now we can pass the parameters to the method itself.
+
+```java
+import java.sql.PreparedStatement;
+
+public static void register(Connection conn, int key,
+                            int type, String name) throws SQLException {
+
+  String sql = "INSERT INTO names VALUES(?, ?, ?)";
+
+  try (PreparedStatement ps = conn.prepareStatement(sql)){
+      ps.setInt(1, key);
+      ps.setString(3, name);
+      ps.setInt(2, type);
+      ps.executeUpdate();
+  }
+}
+```
+
+
+---
+**Note**
+
+- Remember that JDBC starts counting columns with 1 rather than 0. A common exam (and interview) question tests that you 
+  know this!
+```
+
