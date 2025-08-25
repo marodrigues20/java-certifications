@@ -189,4 +189,95 @@ java -cp "<path_to_derby>/derby.jar" TestConnect.java
 <img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_10/images/success_testconnection.png?raw=true" width="500" />
 
 - The details of the output aren't important. Just notice that the class is not *Connection*. It is a vendor implementation
-  of *Connection*.
+  of *Connection*. It is a vendor implementation of *Connection*.
+
+```java
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class TestExternal {
+
+  public static void main(String[] args) throws SQLException {
+    Connection conn = DriverManager.getConnection(
+            "jdbc:postgresql://localhost:5432/ocp-book",
+            "username",
+            "Password20182");
+    System.out.println(conn);
+  }
+}
+```
+
+- It should go without saying that our password is not *Password20182. Also, don't put your password in real code. It is
+  a horrible practice. Always load it from some kind of configuration, ideally one that keeps the store value encrypted.
+
+- If you were to run this with the Postgres driver JAR, it would print something like this:
+
+```markdown
+org.postgresql.jdbc4.Jdbc4Connection@eed1f14
+```
+
+- Unless the exam specifies a command line, you can assume that the correct JDBC driver JAR is in the classpath.
+- The exam creators explicitly ask about the driver JAR if they want you to think about it.
+- *DriverManager* looks  through any drivers it can find to see whether they can handle the JDBC URL. If so, it creates 
+  a *Connection* using that *Driver*. If not, it gives up and throws a *SQLException*.
+
+
+---
+**Real World Scenario**
+
+- Using **Class.forName()**
+
+- You might see *Class.forName()* in code. It was required with older drivers (that were designed for older version of 
+  JDBC) before getting a *Connection*. It looks like this:
+
+```java
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public static void main(String[] args) throws SQLException, ClassNotFoundException {
+
+  Class.forName("org.postgresql.Driver");
+  Connection conn = DriverManager.getConnection(
+          "jdbc:postgresql://localhost:5432/ocp-book",
+          "username",
+          "passoword");
+}
+```
+
+- *Class.forName()* loads a class before it is used. With newer drivers,
+  *Class.forName()* is no longer required.
+---
+
+## Working with a PreparedStatement
+
+- In Java, you have a choice of working with *Statement*, *PreparedStatement*, or *CallableStatement*. The latter two 
+  are subinterfaces of *Statement*, as shown in Figure 10.4.
+
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_10/images/Figure_10_4.png?raw=true" width="500" />
+
+
+- *Statement* is an interface that both *PreparedStatement* and *CallableStatement* extend. A *Statement* and 
+  *PreparedStatement* are similar to each other, except that a *PreparedStatement* takes parameters, while a *Statement*
+  does not.
+- A *Statement* just executes whatever SQL query you give it.
+
+- While it is possible to run SQL directly with *Statement*, you shouldn't.
+- *PreparedStatement* is far superior for the following reasons:
+
+- **Performance**: In most programs, you run similar queries multiple times. A *PreparedStatement* figures out a plan 
+  to run the SQL well and remembers it.
+- **Security**: As you will see in Chapter 11, "Security", you are protected against an attack called SQL injection when 
+  using a *PreparedStatement* correctly.
+- **Readability**: It's nice not to have to deal with string concatenation in building a query string with lots of 
+  parameters.
+- **Future use**: Even if you query is being run only once or doesn't have any parameters, you should still use a 
+  *PreparedStatement*. That way future editors of the code won't add a variable and have to remember to change to 
+  *PreparedStatement* then.
+
+
+- Using the *Statement* interface is also no longer in scope for the JDBC exam, so we do not cover in this book.
+
+
+## Obtaining a PreparedStatement
