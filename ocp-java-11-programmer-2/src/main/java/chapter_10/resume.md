@@ -851,3 +851,8 @@ TABLE 10.6 Sample stored procedures
 ```
 
 
+## Passing an IN Parameter
+
+- A 
+
+
