@@ -582,4 +582,263 @@ register(conn, 100, 1, "Elias", "Ester");
 
 ### Reading a ResultSet
 
+- When working with a *ResultSet*, most of the time you will write a loop to look at each row. The code looks like this:
 
+```
+String sql = "SELECT id, name FROM exhibits";
+Map<Integer, String> idToNameMap = new HashMap<>();
+
+try (var ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery()) {
+    
+    while (rs.next()){
+        int id = rs.getInt("id");
+        String name = rs.getString("name");
+        idToNameMap.put(id, name);
+    }
+    
+    System.out.println(idToNameMap);
+}
+```
+
+- It outputs this:
+
+```markdown
+{1=African Elephant, 2=Zebra}
+```
+
+- A *ResultSet* has a cursor, which points to the current location in the data. Figure 10.5 shows the position as we 
+  we loop through.
+
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_10/images/Figure_10_5.png?raw=true" width="500" />
+
+- Rewriting this same example with column numbers looks like the following:
+
+```
+String sql = "SELECT id, name FROM exhibits";
+Map<Integer, String> idToNameMap = new HashMap<>();
+
+try (var ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery()) {
+    
+    while (rs.next()){
+        int id = rs.getInt(1);
+        String name = rs.getString(2);
+        idToNameMap.put(id, name);
+    }
+    
+    System.out.println(idToNameMap);
+}
+```
+
+- Sometimes you want to get only row the table. Maybe you need only one piece of data. Or maybe the SQL is just returning
+  the number of rows in the table. 
+- When you want only one row, you use an *if* statement rather than a *while* loop.
+
+```
+String sql = "SELECT id, name FROM exhibits";
+Map<Integer, String> idToNameMap = new HashMap<>();
+
+try (var ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery()) {
+    
+    if (rs.next()){
+        int count = rs.getInt(1);
+        System.out.println(count);
+    }
+}
+```
+
+- It is important to check that *rs.next()* returns *true* before trying to call a getter on the *ResultSet*.
+- If a query didn't return any rows, it would throw a *SQLException*, so the *if* statement checks that it is safe to call.
+- Alternatively, you can use the column name.
+
+```
+String sql = "SELECT count(*) AS count FROM exhibits";
+
+
+try (var ps = conn.prepareStatement(sql);
+        var rs = ps.executeQuery()) {
+    
+    if (rs.next()){
+        int count = rs.getInt("count");
+        System.out.println(count);
+    }
+}
+```
+
+- Let's try to read a column that does not exist.
+
+```
+String sql = "SELECT count(*) AS count FROM exhibits";
+
+try (var ps = conn.prepareStatement(sql);
+        var rs = ps.executeQuery()) {
+    
+    if (rs.next()){
+        int count = rs.getInt("total");
+        System.out.println(count);
+    }
+}
+```
+
+- This throws a *SQLException* with a message like this:
+
+```markdown
+Column 'total' not found.
+```
+
+- Attempting to access a column name or index that does not exist thorws a *SQLException*, as does getting data from a 
+  *ResultSet* when it isn't pointing a valid row.
+
+```
+String sql = "SELECT * FROM exhibits WHERE name = 'Not in table'";
+
+try (var ps = conn.prepareStatement(sql);
+      var rs = ps.executeQuery()) {
+    
+      rs.next();
+      rs.getInt(1); //SQLException
+}
+```
+
+
+- In the next example, not calling *rs.next()* at all is a problem. 
+- The result set cursor is still pointing to a location before the first row, so the getter has nothing to point to.
+- How about this one?
+
+```
+String sql = "SELECT count(*) FROM exhibits";
+
+try (var ps = conn.prepareStatement(sql);
+      var rs = ps.executeQuery()) {
+    
+      if (rs.next())
+        rs.getInt(0); //SQLException
+}
+```
+
+- In the below example, since column indexes begin with 1, there is no column 0 to point to and a *SQLException* is thrown.
+
+```
+String sql = "SELECT count(*) FROM exhibits";
+
+try (var ps = conn.prepareStatement(sql);
+      var rs = ps.executeQuery()) {
+    
+      if (rs.next())
+        rs.getInt("badColumn); //SQLException
+}
+```
+
+- Trying to get a column that isn't in the *ResultSet* is just a bad as an invalid column index, and it also throws a 
+  *SQLException*.
+- To sum up this section, it is important to remember the following:
+  - Always use an *if* statement or *while* loop when calling *rs.next()*.
+  - Column indexes begin with 1.
+
+## Getting Data a Column
+
+- There are lots of *get* methods on the *ResultSet* interface.
+- Table 10.5 shows the get methods that you need to know.
+- These are the getter equivalents of the setters in Table 10.4.
+
+
+| Method name  | Return type  |
+|--------------|--------------|
+| getBoolean   | boolean      |
+| getDouble    | double       |
+| getInt       | int          |
+| getLong      | long         |
+| getObject    | Object       |
+| getString    | String       |
+
+
+- Not all of the primitive types are in Table 10.5.
+- There are *getByte()* and *getFloat()* methods, but you don't need to know them for the exam.
+- There is no *getChar()* method. The exam will not try to trick you by using a *get* method name that doesn't exist for 
+  JDBC. 
+
+- The *getObject()* method can return any type. For a primitive, it uses the wrapper class. 
+- Let's look at the following example.
+
+```
+var sql = "SELECT id, name FROM exhibits";
+
+try (var ps = conn.prepareStatement(sql);
+  var rs = ps.executeQuery()) {
+  
+  while (rs.next()) {
+    Object idField = rs.getObject("id");
+    Object nameField = rs.getObject("name");
+    if (idField instanceof Integer) {
+      int id = (Integer) idField;
+      System.out.println(id);
+    }
+    if (nameField instanceof String) {
+      String name = (String) nameField;
+      System.out.println(name);
+    }
+  }
+}
+```
+
+## Using Bind Variables
+
+- We've been creating the *PreparedStatement* and *ResultSet* in the same *try-with-resources* statement.
+- This doesn't work if you have bind variables because they need to be set in between. Luckily, we can nest try-with-resources
+  to handle this.
+- This code prints out the ID for any exhibits matching a given name:
+
+```markdown
+30: var sql = "SELECT id FROM exhibits WHERE name = ?";
+31:
+32: try (var ps = conn.prepareStatement(sql)) {
+33:    ps.setString(1, "Zebra");
+34: 
+35:    try (var rs = ps.executeQuery()) {
+36:        while (rs.next()) {
+37:            int id = rs.getInt("id");
+38:            System.out.println(id);
+39:        }
+40:    }
+41: }
+```
+
+- Pay attention to the flow here. First, we create the *PreparedStatement* on line 32.
+- Then we set the bind variable on line 33. It is only after these are both done that we have a nested try-with-resources
+  on line 35 to create the *ResultSet*.
+
+
+## Calling a CallableStatement
+
+- Sometimes you want your SQL to be directly in the database instead of packaged with your Java code.
+- This is particularly useful when you have many queries and there are complex.
+- A *stored procedure* is code that is compiled in advance and stored in the database.
+- Stored procedures are commonly written in a database-specific variant of SQL, which varies among database software provides.
+
+- Using a stored procedure reduces network round-trips. It also allows database experts to own that part of the code.
+- However, stored procedures are database-specific and introduce complexity of maintaining your application. On the exam, 
+  you need to know how to call a stored procedure but not decide when to use one.
+
+
+TABLE 10.6 Sample stored procedures
+
+| Name                   | Parameter name  | Parameter type  | Description                                                                                   |
+|------------------------|-----------------|-----------------|-----------------------------------------------------------------------------------------------|
+| read_e_names()         | n/a             | n/a             | Returns all rows in the *names* table that have a name beginning with an e                    |
+| read_names_by_letter() | prefix          | IN              | Returns all rows in the *names* table that have a name beginning with the specified parameter |
+| magic_number()         | Num             | OUT             | Returns the number 42                                                                         |
+| double_number()        | Num             | INOUT           | Muliplies the parameter by two and returns that number                                        |
+
+
+
+## Calling a Procedure without Parameters
+
+- Our read_e_names() stored procedures doesn't take any parameter.
+- It does return a *ResultSet*.
+- Since we worked with a *ResultSet* in the *PreparedStatement* section, here we can focus on how the stored procedure is called.
+
+```markdown
+12: String sql = "{call read_e_names()}";
+```
