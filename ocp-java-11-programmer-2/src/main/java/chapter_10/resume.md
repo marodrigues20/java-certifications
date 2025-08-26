@@ -841,4 +841,13 @@ TABLE 10.6 Sample stored procedures
 
 ```markdown
 12: String sql = "{call read_e_names()}";
+13: try (CallableStatement cs = conn.prepareCall(sql);
+14:     ResultSet rs = cs.executeQuery()) {
+15:
+16:     while (rs.next()) {
+17:         System.out.println(rs.getString(3));
+18:     }
+19: }
 ```
+
+
