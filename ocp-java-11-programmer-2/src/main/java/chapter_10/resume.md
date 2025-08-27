@@ -853,6 +853,105 @@ TABLE 10.6 Sample stored procedures
 
 ## Passing an IN Parameter
 
-- A 
+- The *read_names_by_letter()* stored procedure takes a parameter for the prefix or first letter of the store procedure.
+- An *IN* parameter is used for input.
+- There are two differences in calling it compared to our previous stored procedure.
+
+```markdown
+25: var sql = "{call read_names_by_letter(?)}";
+26: try (var cs = conn.prepareCall(sql)) {
+27:     cs.setString("prefix", "Z");
+28:
+29:     try (var rs = cs.executeQuery()) {
+30:         while (rs.next()) {
+31:             System.out.println(rs.getString(3));
+32:         }
+33:     }
+34: }
+```
+
+- On line 25, we have to pass a ? to show we have a parameter. This should be familiar from bind variables with a
+  *PreparedStatement*.
+- On line 27, we set the value of that parameter. Unlike with *PreparedStatement*, we can use either the parameter number
+  (starting with 1) or the parameter name. That means these two statement are equivalent:
+
+```markdown
+cs.setString(1, "Z");
+cs.setString("prefix", "Z");
+```
+
+## Returning an OUT Parameter
+
+- In our previous examples, we returned a *ResultSet*. Some stored procedures return other information. Luckily, stored 
+  procedures can have OUT parameters for output.
+- The *magic_number()* stored procedures sets its *OUT* parameter to 42. There are a few differences here:
 
 
+```markdown
+40: var sql = "{?= call magic_number(?) }";
+41: try (var cs = conn.prepareCall(sql)) {
+42:     cs.registerOutParameter(1, Types.INTEGER);
+43:     cs.execute();
+44:     System.out.println(cs.getInt("num"));
+45: }
+```
+
+- On line 40, we included two special characters (?=) to specify that the stored procedure has an output value.
+- This is optional since we have the *OUT* parameter, but it does aid in readability.
+- On line 42, we register the *OUT* parameter. This is important. It allows JDBC to retrieve the value on line 44.
+- Remember to always call *registerOutParameter()* for each *OUT* or *INOUT* parameter (which we will cover next).
+- On line 43, we call *execute()* instead of *executeQuery()* since we are not returning a *ResultSet* from our stored
+  procedure.
+
+
+---
+**Database-Specific Behaviour**
+
+- Some databases are lenient about certain things this chapter says are required.
+- For example, some databases allow you to omit the following:
+  - Braces ({})
+  - Bind variables (?) if it is an *OUT* parameter
+  - Call to *registerOutParameter()*
+
+- For the exam, you need to answer according to the full requirement, which are described in this book.
+- For example, you should answer exam questions as if braces are required.
+---
+
+
+## Working with an INOUT Parameter
+
+- Finally, it is possible to use the same parameter for both input and output.
+
+```markdown
+50: var sql = "{call double_number(?)}";
+51: try (var cs = conn.prepareCall(sql)) {
+52:     cs.setInt(1, 8);
+53:     cs.registerOutParameter(1, Types.INTEGER);
+54:     cs.execute();
+55:     System.out.println(cs.getInt("num"));
+56: }
+```
+- For an *IN* parameter, line 50 is required since it passes the parameter.
+- Similarly, line 52 is required since it sets the parameter.
+- For an *OUT* parameter, line 53 is required to register the parameter.
+- Line 54 uses *execute()* again because we are not returning a *ResultSet*.
+- Remember that an *INOUT* parameter acts as both an *IN* parameter and an *OUT* parameter, so it has all the requirements
+  of both.
+
+## Comparing Callable Statement Parameters
+
+- TABLE 10.7 Stored procedure parameters types
+
+| d                                  | IN  | OUT  | INOUT |
+|------------------------------------|-----|------|-------|
+| Used for input                     | Yes | No   | Yes   |
+| Used for output                    | No  | Yes  | Yes   |
+| Must set parameter value           | Yes | No   | Yes   |
+| Must call *registerOutParameter()* | No  | Yes  | Yes   |
+| Can include ?=                     | No  | Yes  | Yes   |
+
+
+## Closing Database Resources
+
+- JDBC resources, such as a *Connection*, are expensive to create. Not closing them creates a *resources leak* that will 
+  eventually slow down your program.
