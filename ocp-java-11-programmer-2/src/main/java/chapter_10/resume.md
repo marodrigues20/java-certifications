@@ -955,3 +955,80 @@ cs.setString("prefix", "Z");
 
 - JDBC resources, such as a *Connection*, are expensive to create. Not closing them creates a *resources leak* that will 
   eventually slow down your program.
+- We've been using try-with-resources syntax from Chapter 5. The resources need to be closed ina specific order.
+- The *ResultSet* is closed first, followed by the *PreparedStatement* (or *CallableStatement*) and then the *Connection*.
+- While it is good habit to close all three resources, it isn't strictly necessary. Closing a JDBC resource should close 
+  any resources that it created. In particular, the following are true:
+  - Closing a *Connection* also closes *PreparedStatement* (or *CallableStatement*) and *ResultSet*.
+  - Closing a *PreparedStatement* (or *CallableStatement*) also closes the *ResultSet*.
+- It is important to close resources in the right order. This avoids both resources leaks and exceptions.
+
+
+---
+**Writing a Resource Lead**
+
+- In Chapter 5, you learned that it is possible to declare a type before a try-with-resources statement.
+- Do you see why this method is bad?
+
+```markdown
+40: public void bad() throws SQLException {
+41:     var url = "jdbc:derby:zoo";
+42:     var sql = "SELECT not_a_column FROM names";
+43:     var conn = DriverManager.getConnection(url);
+44:     var ps = conn.prepareStatement(sql);
+45:     var rs = ps.executeQuery();
+46:
+47:     try ( conn; ps; rs) {
+48:         while ( rs.next())
+49:             System.out.println(rs.getString(1));
+50:     }
+51: }
+```
+
+- Suppose an exception is thrown on line 45. The try-with-resources block is never entered, so we don't benefit from 
+  automatic resources closing. That means this code has a resources leak if it fails. Do not write code like this.
+---
+
+- There's another way to close a *ResultSet*. JDBC automatically closes a *ResultSet* when you run another SQL statement
+  from the same *Statement*. This could be a *PreparedStatement* or a *CallableStatement*.
+- How many resources are closed in this code?
+
+```markdown
+14: var url = "jdbc:derby:zoo";
+15: var sql = "SELECT count(*) FROM names where id = ?";
+16: try (var conn = DriverManager.getConnection(url);
+17:     var ps = conn.preparedStatement(sql)) {
+18:
+19:     ps.setInt(1, 1);
+20:
+21:     var rs1 = ps.executeQuery();
+22:     while (rs1.next()) {
+23:         System.out.println("Count: " + rs1.getInt(1));
+24:     }
+25: 
+26:     ps.setInt(1, 2);
+27:
+28:     var rs2 = ps.executeQuery();
+29:     while (rs.next()) {
+30:         System.out.println("Count: " + rs2.getInt(1));
+31:     }
+32:     rs2.close();
+33: }
+```
+
+- The correct answer is four. On line 28, rs1 is closed because the same *PreparedStatement* runs another query.
+- On line 32, rs2 is closed in the method call.
+- Then the try-with-resources statement runs and closes the *PreparedStatement* and *Connection* objects.
+
+
+---
+**Real World Scenario**
+
+**Dealing with Exception**
+
+- 
+
+```markdown
+
+```
+---
