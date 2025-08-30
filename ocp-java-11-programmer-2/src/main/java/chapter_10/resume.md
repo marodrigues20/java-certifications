@@ -1026,9 +1026,45 @@ cs.setString("prefix", "Z");
 
 **Dealing with Exception**
 
-- 
+- In most of this chapter, we've lived in a perfect world, we mentioned that a checked *SQLException* might be thrown by 
+  any JDBC method - but we never actually caught it. We just declared it and the caller deal with it. Now let's catch it.
+- We just declared it and the caller deal with it.
+- Now let's catch the exception.
 
 ```markdown
 
+  var sql = "SELECT not_a_column FROM name";
+  var url = "jdbc:derby:zoo";
+  try (var conn = DriverManager.getConnection(url);
+    var ps = conn.prepareStatement(sql);
+    var rs = ps.executiveQuery()) {
+  
+    while (rs.next())
+        System.out.println(rs.getString(1));
+    }
+        System.out.println(e.getMessage());
+        System.out.println(e.getSQLState());
+        System.out.println(e.getErrorCode());
+    }
 ```
+
+- The output looks like this:
+  
+```markdown
+  Column 'NOT_A_COLUMN' is either not in any table ...
+  42X04
+  30000
+```
+
+- Each of these methods gives you a different piece of information.
+- The *getMessage()* method returns a human-readable message as to what wrong.
+- We've only included the beginning of it here.
+- The *getSQLState()* method returns a code as to what went wrong.
+- You can Google tha name of your database and the SQLstate to get more information about the error.
+- By comparison, *getErrorCode()* is a database-specific code.
+- On this database, it doesn't do anything.
+
 ---
+
+
+
