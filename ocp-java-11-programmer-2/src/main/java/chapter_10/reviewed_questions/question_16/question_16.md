@@ -17,6 +17,11 @@ E. INSERT INTO toys VALUES (?, ?, ?)
 F. INSERT INTO toys VALUES (?, ?, ?, ?)
 
 
-Answer: D, E
+Answer: E
+
+- First, notice that this code uses a *PreparedStatement*. Option A, B, and C are incorrect because they are for a *CallableStatement*.
+- Next, remember that the number of parameter must be an exact match, making option E correct.
+- Remember that you will not be tested on SQL syntax. 
+- When you see a question that appears to be about SQL, think about what it might be trying to test you on.
 
 

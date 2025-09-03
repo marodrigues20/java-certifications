@@ -22,3 +22,6 @@ E. A different exception is thrown. <br>
 
 
 Answer: D
+
+- Before accessing data from a *ResultSet*, the cursor needs to be positioned.
+- The call to *rs.next()* is missing from this code.

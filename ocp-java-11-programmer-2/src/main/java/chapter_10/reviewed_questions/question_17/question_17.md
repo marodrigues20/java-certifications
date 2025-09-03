@@ -28,4 +28,10 @@ F. The code throws an exception. <br>
 
 
 
-Answer: E
+Answer: D
+
+- This code calls the *PreparedStatement* twice.
+- The first time, it gets the number greater than 3.
+- Since there are two such numbers, it prints two lines.
+- Since the parameter is not set between the first and second calls, the second attempt also prints two rows.
+- A total of four lines are printed, making option D correct.
