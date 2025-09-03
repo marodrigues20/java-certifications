@@ -2,12 +2,18 @@
     Which is the correct order in which to close database resources.
 
 
-A. Connection, ResultSet, CallableStatement
-B. Connection, CallableStatement, ResultSet
-C. ResultSet, Connection, CallableStatement
-D. ResultSet, CallableStatement, Connection
-E. CallableStatement, Connection, ResultSet
-F. CallableStatement, ResultSet, Connection
+A. Connection, ResultSet, CallableStatement <br>
+B. Connection, CallableStatement, ResultSet <br>
+C. ResultSet, Connection, CallableStatement <br>
+D. ResultSet, CallableStatement, Connection <br>
+E. CallableStatement, Connection, ResultSet <br>
+F. CallableStatement, ResultSet, Connection <br>
 
 
-Answer: B
+Answer: D
+
+- JDBC resources should be closed in the reverse order from that in which they were opened.
+- The order for opening is *Connection, CallableStatement*, and *ResultSet*. 
+- The order for closing is *ResultSet, CallableStatement*, and *Connection*.
+
+

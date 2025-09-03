@@ -16,3 +16,9 @@ F. Object s = rs.getObject(1) <br>
 
 
 Answer: B, F
+
+
+- In a *ResultSet*, columns are indexed starting with 1, not 0.
+- Therefore, option A, C, and E are incorrect. 
+- There are methods to get the column as a *String* or *Object*.
+- However, optionD is incorrect because an *Object* cannot be assigned to a *String* without a cast.

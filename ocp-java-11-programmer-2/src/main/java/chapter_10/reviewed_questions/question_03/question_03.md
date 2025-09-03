@@ -8,3 +8,9 @@ E. sybase::localhost::/db
 F. sybase::localhost::1234/db
 
 Answer: A
+
+
+- A JDBC URL has three main parts separated by single colons, making options B, C, E, and F incorrect.
+- The first part is always *jdbc*, making option D incorrect.
+- Therefore, the correct answer is option A.
+- Notice that you can get this right even if you've never heard of the Sybase database before.

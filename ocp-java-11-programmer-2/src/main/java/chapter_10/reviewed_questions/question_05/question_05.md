@@ -15,4 +15,10 @@ D. There is a compiler error on line 10.
 E. There is a compiler error on another line.
 F. A runtime exception is thrown.
 
-Answer: B
+Answer: C
+
+- A *Connection* is created using a *static* method on *DriverManager*.
+- It does not use a constructor.
+- Therefore, option C is correct.
+- If the *Connection* was created properly, the answer would be option B.
+

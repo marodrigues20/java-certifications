@@ -22,6 +22,10 @@ E. A *SQLException* is thrown. <br>
 F. A different exception is thrown. <br>
 
 
-Answer: D
+Answer: C
+
+- This code works as expected. 
+- It updates each of the five rows in the table and returns the number of rows updated.
+- Therefore, option C is correct.
 
 

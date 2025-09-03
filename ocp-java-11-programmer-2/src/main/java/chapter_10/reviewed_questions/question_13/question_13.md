@@ -27,5 +27,11 @@ E. The code does not compile. <br>
 F. The code throws an exception. <br>
 
 
-Answer: E
+Answer: C
+
+- This code calls the *PreparedStatement* twice.
+- The first time, it gets the number greater than 3.
+- Since there are two such numbers, it prints two lines.
+- The second time, it gets the numbers greater than 100.
+- There are no such numbers, so the *ResultSet* is empty. A total of two lines is printed, making option C correct.
 

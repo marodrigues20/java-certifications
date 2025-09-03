@@ -8,4 +8,9 @@ E. Port
 F. Vendor-specific string
 
 
-Answer: A, C, F
+Answer: C, F
+
+- A JDBC URL has three parts. 
+- The first part is the string *jdbc*, making option C correct.
+- The second part is the subprotocol. This is the vendor/product name, which isn't an answer choice.
+- The subname is vendor-specific , making option F correct as well.

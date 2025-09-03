@@ -7,6 +7,8 @@ D. Relate
 E. Read
 F. Upgrade
 
-Answer: A, B, E and F
+Answer: A, B, E.
+
+- CRUD stands for Create, Read, Update, Delete, making option A, B, and E correct.
 
 

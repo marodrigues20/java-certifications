@@ -22,4 +22,9 @@ E. A *SQLException* is thrown.
 F. A different exception is thrown.
 
 
-Answer:  C
+Answer:  D
+
+- JDBC code throws a *SQLException*,  which is a checked exception.
+- The code does not handle or declare this exception, and therefore it doesn't compile.
+- Since the code doesn't, option D is correct.
+- If the exception were handled or declared, the answer would be option C.

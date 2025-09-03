@@ -15,3 +15,7 @@ F. executeUpdate, executeQuery, execute
 
 
 Answer: B
+
+- The first line has a return type of *boolean*, making it an *execute()* call.
+- The second line returns the number of modified rows, making it an *executeUpdate()* call.
+- The third line returns the results of a query, making it an *executeQuery()* call.

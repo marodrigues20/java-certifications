@@ -23,3 +23,8 @@ F. A different exception is thrown. <br>
 
 
 Answer: E
+
+- The code compiles because *PreparedStatement* extends *Statement* and *Statement* allows passing a *String* in the executeQuery() call.
+- While *PreparedStatement* can have bind variables, *Statement* cannot.
+- Since this code uses *executeQuery(sql)* in *Statement*, it fails at runtime.
+- A *SQLException* is throws, making option E correct.

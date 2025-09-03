@@ -17,4 +17,7 @@ E. Something else is wrong with the code. <br>
 F. None of the above. This code is correct. <br>
 
 
-Answer: C, D
+Answer: C
+
+- Since an *OUT* parameter is used, the code should call *registerOutParameter().
+- Since this is missing, option C is correct.
