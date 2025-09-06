@@ -15,4 +15,8 @@ C. The stored procedure must declare an IN parameter.   <br>
 D. The stored procedure must declare an INOUT parameter.    <br>
 E. The stored procedure must declare an OUT parameter.  <br>
 
-Answer: C, E
+Answer: E
+
+- Since de codes calls *registerOutParameter()*, we know the stored procedure cannot use an *IN* parameter.
+- Further, there is no *setInt()*, so it cannot be an *INOUT* parameter either.
+- Therefore, the stored procedure must use an *OUT* parameter, making option E the answer.

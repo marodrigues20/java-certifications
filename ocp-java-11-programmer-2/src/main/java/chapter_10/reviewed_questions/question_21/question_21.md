@@ -20,4 +20,9 @@ E. Line 30 <br>
 F. None of the above <br>
 
 
-Answer: C
+Answer: B
+
+- The *prepareStatement()* method requires SQL be passed in.
+- Since this parameter is omitted, line 27 does not compile, and option B is correct.
+- Line 30 also does not compile as the method should be *getInt()*. 
+- However, the question asked about the first compiler error.

@@ -16,3 +16,10 @@ D. The code does not compile. <br>
 E. The code throws an exception at runtime. <br>
 
 Answer: E
+
+- This code should call *prepareStatement()* instead of *prepareCall()* since it not executing a stored procedure.
+- Since we are using *var*, it does compile. 
+- Java will happily create a *CallableStatement* for you.
+- Since this compile safety is lost, the code will not cause issues until runtime.
+- At that point, Java will complain that you are trying to execute SQL as if it were a stored procedure,
+  making option E correct.
