@@ -306,7 +306,7 @@ public Animal clone() {
   wants to make a deep copy.
 
 
-<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_10/images/figure_1_1.png?raw=true" width="500" />
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_11/images/figure_1_1.png?raw=true" width="500" />
 
 - In the last block, implementing-dependent means you should probably check the Javadoc of the overridden *clone()* method
   before using it. It may provide a shallow copy, a deep copy, or something else entirely.
