@@ -315,5 +315,143 @@ public Animal clone() {
 ## Introducing Injection and Input Validation
 
 - *Injection* is an attack where dangerous input runs in a program as a part of a command.
+- For example, user input is often used in database queries or I/O.
+- There are many sources of untrusted data. For the exam, you need to be aware of user input, reading from files, and 
+  retrieving data from a database.
+- In the real world, any data that did not originate from your program should be considered suspect.
+
+
+## Preventing Injection with a PreparedStatement
+
+- Our zoo application has a tabel named *hours* that keeps track of when the *zoo* is open to the public.
+
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_11/images/figure_11_2.png?raw=true" width="500" />
+
+
+## Using Statement
+
+- We wrote a method that uses a *Statement*.
+- In Chapter 10, "JDBC", we didn't use *Statement* because it is often unsafe.
+
+
+```markdown
+public int getOpening(Connection conn, String day) throws SQLException {
+    String sql = 'SELECT opens FROM hours WHERE day = '" + day +"'";
+    try (var stmt = conn.createStatement();
+        var rs = stmt.executeQuery(sql)) {
+        if (rs.next())
+            return rs.getInt("opens");
+    }
+    return -1;
+}
+```
+
+- Then, we call the code with one of the dats in the table.
+
+```markdown
+int opening = attack.getOpening(conn, "monday"); // 10
+```
+
+- This code does what we want.
+- It queries the database and returns the opening time on the requested day.
+- So far, so good. Then Hacker Harry comes along to call the method. He writes this:
+
+```markdown
+int evil = attack.getOpening(conn,
+    "monday' OR day IS NOT NULL OR day = 'sunday");  // 9
+```
+
+- This does not return the expected value. 
+- It returned 9 when we run it.
+- Let's take a look at what Hacker Harry tricked our database into doing.
+- Hacker Harry's parameter results in the following SQL, which we've formatted for readability:
+
+
+```markdown
+SELECT opens FROM hours
+    WHERE day = 'monday'
+       OR day IS NOT NULL
+       OR day = 'sunday'
+```
+
+- It says to return any rows where *day* is *sunday*, *monday*, or any value that isn't *null*.
+- Since none of the values in Figure 11.2 is *null*, this means all the rows are returned.
+- Luckily, the database is kind enough to return the rows in the order they were inserted; our code reads the first row.
+
+
+## Using PreparedStatement
+
+- She reminds us that *Statement* is insecure because it is vulnerable to SQL injection.
+- We switch our code to use *PreparedStatement*.
+
+```markdown
+public int getOpening(Connection conn, String day) throws SQLException {
+    String sql = "SELECT opens FROM hours WHERE day = '" + day +"'";
+    try (var ps = conn.prepareStatement(sql);
+        var rs = ps.executeQuery()) {
+        if (rs.next())
+            return rs.getInt("opens");
+    }
+    return -1;
+}
+```
+
+- Hacker Harry run his code, and the behavior hasn't changed.
+- We haven't fixed the problem!
+- A *PreparedStatement* isn't magic. It gives you the capability to be safe, but only if you use it properly.
+- Security Sienna shows us that we need to rewrite the SQL statement using bind variables like we did in Chapter 10.
+
+```markdown
+public int getOpening(Connection conn, String day) throws SQLException {
+    String sql = "SELECT opens FROM hours WHERE day = ?";
+    try (var ps = conn.prepareStatement(sql)) {
+      **ps.setString(1, day);**
+        try (var ps = conn.prepareStatement(sql)) {
+            if (rs.next())
+                return rs.getInt("opens");
+        }
+        return -1;
+}
+```
+
+- This time, Hacker Harry's code does behave differently.
+
+```markdown
+int evil = attack.getOpening(conn,
+    "monday' or day is not null or day = 'sunday"); // -1
+```
+
+- The entire string is matched against the *day* column.
+- Since there is no match, no rows are returned. This is far better!
+
+
+## Invalidating Invalid Input with Validation
+
+- SQL injection isn't the only type of injection.
+- *Command injection* is another type that uses operating system commands to do something unexpected.
+- The following code attempts to read the name of a subdirectory of *diets* and print out the names of all the *.txt* 
+  files in that directory:
+
+
+```markdown
+Console console = System.console();
+String dirName = console.readLine();
+Path path = Paths.get("c:/data/diets/" + dirName);
+try (Stream<Path> stream = Files.walk(path)) {
+    stream.filter(p -> p.toString().endsWith(".txt"))
+        .forEach(System.out::println);
+```
+
+- We tested it by typing in *mammals* and got the expected output.
+
+```markdown
+c:/data/diets/mammals/Platypus.txt
+```
+
+
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_11/images/figure_11_3.png?raw=true" width="500" />
+
+- Then Hacker Harry came along and typed .. as the directory name.
+
 
 
