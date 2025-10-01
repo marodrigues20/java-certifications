@@ -815,15 +815,307 @@ public class Employee implements Serializable() {
 
 - TABLE 11.2 Methods for serialization and deserialization
 
-| Return type   | Method          | Parameters         | Description                                          |
-|---------------|-----------------|--------------------|------------------------------------------------------|
-| Object        | writeReplace()  | None               | Allows replacement of *object before* serialization  |
-| void          | writeObject()   | ObjectInputStream  | Serializes optionally using *PutField*               |
-| void          | readObject()    | ObjectOutputStream | Deserializes optionally using *GetField*             |
-| Object        | readResolve()   | None               | Allow replacement of object *after* deserialization  |
+| Return type   | Method          | Parameters         | Description                                         |
+|---------------|-----------------|--------------------|-----------------------------------------------------|
+| Object        | writeReplace()  | None               | Allows replacement of object *before* serialization |
+| void          | writeObject()   | ObjectInputStream  | Serializes optionally using *PutField*              |
+| void          | readObject()    | ObjectOutputStream | Deserializes optionally using *GetField*            |
+| Object        | readResolve()   | None               | Allow replacement of object *after* deserialization |
 
 - We also provide a visualization of the process of writing and reading a recor in Figure 11.4
 
 <img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_11/images/figure_11_4.png?raw=true" width="500" />
+
+
+## Constructing Sensitive Objects
+
+- When constructing sensitive objects, you need to ensure that subclasses can't change the behavior. 
+- Suppose we have a *FoodOrder* class.
+
+```markdown
+public class FoodOrder {
+    private String item;
+    private int count;
+
+    public FoodOrder(String item, int count) {
+        setItem(item);
+        setCount(count);
+    }
+
+    public String getItem() { return item; }
+    public void setItem(String item) { this.item = item; }
+    public int getCount() { return count; }
+    public void setCount(int count) { this.count = count; }
+}
+```
+
+- This seems simple enouth. It is a Java object with two instance variable and corresponding getting/setters.
+- We can even write a method that counts how many items are in our order.
+
+```markdown
+public static int total(List<FoodOrder> orders) {
+    return orders.stream()
+        .mapToInt(FoodOrder::getCount)
+        .sum();
+```
+
+- This method signature pleases Hacker Harry because he can pass in his malicious subclass of *FoodOrder*.
+- He overrides the *getCount()* and *setCount()* methods so that *count* is always zero.
+
+```markdown
+public class HarryFoodOrder extends FoodOrder {
+    public HarryFoodOrder(String item, int count) {
+        super(item, count);
+    }
+    public int getCount() { return 0; }
+    public void setCount(int count) { super.setCount(0);)
+}
+```
+
+
+- Well, that's not good. Now we can't order any food.
+- Luckly, Security Sienna has three techniques to foil Hacker Harry.
+- Let's take a look at each one.
+- If you need to review the *final* modifiers, we covered this in detail in **Chapter 1**.
+
+## Making Methods final 
+
+- Security Sienna points out that we are letting Hacker Harry override sensitive methods.
+- If we make the methods *final*, the subclass can't change the behavior on us.
+
+```markdown
+public class FoodOrder {
+    private String item;
+    private int count;
+
+    public FoodOrder(String item, int count) {
+        setItem(item);
+        setCount(count);
+    }
+
+    public final String getItem() { return item; }
+    public final void setItem(String item) { this.item = item; }
+    public final int getCount() { return count; }
+    public final void setCount(int count) { this.count = count; }
+}
+```
+
+- Now the subclass can't provide different behaviour for the get and set methods.
+- In general, you should avoid allowing your constructors to call any methods that a subclass can provide its own 
+  implementation for.
+
+## Making Classes final 
+
+- Remembering to make methods *final* is extra work.
+- Security Sienna points out that we don't need to allow subclasses at all since everything we need is in *FoodOrder*.
+
+```markdown
+public final class FoodOrder {
+    private String item;
+    private int count;
+    
+    public FoodOrder(String item, int count) {
+        setItem(item);
+        setCount(count);
+    }
+
+    public String getItem() { return item; }
+    public void setItem(String item) { this.item = item; }
+    public int getCount() { return count; }
+    public void setCount(int count) { this.count = count; }
+}
+```
+
+- Now Hacker Harry can't create his malicious subclass to begin with!
+
+## Making the Constructor private
+
+- Security Sienna notes that another way of preventing or controlling subclasses is to make the constructor *private*.
+- This technique requires *static* factory methods to obtain the object.
+
+```markdown
+public class FoodOrder {
+    private String item;
+    private int count;
+
+    private FoodOrder(String item, int count) {
+        setItem(item);
+        setCount(count);
+    }
+
+    public FoodOrder getOrder(String item, int count) {
+        return new FoodOrder(item, count);
+    }
+
+    public String getItem() { return item; }
+    public void setItem(String item) { this.item = item; }
+    public int getCount() { return count; }
+    public void setCount(int count) { this.count = count; }
+}
+```
+
+- The factory method technique gives you more control over the process of object creating.
+
+## Preventing Denial of Service Attacks
+
+- A *denial of service (DoS)* attack is when a hacker one or more requests with the intent of disrupting legitimate.
+- Most of denial of service attacks require multiple requests to bring down their targest.
+- Some attacks send a very large requests that can even down the application in one shot.
+- In this book, we will focus on denial of service attacks.
+- Unless otherwise specified, a denial of service attack comes from one machine. It may makes many requests, but they 
+  have the same origin.
+- By contrast, a *distributed denial of service (DDoS) attack* is a denial of service attack that comes from many sources 
+  at once. For example, many machines may attack the target. 
+- In this section, we will look at some common sources of denial of service issues.
+
+
+## Leaking Resources
+
+  - One way that Hacker Harry can mount a denial of service attack is to take advantage of poorly written code.
+  - This simple method counts the number of lines in a file using NIO.2 methods we in **Chapter 9**.
+
+```markdown
+public long countLines(Path path) throws IOException {
+    return Files.lines(path).count();
+}
+```
+
+- Hacker Harry likes this method. He can call it in a loop. Since this method opens a file system resource and never
+  closes it, there is a *resource leak*. After Hacker Harry calls the method enough times, the program crashes because 
+  there are no more file handles available.
+- Luckly, the fix for a resource leak is simple, and it's one you've already seen in **Chapter 9**.
+- Security Sienna fixes the code by using the try-with-resources statement we saw in **Chapter 5**,
+  "Exception, Assertions, and Localization.".
+- Here's an example:
+
+```markdown
+public long countLines(Path path) throws IOException {
+    try (var stream = Files.lines(path)) {
+        return stream.count();
+    }
+}
+```
+
+
+## Reading Very Large Resources
+
+- Another source of a denial of service attacks is very large resources.
+- Suppose we have a simple method that reads a file into memory, does some transformations on it, and writes it to a new file.
+
+```markdown
+public void transform(Path in, Path out) throws IOException {
+    var list = Files.readAllLines(in);
+    list.removeIf(s -> s.trim().isBlank());
+    Files.write(out, list);
+}
+```
+
+- On a small file, this works just fine.
+- However, on a extremely large file, your program could run out of memory and crash.
+- Hacker Harry strikes again!
+- To prevent this problem, you can check the size of the file before reading it.
+
+
+## Including Potentially Large Resources
+  
+- An *inclusion attack* is when multiple files or components are embedded within a single file.
+- Any file that you didn't create is suspect.
+- Some types can appear smaller than they really are.
+- For example, some types of images can have a "zip bomb" where the file is heavily compressed on disk. When you try to 
+  read it in, the file uses much more space than you thought.
+- Extensible Markup Language (XML) files can have the same problem. One attack is called the "billion laughs attack" 
+  where the file gets expanded exponentially.
+- The reason these files can become unexpectedly large is that they can include other entities. This means something that
+  is 1 KB can become exponentially larger if it is included enough times.
+- While handling large files is beyond the scope of the exam, you should understand how and when these issues can come up.
+
+
+---
+*Note*
+
+- Inclusion attacks are often known for when they include potentially hosted content.
+- For example, image you have a web page that includes a script on another website.
+- You don't control the script, but Hacker Harry does. 
+- Including scripts from other websites is dangerous regardless of how big they are.
+---
+
+## Overflowing Numbers
+
+- When checking file size, be careful with an *int* type and loops.
+- Since an *int* has a maximum size, exceeding that size results in integer overflow.
+- Incrementing an *int* at the maximum value results in a negative number, so validation might not work as expected.
+- In this example, we have a requirement to make sure that we can add a line to a file and have the size stay under a 
+  million.
+
+```markdown
+public static void main(String[] args){
+    System.out.println(enoughRoomToAddLine(100));
+    System.out.println(enoughRoomToAddLine(2_000_000));
+    System.out.println(enoughRoomToAddLine(Integer.MAX_VALUE));
+}
+
+public static boolean enoughRoomToAddLine(int requestedSize){
+    int maxLenght = 1_000_000;
+    String newLine = "END OF FILE";
+
+    int newLineSize = newLine.length();
+    return requestedSize + newLineSize < maxLength;
+}
+```
+
+- The output of this program is as follow:
+
+```markdown
+true
+false
+true
+```
+
+- The first *true* should make sense. We start with a small file and add a short line to it.
+- This is definitely under a million.
+- The second value is *false* because two million is already over a million even after adding our short line.
+- Then we get to the final output of *true*.
+- We start with a giant number that is over a million. Adding a small number to it exceeds the capacity of an *int*.
+  Java overflows the number into a very negative number. Since all negative numbers are under a million, the validation
+  doesn't do what we want it to.
+- When accepting numeric input, you need to verify it isn't too large or too small. 
+- In this example, the input value *requestedSize* should have been checked before adding it to *newLineSize*.
+
+## Wasting Data Structures
+
+- One advantage of using a *HashMap* is that you can look up an element quickly by key.
+- Even if the map is extremely large, a lookup is fast as long as there is a good distribution of hashed keys.
+- Hacker Harry likes assumptions. He creates a class where *hashCode()* always returns 42 and puts a million of them in 
+  in your map. Not so fast anymore.
+- This one is harder to prevent. However, beware of untrusted classes. Code review can help detect the Hacker Harry in 
+  your office.
+- Similarly, beware of code that attempts to create a very large array or other data structure. For example, if you write
+  a method that lets you set the size of an array, Hacker Harry can repeatedly pick a really large array size and quickly
+  exhaust the program's memory. Input validation is your friend. You could limit the size of an array parameter or,
+  better yet, don't allow the size to be set at all.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
