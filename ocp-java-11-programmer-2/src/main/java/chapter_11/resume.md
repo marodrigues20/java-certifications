@@ -445,7 +445,7 @@ try (Stream<Path> stream = Files.walk(path)) {
 - We tested it by typing in *mammals* and got the expected output.
 
 ```markdown
-c:/data/diets/mammals/Platypus.txt
+c:/data/diets/mammals/platypus.txt
 ```
 
 
@@ -453,5 +453,351 @@ c:/data/diets/mammals/Platypus.txt
 
 - Then Hacker Harry came along and typed .. as the directory name.
 
+```markdown
+c:/data/diets/../secrets/giraffeDueDate.txt
+c:/data/diets/../diets/mammals/Platypus.txt
+c:/data/diets/../diets/birds/turkey.txt
+```
+
+- Oh, no! Hacker Harry knows we are expecting a baby giraffe just from the filenames.
+- We were not intending for him to see the *secret* directory.
+- We decided to chat with Security Sienna about this problem. She suggests we validate the input.
+- We will use a *whitelist* that allows us to specify which values are allowed.
+
+```markdown
+Console console = System.console();
+String dirName = console.readLine();
+    if (dirName.equals("mammal") || dirName.equals("birds")) {
+      Path path = Paths.get("c:/data/diets/" + dirName); {
+      try (Stream<Path> stream = Files.walk(path)) {
+            stream.filter(p -> p.toString().endsWith(".txt"))
+            .forEach(System.out::println);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+}
+```
+
+- This time when Hacker Harry strikes, he doesn't see any output at all. 
+- His input did not match the whitelist. When validation fails, you can throw an exception, log a message, or take any 
+  other action of your choosing.
+
+## Working with Confidential Information
+
+- When working on a project, you will often encounter confidential or sensitive data.
+- Sometimes there are even law that mandate proper handling of data like the Health Insurance Portability and Accountability Act
+  (HIPAA) in the United States.
+- Table 11.1 lists some examples of confidential information.
+
+| Category                                | Examples                                                                                                    |
+|-----------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| Login information                       | Usernames, <br> Passwords, <br> Hashes of passwords                                                         |
+| Banking                                 | Credit card numbers, <br> Account balances, <br> Credit score                                               |
+| PII (Personal identifiable information) | Social Security number (or other government ID, <br> Mother's maiden name, <br> Security questions/answers  |
+
+
+## Guarding Sensitive Data from Output
+
+- Avoid putting confidential information in a *toString()* method. That's just inviting  the information to wind up logged
+  somewhere you didn't intend.
+- Careful what methods call in these sensitive information. It is important to make sure it is being shared only per the requirements.
+
+## Protecting Data in Memory
+
+- Security Sienna needs to be careful about what is in memory.
+- If her application crashes, it may generate a dump file.
+- That contains values of everything in memory.
+- When calling the *readPasssword()* on *Console*, it returns a *char[]* instead of a *String*.
+- This is safer for two reasons.
+  - It is not stored as a *String* pool, where it could exist in memory long after the code that used it is run.
+  - You can *null* out the value of the array element rather than waiting for the garbage collector to do it.
+
+- For example, this code overlays the password characters with the letter x:
+
+```
+  Console console = System.console();
+  char[] password = console.readPassword();
+  Arrays.fill(password, 'x');
+```
+
+- When the sensitive data cannot be overwritten, it is good practice to set confidential data to *null* when you're done 
+  using it. If the data can be garbage collected, you don't have to worry about it being exposed later.
+- Here's an example:
+
+```
+  LocalDate dateOfBirth = getDateOfBirth();
+  // use date of birth
+  dateOfBirth = null;
+```
+
+- The idea is to have confidential data in memory for as short a time as possible.
+
+## Limiting File Access
+
+- We saw ealier how to prevent command injection by validating requests. 
+- Another way is to use a security policy to control what the program can access.
+
+
+---
+**Defense in Depth**
+- Validation and using a security policy are good techniques to use together to apply defense in depth.
+---
+
+- For the exam, you don't need to know how to write or run a policy.
+- You do need to be able to read one to understand security applications.
+- Luckly, they are fairly self-explanatory.
+- Here's an example of a policy.
+
+
+```markdown
+  grant {
+      permission java.io.FilePermission
+          "C:\\water\fish.txt",
+          "read";
+  }
+```
+
+- This policy gives the programmer permission to read, but not update, the *fish.txt* file.
+- If the program is allowed to read and write the file, we specify the following:
+
+```markdown
+    grant {
+      permission java.io.FilePermission
+          "C:\\water\\fish.txt",
+          "read, write";
+    };
+```
+
+- When looking at a policy, pay attention to whether the policy grants access to more than is needed to run the program.
+- If our application needs to read a file, it should only have *read* permissions. 
+- This is the principle of least privilege we showed you earlier.
+
+## Serializing and Deserialing Objects
+
+- Imagine we are storing data in an **Employee** record.
+- We want to write this data to a file and read this data back into memory, but we want to do so without writing any
+  potentially sensitive data to disk.
+- From *Chapter 8*, you should already know how to do this with serializaiton.
+- Recall from *Chapter 8* that Java skips calling the constructor when deserializing an object. This means it is important
+  not rely on the constructor for custom validation logic.
+- Let's define our *Employee* class used throughout this section. Remember, it's important to mark it *Serializable*.
+
+
+````markdown
+import java.io.*;
+
+public class Employee implements Serializable {
+    private String name;
+    private int age;
+    // Constructor/getters/setters
+````
+
+## Specifying Which Fields to Serialize
+
+- Our zoo has decided that employee age information is sensitive and shouldn't be written to disk.
+- From *Chapter 8*, you should already know how to do this.
+- Sienna reminds us that marking a field as *transient* prevents it from being serialized.
+
+```markdown
+private transient int age;
+```
+
+- Alternatively, you can specify fields to be serialized in an array.
+
+```markdown
+private static final ObjectStreamField[] serialPersistentFields = 
+    { new ObjectStreamField("name", String.class) };
+```
+
+- You can think of *serialPersistentFields* as the opposite of *transient*.
+- The former is a whitelist of fields that should be serialized, while the latter is a blacklist of fields that should not.
+
+---
+**Tip**
+
+- If you go with the array approach, make sure you remember to use the private, static, and final modifiers.
+- Otherwise, the field will be ignored.
+---
+
+
+## Customizing the Serialization Process
+
+- Security may demand custom serialization. In our case, we got a new requirement to add the Social Security number to
+  add the Social Security number to our object.
+- Unlike age, we do need to serialize this information. However, we don't want to store the Social Security number in plain
+  text, so we need to write some custom code.
+- Take a look at the following implementation that uses *writeObject()* and *readObject()* for serialization, which you
+  learned about in **Chapter 8**. For brevity, we'll use *snn* to stand for Social Security number.
+
+```markdown
+import java.io.*;
+
+public class Employee implements Serializable {
+
+    private String name;
+    private String ssn;
+    private int age;
+
+    // Constructor/getters/setters
+
+    private static final ObjectStreamField[] serialPersistentFields = 
+        { new ObjectStreamField("name", String.class),
+        new ObjectStreamField("snn", String.class) };
+
+
+    private static String encrypt(String input) {
+        // Implementation omitted
+    }
+    
+    private static String decrypt(String input) {
+        // Implemented omitted
+    }
+
+    private void writeObject(ObjectOutputStream s) throws Exception {
+        ObjectOutputStream.PutField fields = s.putFields();
+        fields.put("name", name);
+        fields.put("ssn", encrypt(ssn));
+        s.writeFields();
+    }
+
+    private void readObject(ObjectInputStream s) throws Exception {
+        ObjectInputStream.GetField fields = s.readFields();
+        this.name = (String) fields.get("name", null);
+        this.ssn = decrypt((String) fields.get("ssn", null));
+    }
+}
+```
+
+- This version skips the *age* variable as before, although this time without using the *transient* modifier.
+- It also uses custom read and write methods to securely encrypt/decrypt the Social Security number.
+- Notice the *PutField* and *GetField* classes are used in order to write and read the fields easily.
+- Suppose we were to update our *writeObject()* method with the *age* variable.
+
+```markdown
+  fields.put("age", age);
+```
+
+- When using serialization, the code would result in an exception.
+
+```markdown
+java.lang.IllegalArgumentException: no such field age with type int
+```
+
+- This shows the *serialPersistentFields* variables is really being used.
+- Java is preventing us from referencing fields that were not declared to be serializable.
+
+
+---
+*Working with Passwords*
+
+- In this example, we encrypted and then decrypted the Social Security number to show how to perform custom serialization
+  for security reasons. Some fields are too sensitive even for that. In particular, you should never be able to decrypt 
+  a password.
+- When a password is set for a user, it should be converted to a *String* value using a salt (initial random value) and 
+  one-way hashing algorithm. Then, when a user logs in, convert the value they type in using the same algorithm and 
+  compare it with the stored value. This allows you to authenticate a user without having to expose their passwords.
+- Databases of stored passwords can (and very often do) get stolen. Having them properly encrypted means the attacker can't 
+  do much with them, like decrypt them and use them to log in to the system. They also can't use them to log in to other
+  system in which the user used the same passwords more than once.
+---
+
+
+## Pre/Post-Serialization Processing
+
+- Suppose our zoo employee application is having a problem with duplicate records being created for each employee.
+- They decide that they want to maintain a list of all employees in memory and only create users as needed. Furthermore, 
+  each employee' name is guaranteed to be unique. Unlikely in practice we know, but this is a special zoo!
+- From what you learned about concurrent collection in *Chapter 7*, "Concurrency," and factory methods, we can accomplish
+  this with a *private* constructor and factory method.
+
+```markdown
+  import java.io.*;
+  import java.util.Map;
+  import java.util.concurrent.ConcurrentHashMap;
+
+  public class Employee implements Serializable {
+  ...
+  private Employee() {}
+  private static Map<String, Employee> pool = 
+     new ConcurrentHashMap<>();
+
+  public synchronized static Employee getEmployee(String name) {
+     if (pool.get(name)==null) {
+        var e = new Employee();
+        e.name = name;
+        pool.put(name, e);
+     }
+     return pool.get(name);
+  }
+```
+
+- This method creates a new *Employee* if one does not exist. Otherwise, it returns the one storedin the memory pool.
+
+
+## Applying readResolve()
+
+- Now we want to start reading/writing the employee data to disk, but we have a problem.
+- When someone reads the data from the disk, it deserializes it into a new object, not the one in memory pool. This could 
+  result in two users holding different versions of the *Employee* in memory!
+- Enter the *readResolve()* method. When this method is present, it is run after the *readObject()* method and is capable
+  of the object returned by deserialization.
+
+```
+import java.io.*;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class Employee implements Serializable() {
+  ...
+  public synchronized Object readResolve() throws ObjectStreamException {
+      var existingEmployee = pool.get(name);
+      if(pool.get(name) == null) {
+        // New employee not in memory
+        pool.put(name, this);
+        return this;
+      } else {
+        // Existing user already in memory
+        existingEmployee.name = this.name
+        existingEmployee.ssn = this.ssn;
+        return existingEmployee;
+      }
+  }
+}
+```
+
+- If the object is not in memory, it is added to the pool and returned. Otherwise, the version in memory is updated, and 
+  its reference is returned.
+- Notice that we added the *synchronized* modifier to this method. 
+- Java allow any method modifiers (except *static*) for the *readResolve()* method including any access modifier.
+- This rule applies to *writeReplace()*, which is up next.
+
+
+## Applying writeReplace()
+
+- Now, what if we want to write an *Employee* record to disk but we don't completely trust the instance we are holding?
+- For example, we want to always write the version of the object in the pool rather than the *this* instance.
+- By construction, there should be only one version of this object in memory, but for this example let's pretend we're 
+  not 100 percent confident of that.
+- The *writeReplace()* method is run **before** *writeObject()* and allows us to replace the object that gets serialized.
+
+
+```markdown
+  import java.io.*;
+  import java.util.Map;
+  import java.util.concurrent.ConcurrentHashMap;
+  
+  public class Employee implements Serializable {
+    ...
+    public Object writeReplace() throws ObjectStreamException {
+        var e = pool.get(name);
+        return e != null ? e : this;
+    }
+  }
+```
+
+- This implementation checks whether the object is found in the pool.
+- If it is found in the pool, that version is sent for serialization; otherwise, the current instance is used.
+- We could also update this example to add it to the pool if it is somehow missing.
 
 
