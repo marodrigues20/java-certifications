@@ -800,4 +800,30 @@ public class Employee implements Serializable() {
 - If it is found in the pool, that version is sent for serialization; otherwise, the current instance is used.
 - We could also update this example to add it to the pool if it is somehow missing.
 
+---
+*Note*
+
+- If these last few examples seemed a bit contrived, it's because they are.
+- While the exam is likely to test you on these methods, implementing these advanced serialization methods in detail is 
+  way beyond the scope of the exam. Besides, *transient* will probably meet your needs for customizing what gets serialized.
+---
+
+## Reviewing Serialization Methods
+
+- You've encountered a lot of methods in this chapter. Table 11.2 summarizes the important features of each that you
+  should know for the exam.
+
+- TABLE 11.2 Methods for serialization and deserialization
+
+| Return type   | Method          | Parameters         | Description                                          |
+|---------------|-----------------|--------------------|------------------------------------------------------|
+| Object        | writeReplace()  | None               | Allows replacement of *object before* serialization  |
+| void          | writeObject()   | ObjectInputStream  | Serializes optionally using *PutField*               |
+| void          | readObject()    | ObjectOutputStream | Deserializes optionally using *GetField*             |
+| Object        | readResolve()   | None               | Allow replacement of object *after* deserialization  |
+
+- We also provide a visualization of the process of writing and reading a recor in Figure 11.4
+
+<img src="https://github.com/marodrigues20/java-certifications/blob/main/ocp-java-11-programmer-2/src/main/java/chapter_11/images/figure_11_4.png?raw=true" width="500" />
+
 
