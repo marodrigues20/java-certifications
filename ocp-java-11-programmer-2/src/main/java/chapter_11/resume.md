@@ -1095,7 +1095,27 @@ true
   better yet, don't allow the size to be set at all.
 
 
+---
+**Real World Scenario**
 
+*Learning More*
+
+- This exam covers security as it applies to stand-alone applications. On a real project, you are likely to be using other
+  technologies. Luckly, there are lists of things to watch out for.
+- Open Web Applications Security Project (OWASP) publishes a top 10 list of security issues. Some will sound familiar 
+  from this chapter, like injection. Others, like cross-site scripting (XSS), are specific to web applications. XSS 
+  involves malicious JavaScript.
+- If you are deploying to a cloud provider, like Oracle Cloud or AWS, there is even more to be aware of. The Cloud Security
+  Alliance (CSA) also publishes a security list. Theirs is called the Egregious Eleven. This list covers additional worries
+  such as account hijacking.
+- We've included links to the OWASP Top 10 and Egregious Eleven on our book page.
+
+http://www.selikoff.net/ocp11-2
+
+- This chapter is just a taste of security.
+- To learn more about security beyond the scope of the exam, please read *Iron-Clad Java, Jim Manico and August Detlefsen*
+  (Oracle Press, 2014).
+---
 
 
 
