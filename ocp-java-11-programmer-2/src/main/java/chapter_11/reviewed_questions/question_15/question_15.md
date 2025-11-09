@@ -8,4 +8,4 @@ E. transient    <br>
 F. static       <br>
 
 
-Answer:
+Answer: D

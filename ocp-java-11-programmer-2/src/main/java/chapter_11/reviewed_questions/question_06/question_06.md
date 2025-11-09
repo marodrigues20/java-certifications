@@ -8,3 +8,6 @@ E. If *clone*()* is not overridden and runs without exception, it will create a 
 F. If *clone()* is not overrridden and runs without exception, it will create a shallow copy.  <br>
 
 
+Answer: A; E; F
+
+

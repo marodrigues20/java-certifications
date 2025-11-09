@@ -8,4 +8,4 @@ D. Adding *transient* to the method
 E. Making the constructor *private*
 F. None of the above
 
-Answer: 
+Answer: A

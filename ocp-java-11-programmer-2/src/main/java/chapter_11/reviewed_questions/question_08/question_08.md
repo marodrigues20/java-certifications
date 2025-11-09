@@ -15,3 +15,6 @@ D. The policy is incorrect because the permissions should be separated with semi
 E. The policy is incorrect because *write* should not be included. <br>
 
 
+Answer: A
+
+

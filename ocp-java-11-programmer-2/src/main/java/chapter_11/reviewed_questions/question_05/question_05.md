@@ -5,3 +5,6 @@ A. readObject()   <br>
 B. readResolve()  <br>
 C. Both  <br>
 D. Neither  <br>
+
+
+Answer: D

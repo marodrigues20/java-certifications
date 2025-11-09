@@ -7,4 +7,4 @@ C. Log a message <br>
 D. Throw an exception <br>
 E. None of the above <br>
 
-Answer:
+Answer: A

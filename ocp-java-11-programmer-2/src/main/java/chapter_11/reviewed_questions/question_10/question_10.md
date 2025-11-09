@@ -6,4 +6,4 @@ C. I/O
 D. JDBC
 E. String
 
-Answer:
+Answer: C

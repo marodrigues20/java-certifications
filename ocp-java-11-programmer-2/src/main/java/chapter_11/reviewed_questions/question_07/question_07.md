@@ -20,3 +20,6 @@ D. SQL injection        <br>
 E. SQL leak             <br>
 F. None of the above    <br>
 
+
+Answer: D
+

@@ -13,4 +13,4 @@ D. writeObject()
 E. writeReplace()
 F. writeResolve()
 
-Answer:
+Answer: A

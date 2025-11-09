@@ -20,3 +20,6 @@ B. Input validation
 C. Limiting accessibility
 D. Restricting extensibility
 E. None of the above
+
+
+Answer: E

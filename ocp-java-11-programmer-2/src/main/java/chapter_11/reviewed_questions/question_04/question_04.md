@@ -17,4 +17,4 @@ D. (ArrayList) weights.clone()
 E. weights.copy()
 F. (ArrayList) weights.copy()
 
-Answer: 
+Answer: D

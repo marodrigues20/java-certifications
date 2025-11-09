@@ -7,3 +7,5 @@ C. If *Camel* has restricted extensibility, then it must have good encapsulation
 D. If *Camel* has restricted extensibility, then it must be immutable. <br>
 E. If *Camel* is immutable, then it must have good encapsulation. <br>
 F. If *Camel* is immutable, then it must restrict extensibility. <br>
+
+Answer: B
