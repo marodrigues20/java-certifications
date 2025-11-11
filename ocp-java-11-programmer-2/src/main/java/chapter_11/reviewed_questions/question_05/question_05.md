@@ -8,3 +8,6 @@ D. Neither  <br>
 
 
 Answer: D
+
+- When deserializing an object, Java does not call the constructor. 
+- Therefore, option D is correct.

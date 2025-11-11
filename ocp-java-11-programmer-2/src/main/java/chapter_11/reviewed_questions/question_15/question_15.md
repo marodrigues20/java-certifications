@@ -8,4 +8,8 @@ E. transient    <br>
 F. static       <br>
 
 
-Answer: D
+Answer: A, B, F.
+
+- The *serialPersistentFields* field is used to specify which fields should be used in serialization.
+- It must be declared *private static final*, or it will be ignored. 
+- Therefore, option A, B, and F are correct.

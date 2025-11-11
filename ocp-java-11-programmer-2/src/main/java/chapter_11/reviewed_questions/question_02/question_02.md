@@ -22,4 +22,9 @@ D. Restricting extensibility
 E. None of the above
 
 
-Answer: E
+Answer: A, C, D
+
+- Since the class is *final*, it restricts extensibility, making option D correct.
+- The *private* variable limits accessibility, making option C correct.
+- Finally, option A is correct. This is an immutable class since it's not possible to change the state after construction.
+- This class does not do any validation, making option B incorrect.

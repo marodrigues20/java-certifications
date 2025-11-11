@@ -6,4 +6,6 @@ C. Injection.   <br>
 D. None of the above <br>
 
 
-Answer:D
+Answer: A
+
+- Reading an extremely large file is a form of denial of service attack, making option A correct.

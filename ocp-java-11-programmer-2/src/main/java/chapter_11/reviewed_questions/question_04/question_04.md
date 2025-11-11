@@ -17,4 +17,10 @@ D. (ArrayList) weights.clone()
 E. weights.copy()
 F. (ArrayList) weights.copy()
 
-Answer: D
+Answer: B, D.
+
+- Option A is incorrect because it does not make a copy.
+- Options E and F are incorrect because *ArrayList* does not have a *copy()* method.
+- Option C is incorrect because the *clone()* method returns an *Object* and needs to be cast, so that option does not
+  compile.
+- Option B and D are correct because they copy the *ArrayList* using the copy constructor and *clone()* method, respectively.

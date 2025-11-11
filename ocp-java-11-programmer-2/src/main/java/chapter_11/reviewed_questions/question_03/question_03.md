@@ -30,3 +30,7 @@ E. UpdateItem  <br>
 F. UpdateObject <br>
 
 Answer: A
+
+
+- The *PutField()* class is used with the *writeObject()* method, making option A correct.
+- There is also a *GetField* class used with the *readObject()* method.

@@ -6,4 +6,7 @@ C. I/O
 D. JDBC
 E. String
 
-Answer: C
+Answer: C, D.
+
+- Any resources accessing things outside your program should be closed.
+- Options C and D are correct because I/O and JDBC meet this criteria.

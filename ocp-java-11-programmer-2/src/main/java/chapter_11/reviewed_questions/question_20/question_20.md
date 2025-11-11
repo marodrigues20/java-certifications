@@ -15,3 +15,7 @@ D. It creates a wide copy. <br>
 
 
 Answer: C
+
+- A shallow copy does not create copies of the nested objects, making option C correct.
+- Options B and D are incorrect because narrow and wide copies are not terms.
+- Option A is incorrect because a deep copy does copy the nested objects.

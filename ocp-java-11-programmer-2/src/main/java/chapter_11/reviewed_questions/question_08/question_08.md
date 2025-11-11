@@ -15,6 +15,9 @@ D. The policy is incorrect because the permissions should be separated with semi
 E. The policy is incorrect because *write* should not be included. <br>
 
 
-Answer: A
+Answer: E
+
+- The policy compiles and uses correct syntax. However, it gives permissions that are too broad.
+- The user needs to be able to read a book, so *write* permissions should not be granted.
 
 

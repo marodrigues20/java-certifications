@@ -9,4 +9,9 @@ E. Variable names <br>
 F. None of the above <br>
 
 
-Answer: A; B; C; D
+Answer: B; C; D.
+
+
+- Any information the user can see requires care. 
+- Option B, C, and D are correct for this reason. Comments and variables names are part of the program, not the data it
+  handles, making options A and E incorrect.

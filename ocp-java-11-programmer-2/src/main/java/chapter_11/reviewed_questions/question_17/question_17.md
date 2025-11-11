@@ -8,4 +8,8 @@ D. Adding *transient* to the method
 E. Making the constructor *private*
 F. None of the above
 
-Answer: A
+Answer: A, B, E
+
+- Options A and E are correct because they prevent subclasses from being created outside the class definition.
+- Option B is also correct because it prevents overriding the method.
+- Option C and D are incorrect because *transient* is a modifier for variables, not classes or methods.

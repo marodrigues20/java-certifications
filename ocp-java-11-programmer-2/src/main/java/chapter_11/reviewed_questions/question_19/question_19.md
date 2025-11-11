@@ -13,4 +13,11 @@ D. writeObject()
 E. writeReplace()
 F. writeResolve()
 
-Answer: A
+Answer: C
+
+
+- Option B and F are incorrect because these methods names are not used by any serialization or deserialization process.
+- Option A and D are incorrect because the return type for these methods is *void*, not *Object*. 
+- Option E is almost correct, as that is a valid method signature, but our question asks for the method used in deserialization,
+  not serialization.
+- Option C is the correct answer.
