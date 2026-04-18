@@ -2684,60 +2684,181 @@ public static List<Integer> addValues(IntStream source){
 > ☕ **Introduzido e finalizado no Java 21 — cai no OCP Java 21 (1Z0-830)**
 > Não faz parte do OCP Java 11. Incluído aqui como referência de progressão.
 
+---
+
 ### O problema que resolve
 
-- Platform threads (Java 11) são mapeadas 1:1 com threads do OS — caras de criar, limitadas a milhares.
-- Virtual threads são geridas pela JVM, mapeadas dinamicamente sobre um pequeno pool de **carrier threads**.
-- Permitem escalar para **milhões de threads** sem custo de memória proporcional.
+- Platform threads (Java 11) são mapeadas **1:1 com threads do OS** — caras de criar (~1MB stack), limitadas a milhares.
+- Virtual threads são geridas pela JVM sobre um pequeno pool de **carrier threads** (platform threads do fork/join pool).
+- Permitem escalar para **milhões de threads** concorrentes sem custo de memória proporcional.
+- O principal benefício é em tarefas com **blocking I/O** — quando uma virtual thread bloqueia, a JVM desmonta-a da carrier thread e esta fica livre para outra virtual thread.
 
-### Criação
+---
+
+### Formas de criar Virtual Threads
 
 ```java
-// Forma 1 — Thread.ofVirtual()
-Thread vt = Thread.ofVirtual().start(() -> System.out.println("Virtual!"));
+// 1 — Forma mais simples
+Thread t1 = Thread.ofVirtual().start(() -> System.out.println("VT1"));
 
-// Forma 2 — factory
-Thread.Builder builder = Thread.ofVirtual().name("worker");
-Thread t = builder.start(() -> System.out.println("Worker thread"));
+// 2 — Com nome (útil para debug)
+Thread t2 = Thread.ofVirtual().name("worker-1").start(() -> System.out.println("VT2"));
 
-// Forma 3 — ExecutorService (recomendada para o exame)
-try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-    executor.submit(() -> System.out.println("Task 1"));
-    executor.submit(() -> System.out.println("Task 2"));
-}
+// 3 — Thread.Builder com prefixo incremental: task-0, task-1, task-2...
+Thread.Builder builder = Thread.ofVirtual().name("task-", 0);
+Thread t3 = builder.start(() -> System.out.println("VT3"));
+Thread t4 = builder.start(() -> System.out.println("VT4"));
+
+// 4 — Convenience method (mais curto)
+Thread t5 = Thread.startVirtualThread(() -> System.out.println("VT5"));
+
+// 5 — ExecutorService (forma recomendada no exame)
+try (ExecutorService ex = Executors.newVirtualThreadPerTaskExecutor()) {
+    ex.submit(() -> System.out.println("Task A"));
+    ex.submit(() -> System.out.println("Task B"));
+} // auto-close chama shutdown() + awaitTermination()
 ```
 
-### Platform Thread vs Virtual Thread
+> **Exam tip:** `Executors.newVirtualThreadPerTaskExecutor()` cria **uma nova virtual thread por tarefa** — não é um pool com tamanho fixo.
 
-| | Platform Thread | Virtual Thread |
+---
+
+### Platform Thread vs Virtual Thread — Comparação completa
+
+| Característica | Platform Thread | Virtual Thread |
 |---|---|---|
 | Gerida por | OS | JVM |
 | Stack size | ~1 MB (fixo) | Pequeno, cresce dinamicamente |
-| Criação | Lenta/cara | Rápida/barata |
+| Criação | `new Thread()` / `Thread.ofPlatform()` | `Thread.ofVirtual()` / `Thread.startVirtualThread()` |
 | Escalabilidade | Milhares | Milhões |
-| Blocking I/O | Bloqueia a OS thread | JVM desmonta e remonta automaticamente |
 | `Thread.isVirtual()` | `false` | `true` |
+| É daemon por defeito? | ❌ Não | ✅ **Sempre daemon** |
+| Pode definir prioridade? | ✅ Sim | ❌ Ignorado (sempre `NORM_PRIORITY`) |
+| Pode definir stack size? | ✅ Sim | ❌ Ignorado |
+| Blocking I/O | Bloqueia a OS thread | JVM desmonta e reutiliza a carrier |
+| `Thread.sleep()` | Bloqueia a OS thread | Liberta a carrier thread |
 
-### Conceitos-chave para o exame
+---
 
-- **Carrier thread:** platform thread que executa uma virtual thread. Gerida pelo JVM fork/join pool.
-- **Pinning:** uma virtual thread fica "presa" à carrier thread quando está dentro de um bloco `synchronized` ou de código nativo. Deve-se preferir `ReentrantLock` para evitar pinning.
-- Virtual threads são sempre **daemon threads** — a JVM não espera por elas para terminar.
-- `Thread.sleep()` dentro de uma virtual thread **não bloqueia** a carrier thread (a JVM desmonta a virtual thread e reusa a carrier).
-
-### Exam tip
+### Thread.ofVirtual() vs Thread.ofPlatform()
 
 ```java
-// Correcto com Virtual Threads — evita pinning
-ReentrantLock lock = new ReentrantLock();
-lock.lock();
-try { /* work */ } finally { lock.unlock(); }
+// Platform thread com configuração explícita
+Thread pt = Thread.ofPlatform()
+        .name("platform-worker")
+        .daemon(true)
+        .priority(Thread.MAX_PRIORITY)
+        .start(() -> System.out.println("Platform"));
 
-// Evitar com Virtual Threads — causa pinning na carrier thread
-synchronized (this) { /* work */ }
+// Virtual thread — prioridade e daemon são ignorados/fixos
+Thread vt = Thread.ofVirtual()
+        .name("virtual-worker")
+        .start(() -> System.out.println("Virtual"));
+
+System.out.println(pt.isVirtual()); // false
+System.out.println(vt.isVirtual()); // true
+System.out.println(vt.isDaemon());  // true — sempre
 ```
 
-> **Resumo:** Virtual Threads não mudam a API de concorrência — `ExecutorService`, `Future`, `Callable` continuam iguais. O que muda é o **executor** utilizado: `Executors.newVirtualThreadPerTaskExecutor()`.
+---
+
+### Carrier Threads e Pinning
+
+- **Carrier thread:** platform thread que "carrega" uma virtual thread durante a execução. Gerida pelo JVM fork/join pool.
+- Quando a virtual thread faz blocking I/O ou `Thread.sleep()`, a JVM **desmonta-a** da carrier — a carrier fica livre.
+- **Pinning** ocorre quando a virtual thread fica **presa** à carrier thread e não pode ser desmontada:
+  - Dentro de um bloco `synchronized`
+  - Dentro de código nativo (JNI)
+
+```java
+// ❌ CAUSA PINNING — carrier thread fica bloqueada durante o sleep
+synchronized (this) {
+    Thread.sleep(1000);
+}
+
+// ✅ SEM PINNING — carrier fica livre durante o sleep
+ReentrantLock lock = new ReentrantLock();
+lock.lock();
+try {
+    Thread.sleep(1000); // JVM desmonta a virtual thread, carrier fica livre
+} finally {
+    lock.unlock();
+}
+```
+
+> **Exam tip:** `synchronized` não é proibido com virtual threads — compila e corre. Mas causa pinning e degrada a performance. O exame pode perguntar qual a alternativa correcta: `ReentrantLock`.
+
+---
+
+### ThreadLocal com Virtual Threads
+
+- `ThreadLocal` **funciona** com virtual threads — cada virtual thread tem a sua cópia.
+- Mas com **milhões** de virtual threads, cada uma com uma cópia, pode causar pressão de memória.
+- A alternativa moderna é `ScopedValue` — **preview no Java 21, não cai no OCP 21**.
+
+```java
+ThreadLocal<String> local = new ThreadLocal<>();
+
+try (var ex = Executors.newVirtualThreadPerTaskExecutor()) {
+    ex.submit(() -> {
+        local.set("valor");
+        System.out.println(local.get()); // "valor"
+        local.remove(); // boa prática — evitar memory leaks
+    });
+}
+```
+
+---
+
+### Quando usar Virtual Threads
+
+| Cenário | Recomendado? |
+|---|---|
+| Muitas tarefas com blocking I/O (HTTP, DB, ficheiros) | ✅ Ideal |
+| Tarefas CPU-intensive (cálculos pesados) | ❌ Não — prefere platform threads / parallel streams |
+| Código com muito `synchronized` | ⚠️ Funciona mas perde benefício (pinning) |
+| Substituir `newFixedThreadPool` em servidores web | ✅ Sim |
+
+---
+
+### Armadilhas do exame
+
+```java
+// 1 — Virtual threads são SEMPRE daemon: JVM pode terminar antes delas!
+Thread vt = Thread.startVirtualThread(() -> {
+    try { Thread.sleep(5000); } catch (InterruptedException e) {}
+    System.out.println("Pode nunca aparecer se o main terminar primeiro!");
+});
+
+// 2 — setPriority() é ignorado; setDaemon(false) lança excepção!
+Thread vt2 = Thread.ofVirtual().start(() -> {});
+vt2.setPriority(Thread.MAX_PRIORITY); // sem efeito — ignorado silenciosamente
+vt2.setDaemon(false);                 // ❌ lança IllegalArgumentException em runtime!
+
+// 3 — isVirtual() existe em Thread mas NÃO em Runnable/Callable
+Thread.currentThread().isVirtual(); // ✅ correcto
+
+// 4 — newVirtualThreadPerTaskExecutor NÃO tem pool de tamanho fixo
+// Cada submit() cria uma nova virtual thread — não fica à espera de uma livre
+ExecutorService ex = Executors.newVirtualThreadPerTaskExecutor();
+```
+
+---
+
+### Resumo final para o exame OCP 21
+
+| O que saber | Detalhe |
+|---|---|
+| Como criar | `Thread.ofVirtual()`, `Thread.startVirtualThread()`, `Executors.newVirtualThreadPerTaskExecutor()` |
+| Sempre daemon | `isDaemon()` retorna `true`, não pode ser alterado |
+| Prioridade ignorada | Sempre `NORM_PRIORITY`, `setPriority()` não tem efeito (ignorado) |
+| `setDaemon(false)` | Lança `IllegalArgumentException` — virtual threads são sempre daemon |
+| Pinning | `synchronized` causa pinning; preferir `ReentrantLock` |
+| `isVirtual()` | Método em `Thread` — `true` para virtual, `false` para platform |
+| Blocking I/O | Virtual thread liberta a carrier — grande vantagem sobre platform threads |
+| CPU-bound tasks | Não beneficiam de virtual threads |
+| `ThreadLocal` | Funciona mas pode ser pesado com milhões de threads |
+| API de concorrência | Não muda — `ExecutorService`, `Future`, `Callable` continuam iguais |
 
 
 
