@@ -1,5 +1,76 @@
 ## Chapter 7 - Concurrency
 
+---
+
+## Índice
+
+### Threads
+- [Objectives covered in this chapter](#objectives-covered-in-this-chapter)
+- [Introducing Threads](#introducing-threads)
+- [Distinguishing Thread Types](#distinguishing-thread-types)
+- [Understanding Thread Concurrency](#understanding-thread-concurrency)
+- [Defining a Task with Runnable](#defining-a-task-with-runnable)
+- [Creating Runnable Classes](#creating-runnable-classes)
+- [Creating a Thread](#creating-a-thread)
+- [Polling with Sleep](#polling-with-sleep)
+
+### Concurrency API
+- [Creating Threads with the Concurrency API](#creating-threads-with-the-concurrency-api)
+- [Introducing the Single-Thread Executor](#introducing-the-single-thread-executor)
+- [Shutting Down a Thread Executor](#shutting-down-a-thread-executor)
+- [Submitting Tasks](#submitting-tasks)
+- [Waiting for Results](#waiting-for-results)
+- [Introducing Callable](#introducing-callable)
+- [Waiting for All Tasks to Finish](#waiting-for-all-tasks-to-finish)
+- [Submitting Task Collections](#submitting-task-collections)
+- [Scheduling Tasks](#scheduling-tasks)
+- [Increasing Concurrency with Pools](#increasing-concurrency-with-pools)
+
+### Thread-Safe Code
+- [Writing Thread-Safe Code](#writing-thread-safe-code)
+- [Understanding Thread-Safety](#understanding-thread-safety)
+- [The `volatile` Keyword](#the-volatile-keyword) ⚠️ *(lacuna adicionada)*
+- [Protecting Data with Atomic Classes](#protecting-data-with-atomic-classes)
+- [Improving Access with Synchronized Blocks](#improving-access-with-synchronized-blocks)
+- [Synchronizing on Methods](#synchronizing-on-methods)
+- [Understanding the Lock Framework](#understanding-the-lock-framework)
+- [Applying a ReentrantLock Interface](#applying-a-reentrantlock-interface)
+- [Attempting to Acquire a Lock](#attempting-to-acquire-a-lock)
+- [Orchestrating Tasks with a CyclicBarrier](#orchestrating-tasks-with-a-cyclicbarrier)
+- [Reusing CyclicBarrier](#reusing-cyclicbarrier)
+
+### Concurrent Collections
+- [Using Concurrent Collections](#using-concurrent-collections)
+- [Understanding Memory Consistency Errors](#understanding-memory-consistency-errors)
+- [Working with Concurrent Classes](#working-with-concurrent-classes)
+- [Understanding SkipList Collections](#understanding-skiplist-collections)
+- [Understanding CopyOnWrite Collections](#understanding-copyonwrite-collections)
+- [Understanding Blocking Queues](#understanding-blocking-queues)
+- [Obtaining Synchronized Collections](#obtaining-synchronized-collections)
+
+### Threading Problems
+- [Identifying Threading Problems](#identifying-threading-problems)
+- [Understanding Liveliness](#understanding-liveliness)
+- [Deadlock](#deadlock)
+- [Starvation](#starvation)
+- [Livelock](#livelock)
+- [Managing Race Conditions](#managing-race-conditions)
+
+### Parallel Streams
+- [Working with Parallel Streams](#working-with-parallel-streams)
+- [Creating Parallel Streams](#creating-parallel-streams)
+- [Performing a Parallel Decomposition](#performing-a-parallel-decomposition)
+- [Processing Parallel Reductions](#processing-parallel-reductions)
+- [Combining Results with reduce()](#combining-results-with-reduce)
+- [Combining Results with collect()](#combining-results-with-collect)
+- [Performing a Parallel Reduction on a Collector](#performing-a-parallel-reduction-on-a-collector)
+- [Avoiding Stateful Operations](#avoiding-stateful-operations)
+
+### Java 21
+- [🆕 Virtual Threads — Java 21 (JEP 444)](#-virtual-threads--java-21-jep-444) *(adicionado)*
+
+---
+
 ### Objectives covered in this chapter
 
 - Concurrency
@@ -1064,6 +1135,33 @@ private void incrementAndReport(){
 | getAndIncrement() | For numeric classes, atomic post-increment operation equivalent to value++ |
 | decrementAndGet() | For numeric classes, atomic pre-decrement operation equivalent --value     |
 | getAndDecrement() | For numeric classes, atomic post-decrement operation equivalent to value-- |
+
+---
+
+## The `volatile` Keyword
+
+> ⚠️ **Lacuna identificada no resumo original — relevante para OCP 11**
+
+- The `volatile` keyword is a lightweight alternative to `synchronized` for **single read/write operations** on a variable.
+- It guarantees that changes to a variable are **immediately visible to all threads** — it prevents threads from caching a stale copy of the variable in their local CPU cache.
+- It does **not** guarantee atomicity for compound operations (e.g., `count++` is still not thread-safe with `volatile`).
+
+```java
+// Without volatile: thread B may read a stale value of running
+// With volatile: thread B always sees the latest value written by thread A
+private volatile boolean running = true;
+
+void stop()  { running = false; }       // Thread A
+void loop()  { while (running) { } }    // Thread B
+```
+
+| Mechanism  | Visibility | Atomicity | Use when                              |
+|------------|-----------|-----------|---------------------------------------|
+| `volatile` | ✅ Yes     | ❌ No     | Single flag/boolean shared by threads |
+| `synchronized` | ✅ Yes | ✅ Yes  | Compound operations, critical sections |
+| Atomic classes | ✅ Yes | ✅ Yes | Single numeric variable, high throughput |
+
+> **Exam tip:** If a question shows a `boolean` flag shared between threads with no synchronization and asks why changes aren't visible — the answer is `volatile`.
 
 ---
 
@@ -2578,6 +2676,68 @@ public static List<Integer> addValues(IntStream source){
 - Recommented avoid stateful operations when using parallel streams in order to remove possible side effects.
 - They should be avoided in serial streams since doing so limits the code's ability to someday take advantage of 
   parallelization.
+
+---
+
+## 🆕 Virtual Threads — Java 21 (JEP 444)
+
+> ☕ **Introduzido e finalizado no Java 21 — cai no OCP Java 21 (1Z0-830)**
+> Não faz parte do OCP Java 11. Incluído aqui como referência de progressão.
+
+### O problema que resolve
+
+- Platform threads (Java 11) são mapeadas 1:1 com threads do OS — caras de criar, limitadas a milhares.
+- Virtual threads são geridas pela JVM, mapeadas dinamicamente sobre um pequeno pool de **carrier threads**.
+- Permitem escalar para **milhões de threads** sem custo de memória proporcional.
+
+### Criação
+
+```java
+// Forma 1 — Thread.ofVirtual()
+Thread vt = Thread.ofVirtual().start(() -> System.out.println("Virtual!"));
+
+// Forma 2 — factory
+Thread.Builder builder = Thread.ofVirtual().name("worker");
+Thread t = builder.start(() -> System.out.println("Worker thread"));
+
+// Forma 3 — ExecutorService (recomendada para o exame)
+try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+    executor.submit(() -> System.out.println("Task 1"));
+    executor.submit(() -> System.out.println("Task 2"));
+}
+```
+
+### Platform Thread vs Virtual Thread
+
+| | Platform Thread | Virtual Thread |
+|---|---|---|
+| Gerida por | OS | JVM |
+| Stack size | ~1 MB (fixo) | Pequeno, cresce dinamicamente |
+| Criação | Lenta/cara | Rápida/barata |
+| Escalabilidade | Milhares | Milhões |
+| Blocking I/O | Bloqueia a OS thread | JVM desmonta e remonta automaticamente |
+| `Thread.isVirtual()` | `false` | `true` |
+
+### Conceitos-chave para o exame
+
+- **Carrier thread:** platform thread que executa uma virtual thread. Gerida pelo JVM fork/join pool.
+- **Pinning:** uma virtual thread fica "presa" à carrier thread quando está dentro de um bloco `synchronized` ou de código nativo. Deve-se preferir `ReentrantLock` para evitar pinning.
+- Virtual threads são sempre **daemon threads** — a JVM não espera por elas para terminar.
+- `Thread.sleep()` dentro de uma virtual thread **não bloqueia** a carrier thread (a JVM desmonta a virtual thread e reusa a carrier).
+
+### Exam tip
+
+```java
+// Correcto com Virtual Threads — evita pinning
+ReentrantLock lock = new ReentrantLock();
+lock.lock();
+try { /* work */ } finally { lock.unlock(); }
+
+// Evitar com Virtual Threads — causa pinning na carrier thread
+synchronized (this) { /* work */ }
+```
+
+> **Resumo:** Virtual Threads não mudam a API de concorrência — `ExecutorService`, `Future`, `Callable` continuam iguais. O que muda é o **executor** utilizado: `Executors.newVirtualThreadPerTaskExecutor()`.
 
 
 
