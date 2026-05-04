@@ -1,6 +1,6 @@
 package chapter_9.set;
 
-import uk.co.collection.domain.Person;
+import chapter_9.domain.Person;
 
 import java.util.*;
 

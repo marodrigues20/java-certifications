@@ -1,6 +1,8 @@
 package chapter_9.list;
 
-import uk.co.collection.domain.Person;
+
+
+import chapter_9.domain.Person;
 
 import java.util.ArrayList;
 import java.util.Comparator;
